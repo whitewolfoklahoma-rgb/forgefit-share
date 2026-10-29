@@ -153,6 +153,11 @@ svg.ring{transform:rotate(-90deg)}
 button.setdel{background:none;border:none;color:var(--mut);font-size:15px;min-height:40px;min-width:30px;cursor:pointer;padding:0}
 button.setdel:active{color:#f87171}
 .restclock{font-weight:700;color:var(--warn)}
+.gchip.on{background:linear-gradient(135deg,#4ade80,#34d399 48%,#2dd4bf);color:#06281a;border-color:transparent;font-weight:700}
+.gchip.subchip.on{background:linear-gradient(135deg,#38bdf8,#818cf8);color:#0a1626}
+.splitrow{display:flex;justify-content:space-between;font-size:13px;margin-top:7px}
+.bitem{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.bitem input[type=number]{text-align:center;min-height:46px}
 @media (max-width:640px){
   .playerstats{grid-template-columns:repeat(2,1fr) auto}
   .setgrid{grid-template-columns:24px minmax(52px,.8fr) 1fr 1fr 40px 24px;gap:5px}
@@ -351,6 +356,24 @@ details.card>summary{cursor:pointer;font-weight:600}
   <div class="card">
     <div class="flexb"><span><b>Just want to log a workout?</b> <span class="small mut">Start an empty session and add exercises as you go — same set-by-set logging as a planned workout.</span></span><button class="btn" id="btnFreeWorkout" type="button">Log workout</button></div>
   </div>
+  <div class="card">
+    <div class="flexb"><span><b>Build your own workout</b> <span class="small mut">Pick the muscles you want to train, add exercises, watch the muscle split, and save it as a template you can run any time — it logs through the same workout player as everything else.</span></span><button class="btn" id="btnBuildWorkout" type="button">＋ Build a workout</button></div>
+    <div id="templateList" class="mt"></div>
+  </div>
+  <div class="card" id="builderCard" style="display:none">
+    <div class="flexb"><h3 style="margin:0" id="builderTitle">Build a workout</h3><span class="pill">split updates as you build</span></div>
+    <div class="field mt"><label>Workout name</label><input id="tplName" type="text" placeholder="e.g. Push day — chest &amp; triceps" autocomplete="off"><button type="button" class="micbtn" data-mic-for="tplName" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
+    <div class="field"><label>1 · Pick the muscles you want to train</label><div class="chipRow" id="builderGroups"></div><div class="chipRow" id="builderSubs" style="padding-top:0"></div><div class="small mut" id="builderGroupHint"></div></div>
+    <div class="field"><label>2 · Add exercises</label><input id="builderSearch" type="text" placeholder="Search exercises…" autocomplete="off"><button type="button" class="micbtn" data-mic-for="builderSearch" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
+    <div id="builderLibrary"></div>
+    <div class="mt"><b>3 · Your workout</b><div id="builderItems" class="mt"></div></div>
+    <div class="mt"><b>Muscle split</b><div class="small mut">Share of this workout's working sets per body part. Secondary muscles count half.</div><div id="builderSplit"></div></div>
+    <div class="row mt">
+      <button class="btn" id="btnSaveTemplate" type="button">Save template</button>
+      <button class="btn sec" id="btnCancelBuilder" type="button">Cancel</button>
+    </div>
+    <div class="small mut mt" id="builderMsg" aria-live="polite"></div>
+  </div>
   <div id="postWorkoutMsg"></div>
   <div class="card" id="playerCard" style="display:none">
     <div class="flexb"><h3 style="margin:0" id="playerTitle">Workout</h3><span class="pill" id="playerDate"></span></div>
@@ -407,7 +430,7 @@ details.card>summary{cursor:pointer;font-weight:600}
       <span class="small mut" id="voiceFoodStatus"></span>
     </div>
     <div id="voiceFoodMatches" class="mt"></div>
-    <p class="small mut mt">Eating out? ForgeFit carries published nutrition for 15 restaurant chains — say or search the chain (Braum's, McDonald's, Whataburger, Taco Bell…). Restaurant values are the chains' published figures and vary by location; you can edit any number on the confirm screen before adding.</p>
+    <p class="small mut mt">Eating out? ForgeFit carries published nutrition for 28 restaurant chains — say or search the chain (Braum's, McDonald's, Whataburger, Taco Bell…). Restaurant values are the chains' published figures and vary by location; you can edit any number on the confirm screen before adding.</p>
     <div id="foodResults"></div>
     <details class="mt" id="customFoodDetails"><summary>＋ Add a custom food</summary>
       <div class="row mt">
@@ -704,7 +727,7 @@ details.card>summary{cursor:pointer;font-weight:600}
     <button class="btn sec" id="btnShowIntro" type="button">See the intro again</button>
   </div>
   <details class="card"><summary>ℹ️ About ForgeFit AI</summary>
-    <p class="small mut mt">ForgeFit AI <b>version 2.2.3</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
+    <p class="small mut mt">ForgeFit AI <b>version 2.3.0</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
   </details>
   </details>
 </section>
@@ -1058,14 +1081,34 @@ var EXTRA_FOODS = [
   brandFood("Wendy's", "Chicken Nuggets", "10 pc", 420, 24, 24, 26, {fiber:1, sugar:0, sodium:850, chol:65}),
   brandFood("Wendy's", "French Fries, medium", "1 medium order", 350, 4, 45, 16, {fiber:4, sugar:0, sodium:310, chol:0}),
   brandFood("Wendy's", "Chocolate Frosty, small", "1 small", 350, 6, 58, 9, {fiber:1, sugar:47, sodium:180, chol:25}),
-  /* Braum's — braums.com published nutrition (REQUIRED chain) */
+  /* Braum's — braums.com published nutrition chart (values verified
+     against the chart hosted on braums.com; see the v2.2.4 corrections
+     note in qa-report.md) */
   brandFood("Braum's", "Double 1/4 lb Cheeseburger", "1 sandwich", 730, 47, 40, 41, {fiber:2, sugar:11, sodium:1470, chol:155}),
-  brandFood("Braum's", "1/4 lb Cheeseburger", "1 sandwich", 530, 29, 40, 28, {fiber:2, sugar:8, sodium:1080, chol:85}),
+  brandFood("Braum's", "1/4 lb Cheeseburger", "1 sandwich", 530, 29, 40, 28, {fiber:2, sugar:11, sodium:1420, chol:90}),
   brandFood("Braum's", "Double Jr Cheeseburger", "1 sandwich", 520, 32, 37, 27, {fiber:1, sugar:9, sodium:1260, chol:100}),
-  brandFood("Braum's", "Chicken Strips", "4 pc", 450, 30, 28, 25, {fiber:1, sugar:0, sodium:1040, chol:75}),
+  brandFood("Braum's", "Jr Cheeseburger", "1 sandwich", 390, 20, 37, 18, {fiber:1, sugar:9, sodium:1230, chol:55}),
+  brandFood("Braum's", "Chicken Strips", "4 pc", 490, 28, 29, 29, {fiber:1, sugar:0, sodium:1350, chol:50}),
   brandFood("Braum's", "Chicken Strip Dinner", "1 dinner", 1150, 37, 134, 51, {fiber:7, sugar:20, sodium:2590, chol:50}),
-  brandFood("Braum's", "French Fries, medium", "1 medium order", 360, 4, 46, 17, {fiber:4, sugar:0, sodium:300, chol:0}),
-  brandFood("Braum's", "Vanilla Shake, small", "16 oz", 450, 12, 65, 15, {fiber:0, sugar:60, sodium:200, chol:55}),
+  brandFood("Braum's", "French Fries, medium", "1 medium order (128g)", 310, 4, 43, 14, {fiber:4, sugar:0, sodium:220, chol:0}),
+  brandFood("Braum's", "French Fries, small", "1 small order (85g)", 210, 3, 29, 9, {fiber:3, sugar:0, sodium:140, chol:0}),
+  brandFood("Braum's", "French Fries, large", "1 large order (170g)", 420, 5, 58, 18, {fiber:5, sugar:0, sodium:290, chol:0}),
+  brandFood("Braum's", "Vanilla Shake, small", "16 oz", 690, 24, 75, 34, {fiber:1, sugar:75, sodium:390, chol:125}),
+  brandFood("Braum's", "Coca-Cola, small", "16 oz", 140, 0, 37, 0, {fiber:0, sugar:37, sodium:45, chol:0}),
+  brandFood("Braum's", "Coca-Cola, medium", "22 oz", 170, 0, 47, 0, {fiber:0, sugar:47, sodium:55, chol:0}),
+  brandFood("Braum's", "Coca-Cola, large", "32 oz", 240, 0, 65, 0, {fiber:0, sugar:65, sodium:75, chol:0}),
+  brandFood("Braum's", "Dr Pepper, small", "16 oz", 140, 0, 38, 0, {fiber:0, sugar:38, sodium:50, chol:0}),
+  brandFood("Braum's", "Dr Pepper, medium", "22 oz", 180, 0, 48, 0, {fiber:0, sugar:48, sodium:60, chol:0}),
+  brandFood("Braum's", "Dr Pepper, large", "32 oz", 250, 0, 66, 0, {fiber:0, sugar:66, sodium:85, chol:0}),
+  /* Braum's numbered combos: Braum's publishes no combo totals, so each
+     row is the sum of the Braum's rows above for the combo's components
+     (sandwich + French Fries, medium + Coca-Cola, medium 22 oz) — the
+     arithmetic is shown in qa-report.md. Combo numbering is as listed
+     consistently across Braum's store menus (#1/#2/#9); numbers that
+     conflict between menu eras (e.g. #3) are deliberately absent. */
+  brandFood("Braum's", "Combo #1 — 1/4 lb Cheeseburger, fries & drink", "1 combo", 1010, 33, 130, 42, {fiber:6, sugar:58, sodium:1695, chol:90}),
+  brandFood("Braum's", "Combo #2 — Double 1/4 lb Cheeseburger, fries & drink", "1 combo", 1210, 51, 130, 55, {fiber:6, sugar:58, sodium:1745, chol:155}),
+  brandFood("Braum's", "Combo #9 — Chicken Strips, fries & drink", "1 combo", 970, 32, 119, 43, {fiber:5, sugar:47, sodium:1625, chol:50}),
   /* Sonic — sonicdrivein.com nutrition */
   brandFood("Sonic", "Cheeseburger", "1 sandwich", 710, 30, 44, 44, {fiber:2, sugar:10, sodium:1380, chol:95}),
   brandFood("Sonic", "SuperSONIC Double Cheeseburger", "1 sandwich", 1030, 48, 44, 72, {fiber:2, sugar:10, sodium:1690, chol:160}),
@@ -1153,6 +1196,162 @@ var EXTRA_FOODS = [
   brandFood("Dairy Queen", "Vanilla Cone, small", "1 small cone", 230, 5, 34, 8, {fiber:0, sugar:26, sodium:95, chol:25}),
   brandFood("Dairy Queen", "French Fries, regular", "1 regular order", 290, 3, 39, 13, {fiber:3, sugar:0, sodium:560, chol:0}),
   brandFood("Dairy Queen", "Dilly Bar", "1 bar", 220, 3, 25, 12, {fiber:0, sugar:21, sodium:70, chol:15}),
+  /* Jack in the Box — jackinthebox.com nutrition figures as republished
+     by Nutrition-Charts.com (official PDF unreachable from the build
+     environment; see qa-report.md provenance note) */
+  brandFood("Jack in the Box", "Jumbo Jack", "1 burger", 480, 23, 32, 29, {fiber:2, sugar:5, sodium:860, chol:40}),
+  brandFood("Jack in the Box", "Jumbo Jack Cheeseburger", "1 burger", 560, 26, 33, 36, {fiber:2, sugar:5, sodium:1050, chol:70}),
+  brandFood("Jack in the Box", "Ultimate Cheeseburger", "1 burger", 840, 44, 31, 59, {fiber:2, sugar:6, sodium:1520, chol:170}),
+  brandFood("Jack in the Box", "Sourdough Jack", "1 sandwich", 680, 33, 35, 45, {fiber:3, sugar:7, sodium:1250, chol:110}),
+  brandFood("Jack in the Box", "Jr. Jumbo Jack", "1 burger", 400, 15, 31, 24, {fiber:1, sugar:5, sodium:660, chol:35}),
+  brandFood("Jack in the Box", "Chicken Sandwich", "1 sandwich", 510, 20, 41, 29, {fiber:3, sugar:6, sodium:1110, chol:55}),
+  brandFood("Jack in the Box", "Curly Fries, medium", "1 medium order", 430, 5, 45, 25, {fiber:3, sugar:1, sodium:750, chol:0}),
+  brandFood("Jack in the Box", "Seasoned Fries, medium", "1 medium order", 410, 4, 54, 19, {fiber:4, sugar:0, sodium:780, chol:0}),
+  brandFood("Jack in the Box", "Tacos", "2 tacos", 340, 12, 30, 19, {fiber:3, sugar:2, sodium:680, chol:35}),
+  brandFood("Jack in the Box", "Breakfast Jack", "1 sandwich", 350, 16, 30, 18, {fiber:1, sugar:4, sodium:790, chol:210}),
+  /* Church's Chicken — churchs.com published nutrition guide */
+  brandFood("Church's Chicken", "Original Chicken Breast", "1 breast", 300, 25, 8, 18, {fiber:0, sugar:0, sodium:890, chol:125}),
+  brandFood("Church's Chicken", "Spicy Chicken Breast", "1 breast", 320, 24, 10, 20, {fiber:1, sugar:0, sodium:1130, chol:125}),
+  brandFood("Church's Chicken", "Chicken Tenders", "3 pc", 450, 26, 24, 26, {fiber:1, sugar:0, sodium:1350, chol:75}),
+  brandFood("Church's Chicken", "Chicken Sandwich", "1 sandwich", 530, 26, 44, 27, {fiber:2, sugar:5, sodium:1480, chol:75}),
+  brandFood("Church's Chicken", "Honey-Butter Biscuit", "1 biscuit", 230, 3, 26, 12, {fiber:1, sugar:4, sodium:530, chol:5}),
+  brandFood("Church's Chicken", "Macaroni & Cheese, regular", "1 regular side", 190, 6, 24, 8, {fiber:1, sugar:4, sodium:730, chol:15}),
+  brandFood("Church's Chicken", "Mashed Potatoes & Gravy, regular", "1 regular side", 110, 2, 16, 4, {fiber:1, sugar:1, sodium:480, chol:5}),
+  brandFood("Church's Chicken", "Fried Okra, regular", "1 regular side", 210, 3, 26, 11, {fiber:3, sugar:4, sodium:520, chol:0}),
+  brandFood("Church's Chicken", "Jalapeño Cheese Bombers", "4 pc", 240, 6, 22, 14, {fiber:1, sugar:1, sodium:640, chol:20}),
+  /* Wingstop — wingstop.com published nutrition guide. Wingstop publishes
+     per-10-piece totals; rows below are PER PIECE (published totals
+     divided by the piece count — arithmetic shown in qa-report.md) so a
+     spoken count ("ten wings") scales correctly. */
+  brandFood("Wingstop", "Classic Wing, plain", "1 wing", 77, 8.1, 0, 4.9, {fiber:0, sugar:0, sodium:26, chol:40.5}),
+  brandFood("Wingstop", "Boneless Wing", "1 wing", 64, 5.6, 4, 2.8, {fiber:0.3, sugar:0.2, sodium:172, chol:14.5}),
+  brandFood("Wingstop", "Garlic Parmesan Wing", "1 wing", 108, 8.5, 0.4, 8, {fiber:0, sugar:0, sodium:98, chol:46}),
+  brandFood("Wingstop", "Lemon Pepper Wing", "1 wing", 79, 8.2, 0.1, 5, {fiber:0, sugar:0.1, sodium:157, chol:40.5}),
+  brandFood("Wingstop", "Mango Habanero Wing", "1 wing", 85, 8.2, 1.7, 5, {fiber:0, sugar:1.6, sodium:102, chol:40.5}),
+  brandFood("Wingstop", "Chicken Tender", "1 tender", 92, 9, 4, 4.3, {fiber:0.3, sugar:0, sodium:196, chol:23}),
+  brandFood("Wingstop", "Seasoned Fries, regular", "1 regular order", 487, 5, 63, 24, {fiber:4, sugar:3, sodium:1035, chol:0}),
+  brandFood("Wingstop", "Seasoned Fries, large", "1 large order", 918, 9, 119, 46, {fiber:8, sugar:5, sodium:1952, chol:0}),
+  brandFood("Wingstop", "Louisiana Voodoo Fries", "1 order", 889, 13, 96, 50, {fiber:6, sugar:4, sodium:1731, chol:45}),
+  brandFood("Wingstop", "Ranch Dip", "1 dip cup", 160, 1, 2, 17, {fiber:0, sugar:1, sodium:380, chol:10}),
+  /* Chipotle — chipotle.com published nutrition chart; burritos/bowls are
+     the standard builds summed from Chipotle's published component values
+     (builds itemized in qa-report.md) */
+  brandFood("Chipotle", "Chicken Burrito", "1 burrito", 975, 46, 107, 38, {fiber:13, sugar:12, sodium:1830, chol:125}),
+  brandFood("Chipotle", "Steak Burrito", "1 burrito", 965, 43, 107, 37, {fiber:13, sugar:12, sodium:1765, chol:125}),
+  brandFood("Chipotle", "Carnitas Burrito", "1 burrito", 1095, 54, 107, 48, {fiber:13, sugar:12, sodium:2005, chol:135}),
+  brandFood("Chipotle", "Chicken Burrito Bowl", "1 bowl", 705, 46, 68, 24, {fiber:13, sugar:9, sodium:1230, chol:125}),
+  brandFood("Chipotle", "Steak Burrito Bowl", "1 bowl", 695, 43, 68, 23, {fiber:13, sugar:9, sodium:1165, chol:125}),
+  brandFood("Chipotle", "Barbacoa Burrito Bowl", "1 bowl", 745, 48, 68, 27, {fiber:13, sugar:9, sodium:1385, chol:130}),
+  brandFood("Chipotle", "Sofritas Burrito Bowl", "1 bowl", 695, 19, 76, 34, {fiber:17, sugar:13, sodium:1225, chol:15}),
+  brandFood("Chipotle", "Chips", "1 regular order", 540, 7, 73, 25, {fiber:7, sugar:1, sodium:400, chol:0}),
+  brandFood("Chipotle", "Chips & Guacamole", "1 order", 770, 11, 82, 43, {fiber:13, sugar:2, sodium:870, chol:0}),
+  brandFood("Chipotle", "Guacamole", "1 side (4 oz)", 230, 4, 9, 18, {fiber:6, sugar:1, sodium:470, chol:0}),
+  /* Panera — panerabread.com published nutrition information */
+  brandFood("Panera", "Turkey Bravo Sandwich", "1 sandwich", 1030, 50, 86, 50, {fiber:5, sugar:13, sodium:2580, chol:135}),
+  brandFood("Panera", "Green Goddess Cobb Salad with Chicken", "1 salad", 500, 37, 25, 29, {fiber:6, sugar:10, sodium:910, chol:290}),
+  brandFood("Panera", "Fuji Apple Salad with Chicken", "1 salad", 570, 33, 35, 34, {fiber:6, sugar:24, sodium:820, chol:90}),
+  brandFood("Panera", "Broccoli Cheddar Soup, cup", "1 cup (8.75 oz)", 240, 9, 17, 15, {fiber:2, sugar:6, sodium:990, chol:45}),
+  brandFood("Panera", "Mac & Cheese, small", "1 small", 490, 17, 37, 31, {fiber:1, sugar:6, sodium:1090, chol:85}),
+  brandFood("Panera", "Turkey Chili, cup", "1 cup", 300, 18, 34, 11, {fiber:7, sugar:8, sodium:1090, chol:40}),
+  brandFood("Panera", "Frontega Chicken Sandwich, half", "1/2 sandwich", 380, 24, 49, 10, {fiber:3, sugar:6, sodium:850, chol:65}),
+  brandFood("Panera", "Cinnamon Crunch Bagel", "1 bagel", 420, 7, 82, 7, {fiber:2, sugar:33, sodium:430, chol:0}),
+  /* Five Guys — fiveguys.com published nutrition guide */
+  brandFood("Five Guys", "Hamburger", "1 burger", 840, 43, 39, 43, {fiber:2, sugar:8, sodium:430, chol:120}),
+  brandFood("Five Guys", "Cheeseburger", "1 burger", 980, 47, 40, 55, {fiber:2, sugar:9, sodium:690, chol:165}),
+  brandFood("Five Guys", "Bacon Burger", "1 burger", 920, 46, 39, 50, {fiber:2, sugar:8, sodium:690, chol:145}),
+  brandFood("Five Guys", "Bacon Cheeseburger", "1 burger", 1060, 51, 40, 62, {fiber:2, sugar:9, sodium:950, chol:195}),
+  brandFood("Five Guys", "Little Hamburger", "1 burger", 540, 26, 39, 26, {fiber:2, sugar:8, sodium:380, chol:70}),
+  brandFood("Five Guys", "Little Cheeseburger", "1 burger", 610, 27, 40, 32, {fiber:2, sugar:8, sodium:690, chol:100}),
+  brandFood("Five Guys", "Hot Dog", "1 hot dog", 520, 19, 40, 35, {fiber:1, sugar:9, sodium:1210, chol:85}),
+  brandFood("Five Guys", "Fries, little", "1 little order", 530, 7, 72, 23, {fiber:7, sugar:2, sodium:530, chol:0}),
+  brandFood("Five Guys", "Fries, regular", "1 regular order", 950, 13, 131, 41, {fiber:12, sugar:3, sodium:960, chol:0}),
+  brandFood("Five Guys", "Fries, large", "1 large order", 1470, 20, 203, 64, {fiber:18, sugar:4, sodium:1490, chol:0}),
+  brandFood("Five Guys", "Cajun Fries, regular", "1 regular order", 960, 13, 131, 43, {fiber:12, sugar:3, sodium:960, chol:0}),
+  brandFood("Five Guys", "Veggie Sandwich", "1 sandwich", 440, 9, 61, 15, {fiber:4, sugar:16, sodium:640, chol:10}),
+  /* Raising Cane's — raisingcanes.com published Nutrition & Allergen guide */
+  brandFood("Raising Cane's", "The Box Combo", "1 combo", 1270, 61, 108, 66, {fiber:5, sugar:10, sodium:2390, chol:310}),
+  brandFood("Raising Cane's", "The Caniac Combo", "1 combo", 1740, 87, 138, 93, {fiber:6, sugar:15, sodium:3170, chol:460}),
+  brandFood("Raising Cane's", "The Sandwich Combo", "1 combo", 1190, 42, 132, 55, {fiber:5, sugar:26, sodium:2110, chol:155}),
+  brandFood("Raising Cane's", "The 3 Finger Combo", "1 combo", 1030, 44, 96, 52, {fiber:5, sugar:10, sodium:1900, chol:230}),
+  brandFood("Raising Cane's", "Chicken Finger", "1 finger", 190, 13, 6, 13, {fiber:0, sugar:0, sodium:340, chol:75}),
+  brandFood("Raising Cane's", "Crinkle-Cut Fries", "1 order", 360, 4, 49, 17, {fiber:3, sugar:0, sodium:230, chol:0}),
+  brandFood("Raising Cane's", "Texas Toast", "1 slice", 190, 4, 24, 9, {fiber:1, sugar:4, sodium:330, chol:0}),
+  brandFood("Raising Cane's", "Coleslaw", "1 serving", 100, 1, 11, 6, {fiber:2, sugar:9, sodium:240, chol:5}),
+  brandFood("Raising Cane's", "Cane's Sauce", "1 serving (1.5 oz cup)", 190, 1, 4, 19, {fiber:0, sugar:3, sodium:340, chol:10}),
+  /* Popeyes — popeyes.com published nutrition PDF (Oct 2025) */
+  brandFood("Popeyes", "Classic Chicken Sandwich", "1 sandwich", 699, 26, 49, 42, {fiber:2, sugar:8, sodium:1443, chol:78}),
+  brandFood("Popeyes", "Spicy Chicken Sandwich", "1 sandwich", 700, 28, 50, 43, {fiber:2, sugar:8, sodium:1623, chol:86}),
+  brandFood("Popeyes", "Chicken Tenders", "3 pc", 270, 34, 2, 14, {fiber:1, sugar:0, sodium:920, chol:80}),
+  brandFood("Popeyes", "Signature Chicken Breast, mild", "1 breast", 380, 35, 15, 20, {fiber:0, sugar:0, sodium:1210, chol:165}),
+  brandFood("Popeyes", "Signature Chicken Breast, spicy", "1 breast", 450, 38, 18, 25, {fiber:0, sugar:0, sodium:1120, chol:140}),
+  brandFood("Popeyes", "Signature Chicken Thigh, mild", "1 thigh", 280, 18, 9, 19, {fiber:0, sugar:0, sodium:670, chol:110}),
+  brandFood("Popeyes", "Red Beans & Rice, regular", "1 regular side", 249, 9, 32, 10, {fiber:7, sugar:2, sodium:683}),
+  brandFood("Popeyes", "Cajun Fries, regular", "1 regular order", 261, 3, 31, 14, {fiber:3, sugar:1, sodium:280, chol:5}),
+  brandFood("Popeyes", "Cajun Fries, large", "1 large order", 523, 7, 62, 28, {fiber:6, sugar:1, sodium:559, chol:10}),
+  brandFood("Popeyes", "Mashed Potatoes with Cajun Gravy, regular", "1 regular side", 110, 3, 17, 4, {fiber:1, sugar:3, sodium:590, chol:10}),
+  brandFood("Popeyes", "Buttermilk Biscuit", "1 biscuit", 205, 3, 22, 12, {fiber:1, sugar:2, sodium:475, chol:5}),
+  /* Freddy's — freddys.com published nutrition PDF */
+  brandFood("Freddy's", "Original Double Steakburger", "1 burger", 770, 43, 35, 50, {fiber:1, sugar:7, sodium:1450, chol:150}),
+  brandFood("Freddy's", "Single Steakburger", "1 burger", 570, 32, 33, 36, {fiber:1, sugar:8, sodium:1120, chol:105}),
+  brandFood("Freddy's", "Bacon Double Steakburger", "1 burger", 870, 51, 35, 58, {fiber:1, sugar:7, sodium:1860, chol:165}),
+  brandFood("Freddy's", "Grilled Chicken Sandwich", "1 sandwich", 480, 32, 48, 17, {fiber:3, sugar:11, sodium:1150, chol:85}),
+  brandFood("Freddy's", "Chicken Tenders", "1 order", 700, 37, 40, 44, {fiber:1, sugar:0, sodium:1840, chol:85}),
+  brandFood("Freddy's", "All-Beef Hot Dog", "1 hot dog", 380, 12, 32, 23, {fiber:1, sugar:5, sodium:910, chol:40}),
+  brandFood("Freddy's", "French Fries", "1 order", 650, 8, 74, 36, {fiber:7, sugar:1, sodium:890, chol:55}),
+  brandFood("Freddy's", "Cheese Curds", "1 order", 950, 45, 30, 72, {fiber:1, sugar:2, sodium:1510, chol:180}),
+  brandFood("Freddy's", "Onion Rings", "1 order", 910, 11, 88, 56, {fiber:4, sugar:10, sodium:1010, chol:50}),
+  brandFood("Freddy's", "Vanilla Custard Dish, mini", "1 mini dish", 320, 7, 39, 15, {fiber:0, sugar:37, sodium:135, chol:90}),
+  brandFood("Freddy's", "Vanilla Custard Shake, regular", "1 regular shake", 780, 15, 106, 33, {fiber:0, sugar:103, sodium:340, chol:165}),
+  /* Arby's — Arby's published Nutrition & Allergen Information (U.S.),
+     April 2024 edition, single-edition values throughout (see the
+     v2.2.4 corrections note in qa-report.md) */
+  brandFood("Arby's", "Classic Roast Beef", "1 sandwich", 360, 23, 37, 14, {fiber:2, sugar:5, sodium:970, chol:50}),
+  brandFood("Arby's", "Beef 'n Cheddar, classic", "1 sandwich", 450, 23, 45, 20, {fiber:2, sugar:9, sodium:1280, chol:50}),
+  brandFood("Arby's", "Beef 'n Cheddar, double", "1 sandwich", 630, 39, 48, 32, {fiber:2, sugar:9, sodium:2100, chol:100}),
+  brandFood("Arby's", "Smokehouse Brisket", "1 sandwich", 560, 36, 42, 29, {fiber:3, sugar:3, sodium:1140, chol:95}),
+  brandFood("Arby's", "Chicken Bacon Swiss Sandwich", "1 sandwich", 610, 35, 51, 30, {fiber:4, sugar:9, sodium:1580, chol:80}),
+  brandFood("Arby's", "Crispy Chicken Sandwich", "1 sandwich", 510, 24, 48, 25, {fiber:4, sugar:7, sodium:1230, chol:55}),
+  brandFood("Arby's", "Greek Gyro", "1 gyro", 700, 23, 55, 44, {fiber:4, sugar:6, sodium:1370, chol:75}),
+  brandFood("Arby's", "Mozzarella Sticks", "4 pc", 440, 19, 37, 23, {fiber:2, sugar:3, sodium:1410, chol:35}),
+  brandFood("Arby's", "Curly Fries, small", "1 small order", 250, 3, 29, 13, {fiber:3, sugar:0, sodium:570, chol:0}),
+  brandFood("Arby's", "Curly Fries, medium", "1 medium order", 410, 5, 49, 22, {fiber:5, sugar:0, sodium:940, chol:0}),
+  brandFood("Arby's", "Curly Fries, large", "1 large order", 550, 6, 65, 29, {fiber:6, sugar:0, sodium:1250, chol:0}),
+  brandFood("Arby's", "Jamocha Shake", "1 regular shake", 540, 12, 88, 16, {fiber:1, sugar:74, sodium:320, chol:50}),
+  brandFood("Arby's", "Coca-Cola, medium", "medium, as served (50% ice)", 180, 0, 44, 0, {fiber:0, sugar:44, sodium:45, chol:0}),
+  /* Jimmy John's — jimmyjohns.com nutrition PDF (8-inch, regular build) */
+  brandFood("Jimmy John's", "#1 Pepe", "1 8-inch sub", 550, 23, 57, 25, {fiber:3, sugar:5, sodium:1710, chol:60}),
+  brandFood("Jimmy John's", "#2 Big John", "1 8-inch sub", 450, 24, 55, 14, {fiber:3, sugar:5, sodium:1240, chol:55}),
+  brandFood("Jimmy John's", "#4 Turkey Tom", "1 8-inch sub", 510, 25, 55, 20, {fiber:3, sugar:4, sodium:1810, chol:55}),
+  brandFood("Jimmy John's", "#5 Vito", "1 8-inch sub", 560, 26, 56, 25, {fiber:3, sugar:6, sodium:1570, chol:50}),
+  brandFood("Jimmy John's", "#9 Italian Night Club", "1 8-inch sub", 870, 39, 59, 51, {fiber:3, sugar:7, sodium:2170, chol:105}),
+  brandFood("Jimmy John's", "#12 Beach Club", "1 8-inch sub", 740, 34, 60, 38, {fiber:3, sugar:8, sodium:2040, chol:90}),
+  brandFood("Jimmy John's", "#14 Bootlegger Club", "1 8-inch sub", 630, 35, 55, 28, {fiber:3, sugar:5, sodium:1790, chol:95}),
+  brandFood("Jimmy John's", "#16 Club Lulu", "1 8-inch sub", 700, 29, 58, 38, {fiber:3, sugar:7, sodium:1940, chol:80}),
+  brandFood("Jimmy John's", "#17 Ultimate Porker", "1 8-inch sub", 610, 28, 50, 31, {fiber:3, sugar:6, sodium:1760, chol:75}),
+  brandFood("Jimmy John's", "J.J. Gargantuan", "1 8-inch sub", 1030, 62, 60, 59, {fiber:4, sugar:8, sodium:3240, chol:165}),
+  /* Qdoba — qdoba.com published nutrition chart; burritos/bowls built from
+     Qdoba's published component values (see qa-report.md) */
+  brandFood("Qdoba", "Chicken Burrito", "1 burrito (flour tortilla)", 920, 47, 104, 34, {fiber:12, sugar:10, sodium:1880, chol:110}),
+  brandFood("Qdoba", "Steak Burrito", "1 burrito (flour tortilla)", 940, 46, 103, 36, {fiber:12, sugar:10, sodium:1790, chol:120}),
+  brandFood("Qdoba", "Ground Beef Burrito", "1 burrito (flour tortilla)", 1000, 42, 105, 42, {fiber:12, sugar:11, sodium:1860, chol:115}),
+  brandFood("Qdoba", "Cholula Hot & Sweet Chicken Burrito", "1 burrito (flour tortilla)", 980, 44, 123, 33, {fiber:12, sugar:23, sodium:2010, chol:105}),
+  brandFood("Qdoba", "Chicken Burrito Bowl", "1 bowl", 600, 40, 57, 24, {fiber:11, sugar:7, sodium:1240, chol:110}),
+  brandFood("Qdoba", "Steak Burrito Bowl", "1 bowl", 620, 39, 56, 26, {fiber:11, sugar:6, sodium:1150, chol:120}),
+  brandFood("Qdoba", "Chicken Quesadilla", "1 quesadilla", 830, 51, 56, 43, {fiber:4, sugar:4, sodium:1460, chol:150}),
+  brandFood("Qdoba", "Chicken 3-Cheese Nachos", "1 order", 1030, 46, 84, 55, {fiber:11, sugar:7, sodium:1970, chol:145}),
+  brandFood("Qdoba", "Chips & Queso Diablo", "1 side order", 660, 13, 70, 36, {fiber:6, sugar:3, sodium:1070, chol:45}),
+  /* Culver's — culvers.com published nutrition (Culver's guide publishes no cholesterol column) */
+  brandFood("Culver's", "ButterBurger", "1 burger", 390, 20, 38, 17, {fiber:2, sugar:7, sodium:480}),
+  brandFood("Culver's", "ButterBurger Cheese, single", "1 burger", 430, 23, 39, 21, {fiber:2, sugar:7, sodium:610}),
+  brandFood("Culver's", "ButterBurger Cheese, double", "1 burger", 560, 34, 39, 31, {fiber:2, sugar:7, sodium:660}),
+  brandFood("Culver's", "Crispy Chicken Sandwich", "1 sandwich", 460, 28, 52, 15, {fiber:2, sugar:9, sodium:920}),
+  brandFood("Culver's", "Grilled Chicken Sandwich", "1 sandwich", 390, 41, 40, 7, {fiber:1, sugar:6, sodium:670}),
+  brandFood("Culver's", "North Atlantic Cod Filet Sandwich", "1 sandwich", 600, 29, 55, 30, {fiber:2, sugar:5, sodium:890}),
+  brandFood("Culver's", "Chicken Tenders", "4 pc", 540, 42, 36, 25, {fiber:2, sugar:3, sodium:1400}),
+  brandFood("Culver's", "Wisconsin Cheese Curds, regular", "1 regular order", 510, 26, 33, 31, {fiber:2, sugar:2, sodium:1030}),
+  brandFood("Culver's", "Crinkle Cut Fries, medium", "1 medium order", 360, 4, 53, 15, {fiber:5, sugar:1, sodium:720}),
+  brandFood("Culver's", "Vanilla Custard Concrete Mixer, medium", "1 medium", 740, 13, 96, 34, {fiber:1, sugar:84, sodium:320}),
+  brandFood("Culver's", "George's Chili Supreme, cup", "1 cup", 290, 17, 28, 12, {fiber:6, sugar:7, sodium:1010}),
   /* Generic staples — typical values (USDA fast-food reference data) */
   genericFood("Double Cheeseburger", "1 sandwich", 440, 25, 28, 25, {fiber:1, sugar:6, sodium:960, chol:78}),
   genericFood("Hamburger", "1 sandwich", 250, 12, 30, 9, {fiber:1, sugar:6, sodium:520, chol:30}),
@@ -1162,6 +1361,7 @@ var EXTRA_FOODS = [
   genericFood("French Fries, small", "1 small order", 230, 3, 29, 11, {fiber:3, sugar:0, sodium:160, chol:0}),
   genericFood("French Fries, large", "1 large order", 480, 6, 63, 23, {fiber:5, sugar:1, sodium:350, chol:0}),
   genericFood("Milkshake", "16 oz", 530, 10, 84, 18, {fiber:0, sugar:70, sodium:240, chol:60}),
+  genericFood("Dr Pepper", "12 fl oz can", 150, 0, 40, 0, {fiber:0, sugar:40, sodium:55, chol:0}),
   genericFood("Crispy Chicken Sandwich", "1 sandwich", 470, 22, 45, 22, {fiber:2, sugar:5, sodium:1050, chol:55})
 ];
 
@@ -1173,7 +1373,7 @@ function allFoods(state){ return FOODS.map(foodObj).concat(EXTRA_FOODS).concat((
 "use strict";
 /* ---------- state ---------- */
 var FF_KEY = "forgefit_v1";
-var FF_VERSION = "2.2.3";
+var FF_VERSION = "2.3.0";
 /* Terms of Use version bundled with this build (legal pack v1.0). Bump this
    ONE constant when the terms text changes and users are re-asked once. */
 var FF_TERMS_VERSION = "1.0";
@@ -1188,6 +1388,7 @@ function blankState(){
     foodLogs: [],                // {id, date, meal, name, serving, qty, cal, p, c, fat}
     customFoods: [],             // {name, serving, cal, p, c, fat}
     planAdjust: {},              // v2.2.3 voice plan adjustments by date {load, vol, note}; load clamped 0.90-1.10, vol 0.80-1.20
+    templates: [],               // v2.3.0 user-built workout templates {id, name, created, items:[{id(exercise), sets, target}]} — target is reps, or seconds for timed exercises
     water: {},                   // date -> ml
     activity: {},                // date -> daily device/manual record (see blankDay)
     sourceLog: [],               // {source, at, files, days, detail}
@@ -1223,6 +1424,8 @@ function normalizeState(s){
   if (!Array.isArray(s.workoutLogs)) s.workoutLogs = [];
   if (!Array.isArray(s.foodLogs)) s.foodLogs = [];
   if (!Array.isArray(s.customFoods)) s.customFoods = [];
+  if (!Array.isArray(s.templates)) s.templates = [];
+  s.templates = s.templates.map(sanitizeTemplate).filter(Boolean);
   if (!s.planAdjust || typeof s.planAdjust !== "object" || Array.isArray(s.planAdjust)) s.planAdjust = {};
   if (!Array.isArray(s.sourceLog)) s.sourceLog = [];
   if (!Array.isArray(s.weights)) s.weights = [];
@@ -3011,8 +3214,17 @@ function startMonthWorkout(date){
   showPlayer();
 }
 function renderTrain(){
+  renderTemplates();
   $("trainMsgs").innerHTML = msgsHtml(coachMessages(state).filter(function(m){ return /overload|deload|streak|session|rest day|personal record/i.test(m.text); }));
   renderLibrary();
+  // history
+  var logs = (state.workoutLogs||[]).slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; });
+  $("workoutHistory").innerHTML = logs.length ? logs.slice(0, 12).map(function(l){
+    var vol = 0; l.entries.forEach(function(en){ (en.sets || []).forEach(function(s){ if (s.done) vol += num(s.reps) * num(s.weight); }); });
+    return '<div class="excard"><div class="flexb"><b>' + esc(l.date) + " — " + esc(l.dayName) + '</b><span class="small mut">' + l.entries.length + " exercises" + (vol ? " · " + Math.round(vol).toLocaleString() + " lb volume" : "") + (l.durationSec ? " · " + fmtDuration(l.durationSec) : "") + (num(l.burnKcal) > 0 ? " · Est. burn ~" + Math.round(num(l.burnKcal)) + " kcal" : "") + '</span></div>' +
+      '<div class="small mut mt">' + l.entries.map(function(en){ var ex = exerciseById(en.id); var top = 0; (en.sets || []).forEach(function(s){ if (s.done) top = Math.max(top, num(s.weight)); }); return esc(ex ? ex.name : en.id) + (top ? " (top " + top + " lb)" : "") + (en.note ? " 📝 " + esc(en.note) : ""); }).join(" · ") + '</div>' +
+      (splitText(l.entries, false) ? '<div class="small mt">Muscle split — planned: ' + esc(splitText(l.entries, false)) + '<br>Muscle split — logged: ' + esc(splitText(l.entries, true) || "nothing ticked done") + '</div>' : "") + '</div>';
+  }).join("") : '<p class="small mut">No workouts logged yet. Start one above — your history, PRs and progression tips appear here.</p>';
   var plan = state.plan;
   if (!state.profile){
     $("planMeta").textContent = "Set up your profile first — your plan is generated from your experience level and equipment.";
@@ -3047,13 +3259,6 @@ function renderTrain(){
   });
   // library
   renderLibrary();
-  // history
-  var logs = (state.workoutLogs||[]).slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; });
-  $("workoutHistory").innerHTML = logs.length ? logs.slice(0, 12).map(function(l){
-    var vol = 0; l.entries.forEach(function(en){ (en.sets || []).forEach(function(s){ if (s.done) vol += num(s.reps) * num(s.weight); }); });
-    return '<div class="excard"><div class="flexb"><b>' + esc(l.date) + " — " + esc(l.dayName) + '</b><span class="small mut">' + l.entries.length + " exercises" + (vol ? " · " + Math.round(vol).toLocaleString() + " lb volume" : "") + (l.durationSec ? " · " + fmtDuration(l.durationSec) : "") + (num(l.burnKcal) > 0 ? " · Est. burn ~" + Math.round(num(l.burnKcal)) + " kcal" : "") + '</span></div>' +
-      '<div class="small mut mt">' + l.entries.map(function(en){ var ex = exerciseById(en.id); var top = 0; (en.sets || []).forEach(function(s){ if (s.done) top = Math.max(top, num(s.weight)); }); return esc(ex ? ex.name : en.id) + (top ? " (top " + top + " lb)" : "") + (en.note ? " 📝 " + esc(en.note) : ""); }).join(" · ") + '</div></div>';
-  }).join("") : '<p class="small mut">No workouts logged yet. Start one above — your history, PRs and progression tips appear here.</p>';
   renderMonthPlan();
 }
 function renderLibrary(){
@@ -3063,9 +3268,384 @@ function renderLibrary(){
     return (!q || e.name.toLowerCase().indexOf(q) >= 0) && (!mus || e.muscle === mus) && (!eq || e.equip === eq);
   });
   $("exLibrary").innerHTML = '<p class="small mut mb">' + list.length + " of " + EXERCISES.length + ' exercises</p>' + list.map(function(e){
-    return '<details><summary>' + esc(e.name) + ' <span class="pill">' + esc(e.muscle) + '</span> <span class="pill">' + (e.equip === "none" ? "No equipment" : e.equip === "dumbbells" ? "Dumbbells" : "Full gym") + '</span> <span class="pill">Level ' + e.diff + '</span></summary><p class="small mut" style="padding:4px 0 8px">' + esc(e.cues) + '</p></details>';
+    var tg = exTags(e);
+    return '<details><summary>' + esc(e.name) + ' <span class="pill">' + esc(e.muscle) + '</span> <span class="pill">' + (e.equip === "none" ? "No equipment" : e.equip === "dumbbells" ? "Dumbbells" : "Full gym") + '</span> <span class="pill">Level ' + e.diff + '</span></summary><p class="small mut" style="padding:4px 0 8px">Primary: <b>' + esc(tg.primary) + '</b>' + (tg.secondary.length ? " · also trains: " + tg.secondary.join(", ") : "") + (tg.sub.length ? " · " + tg.sub.join("/") : "") + '<br>' + esc(e.cues) + '</p></details>';
   }).join("");
 }
+/* ---------- Build your own workout (v2.3.0) ----------
+   Hevy-style builder: pick muscle groups first, then add exercises from
+   the library filtered to those groups, set target sets x reps (or
+   seconds), save as a named template, and run it through the SAME workout
+   player and history as planned workouts — no parallel logging system.
+   Muscle tags: every library exercise carries a primary group, secondary
+   groups and (for legs) sub-tags. Source rule: the primary is the prime
+   mover for the exercise under standard anatomy references (the same
+   convention as the library's own muscle field); secondaries are the
+   usual synergists/stabilizers. No new exercises were invented.
+   Split math: each working set gives 1 credit to the primary group and
+   1/2 credit to each secondary group; percentages are each group's share
+   of total credits, rounded by largest remainder so they always add to
+   exactly 100. Groups at 0% are not shown. */
+var BUILDER_GROUPS = ["Chest", "Back", "Shoulders", "Biceps", "Triceps", "Legs", "Core", "Full Body"];
+var LEG_SUBTAGS = ["Quads", "Hamstrings", "Glutes", "Calves"];
+var MUSCLE_MAP = {
+  "pushup": { g: "Chest", s: ["Triceps", "Shoulders"] },
+  "incline-pushup": { g: "Chest", s: ["Triceps", "Shoulders"] },
+  "diamond-pushup": { g: "Triceps", s: ["Chest", "Shoulders"] },
+  "db-bench": { g: "Chest", s: ["Triceps", "Shoulders"] },
+  "db-floor-press": { g: "Chest", s: ["Triceps", "Shoulders"] },
+  "db-fly": { g: "Chest", s: ["Shoulders"] },
+  "bb-bench": { g: "Chest", s: ["Triceps", "Shoulders"] },
+  "incline-bb-press": { g: "Chest", s: ["Shoulders", "Triceps"] },
+  "cable-fly": { g: "Chest", s: ["Shoulders"] },
+  "dips": { g: "Chest", s: ["Triceps", "Shoulders"] },
+  "superman-pull": { g: "Back", s: ["Legs", "Shoulders"], sub: ["Glutes", "Hamstrings"] },
+  "reverse-snow-angel": { g: "Back", s: ["Shoulders"] },
+  "inverted-row": { g: "Back", s: ["Biceps", "Shoulders"] },
+  "scap-pushup": { g: "Shoulders", s: ["Chest", "Triceps"] },
+  "wall-handstand": { g: "Shoulders", s: ["Triceps", "Core"] },
+  "db-row": { g: "Back", s: ["Biceps"] },
+  "db-one-arm-row": { g: "Back", s: ["Biceps"] },
+  "db-pullover": { g: "Back", s: ["Chest", "Triceps"] },
+  "bb-row": { g: "Back", s: ["Biceps", "Legs"], sub: ["Hamstrings"] },
+  "lat-pulldown": { g: "Back", s: ["Biceps"] },
+  "seated-cable-row": { g: "Back", s: ["Biceps", "Shoulders"] },
+  "pullup": { g: "Back", s: ["Biceps", "Core"] },
+  "face-pull": { g: "Shoulders", s: ["Back", "Biceps"] },
+  "tbar-row": { g: "Back", s: ["Biceps"] },
+  "pike-pushup": { g: "Shoulders", s: ["Triceps", "Chest"] },
+  "db-shoulder-press": { g: "Shoulders", s: ["Triceps"] },
+  "db-lateral-raise": { g: "Shoulders", s: ["Back"] },
+  "db-front-raise": { g: "Shoulders", s: ["Chest"] },
+  "db-reverse-fly": { g: "Shoulders", s: ["Back"] },
+  "bb-ohp": { g: "Shoulders", s: ["Triceps", "Core"] },
+  "cable-lateral-raise": { g: "Shoulders", s: ["Back"] },
+  "doorframe-curl": { g: "Biceps", s: ["Back"] },
+  "db-curl": { g: "Biceps", s: [] },
+  "db-hammer-curl": { g: "Biceps", s: [] },
+  "cable-curl": { g: "Biceps", s: [] },
+  "chair-dip": { g: "Triceps", s: ["Chest", "Shoulders"] },
+  "db-kickback": { g: "Triceps", s: [] },
+  "db-overhead-ext": { g: "Triceps", s: [] },
+  "cable-pushdown": { g: "Triceps", s: [] },
+  "bw-squat": { g: "Legs", s: ["Core"], sub: ["Quads", "Glutes"] },
+  "split-squat": { g: "Legs", s: ["Core"], sub: ["Quads", "Glutes", "Calves"] },
+  "walking-lunge": { g: "Legs", s: ["Core"], sub: ["Quads", "Glutes", "Calves"] },
+  "wall-sit": { g: "Legs", s: [], sub: ["Quads"] },
+  "calf-raise": { g: "Legs", s: [], sub: ["Calves"] },
+  "goblet-squat": { g: "Legs", s: ["Core"], sub: ["Quads", "Glutes"] },
+  "db-rdl": { g: "Legs", s: ["Back"], sub: ["Hamstrings", "Glutes"] },
+  "db-lunge": { g: "Legs", s: ["Core"], sub: ["Quads", "Glutes"] },
+  "db-stepup": { g: "Legs", s: [], sub: ["Quads", "Glutes", "Calves"] },
+  "db-sumo-squat": { g: "Legs", s: [], sub: ["Quads", "Glutes"] },
+  "db-deadlift": { g: "Legs", s: ["Back"], sub: ["Hamstrings", "Glutes"] },
+  "bb-squat": { g: "Legs", s: ["Core", "Back"], sub: ["Quads", "Glutes"] },
+  "bb-deadlift": { g: "Legs", s: ["Back"], sub: ["Hamstrings", "Glutes"] },
+  "leg-press": { g: "Legs", s: [], sub: ["Quads", "Glutes"] },
+  "leg-curl": { g: "Legs", s: [], sub: ["Hamstrings"] },
+  "leg-extension": { g: "Legs", s: [], sub: ["Quads"] },
+  "hack-squat": { g: "Legs", s: [], sub: ["Quads", "Glutes"] },
+  "glute-bridge": { g: "Legs", s: [], sub: ["Glutes", "Hamstrings"] },
+  "bw-hip-thrust": { g: "Legs", s: [], sub: ["Glutes", "Hamstrings"] },
+  "db-hip-thrust": { g: "Legs", s: [], sub: ["Glutes", "Hamstrings"] },
+  "bb-hip-thrust": { g: "Legs", s: [], sub: ["Glutes", "Hamstrings"] },
+  "hip-abductor": { g: "Legs", s: [], sub: ["Glutes"] },
+  "db-shrug": { g: "Back", s: ["Shoulders"] },
+  "farmers-carry": { g: "Full Body", s: ["Shoulders", "Core", "Legs"] },
+  "plank": { g: "Core", s: ["Shoulders"] },
+  "side-plank": { g: "Core", s: ["Shoulders"] },
+  "dead-bug": { g: "Core", s: [] },
+  "bird-dog": { g: "Core", s: ["Back", "Legs"], sub: ["Glutes"] },
+  "leg-raise": { g: "Core", s: ["Legs"], sub: ["Quads"] },
+  "russian-twist": { g: "Core", s: [] },
+  "mountain-climbers": { g: "Core", s: ["Shoulders", "Legs"], sub: ["Quads"] },
+  "burpee": { g: "Full Body", s: ["Chest", "Legs", "Core"], sub: ["Quads", "Glutes"] },
+  "jumping-jacks": { g: "Full Body", s: ["Legs"], sub: ["Calves"] },
+  "high-knees": { g: "Full Body", s: ["Core", "Legs"], sub: ["Quads"] },
+  "inchworm": { g: "Full Body", s: ["Shoulders", "Core", "Legs"], sub: ["Hamstrings"] }
+};
+function exTags(ex){
+  if (!ex) return { primary: "", secondary: [], sub: [] };
+  var m = MUSCLE_MAP[ex.id];
+  if (m) return { primary: m.g, secondary: m.s.slice(), sub: (m.sub || []).slice() };
+  // Fallback from the library's own muscle field — should not happen: the
+  // QA suite asserts every exercise id has an explicit MUSCLE_MAP entry.
+  var g = ex.muscle, sub = [];
+  if (g === "Calves"){ g = "Legs"; sub = ["Calves"]; }
+  else if (g === "Glutes"){ g = "Legs"; sub = ["Glutes"]; }
+  else if (g === "Traps") g = "Back";
+  else if (g === "Cardio") g = "Full Body";
+  return { primary: g, secondary: [], sub: sub };
+}
+function sanitizeTemplate(t){
+  if (!t || typeof t !== "object" || Array.isArray(t)) return null;
+  var name = String(t.name || "").trim().slice(0, 60);
+  if (!name) return null;
+  var items = (Array.isArray(t.items) ? t.items : []).filter(function(it){
+    return it && typeof it === "object" && exerciseById(it.id);
+  }).map(function(it){
+    var ex = exerciseById(it.id);
+    return {
+      id: it.id,
+      sets: Math.round(clamp(num(it.sets, 3), 1, 20)),
+      target: Math.round(clamp(num(it.target, ex.unit === "sec" ? 30 : 10), 1, ex.unit === "sec" ? 3600 : 500))
+    };
+  });
+  if (!items.length) return null;
+  return { id: String(t.id || uid()), name: name, created: String(t.created || ""), items: items };
+}
+function templateById(id){
+  var list = (state && state.templates) || [];
+  for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+  return null;
+}
+function splitCredits(list, loggedOnly){
+  var credits = {};
+  (list || []).forEach(function(it){
+    if (!it) return;
+    var ex = exerciseById(it.id); if (!ex) return;
+    var n;
+    if (Array.isArray(it.sets)) n = loggedOnly ? it.sets.filter(function(s){ return s && s.done; }).length : it.sets.length;
+    else n = Math.max(0, Math.round(num(it.sets)));
+    if (!n) return;
+    var tg = exTags(ex);
+    if (tg.primary) credits[tg.primary] = (credits[tg.primary] || 0) + n;
+    tg.secondary.forEach(function(g){ credits[g] = (credits[g] || 0) + n * 0.5; });
+  });
+  return credits;
+}
+function muscleSplit(list, loggedOnly){
+  var credits = splitCredits(list, loggedOnly), total = 0;
+  Object.keys(credits).forEach(function(g){ total += credits[g]; });
+  if (!total) return [];
+  var rows = Object.keys(credits).map(function(g){ return { group: g, raw: credits[g] / total * 100, pct: 0 }; });
+  rows.forEach(function(r){ r.pct = Math.floor(r.raw); });
+  var left = 100 - rows.reduce(function(a, r){ return a + r.pct; }, 0);
+  rows.slice().sort(function(a, b){ return (b.raw - b.pct) - (a.raw - a.pct); }).forEach(function(r){ if (left > 0){ r.pct++; left--; } });
+  return rows.filter(function(r){ return r.pct > 0; }).sort(function(a, b){ return b.pct - a.pct || (BUILDER_GROUPS.indexOf(a.group) - BUILDER_GROUPS.indexOf(b.group)); });
+}
+function splitBarsHtml(list, loggedOnly){
+  var rows = muscleSplit(list, loggedOnly);
+  if (!rows.length) return '<p class="small mut">Add exercises to see the split.</p>';
+  return rows.map(function(r){
+    return '<div class="splitrow"><span>' + esc(r.group) + '</span><b>' + r.pct + '%</b></div><div class="bar"><i style="width:' + r.pct + '%;background:linear-gradient(90deg,var(--acc),var(--acc2))"></i></div>';
+  }).join("");
+}
+function splitText(list, loggedOnly){
+  return muscleSplit(list, loggedOnly).map(function(r){ return r.group + " " + r.pct + "%"; }).join(" · ");
+}
+var builder = null;   // { tplId, name, groups:[], sub:"", search:"", items:[{id, sets, target}] }
+function openBuilder(tpl){
+  builder = tpl
+    ? { tplId: tpl.id, name: tpl.name, groups: [], sub: "", search: "", items: tpl.items.map(function(it){ return { id: it.id, sets: it.sets, target: it.target }; }) }
+    : { tplId: null, name: "", groups: [], sub: "", search: "", items: [] };
+  if (tpl){
+    var seen = {};
+    builder.items.forEach(function(it){ var tg = exTags(exerciseById(it.id)); if (tg.primary && !seen[tg.primary]){ seen[tg.primary] = 1; builder.groups.push(tg.primary); } });
+  }
+  $("builderTitle").textContent = tpl ? "Edit workout — " + tpl.name : "Build a workout";
+  $("tplName").value = builder.name;
+  $("builderSearch").value = "";
+  $("builderMsg").textContent = "";
+  var bc = $("builderCard"); if (bc) bc.style.display = "block";
+  renderBuilder();
+  if (bc && bc.scrollIntoView) bc.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function closeBuilder(){
+  builder = null;
+  var bc = $("builderCard"); if (bc) bc.style.display = "none";
+}
+function builderFilteredExercises(){
+  var q = (builder.search || "").toLowerCase();
+  return EXERCISES.filter(function(e){
+    if (q && e.name.toLowerCase().indexOf(q) < 0) return false;
+    if (builder.groups.length){
+      var tg = exTags(e);
+      var hit = builder.groups.indexOf(tg.primary) >= 0 || tg.secondary.some(function(g){ return builder.groups.indexOf(g) >= 0; });
+      if (!hit) return false;
+      if (builder.sub && (tg.primary !== "Legs" || tg.sub.indexOf(builder.sub) < 0)) return false;
+    }
+    return true;
+  });
+}
+function renderBuilder(){
+  if (!builder) return;
+  $("builderGroups").innerHTML = BUILDER_GROUPS.map(function(g){
+    return '<button type="button" class="btn sec sm gchip' + (builder.groups.indexOf(g) >= 0 ? " on" : "") + '" data-bgroup="' + g + '">' + g + '</button>';
+  }).join("");
+  $("builderSubs").innerHTML = builder.groups.indexOf("Legs") >= 0 ? LEG_SUBTAGS.map(function(s){
+    return '<button type="button" class="btn sec sm gchip subchip' + (builder.sub === s ? " on" : "") + '" data-bsub="' + s + '">Legs: ' + s + '</button>';
+  }).join("") : "";
+  $("builderGroupHint").textContent = builder.groups.length
+    ? "Showing exercises that train: " + builder.groups.join(", ") + (builder.sub ? " · leg focus: " + builder.sub : "") + "."
+    : "Pick one or more muscle groups — or just search and add any exercise below.";
+  $("builderGroups").querySelectorAll("[data-bgroup]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var g = b.getAttribute("data-bgroup"), i = builder.groups.indexOf(g);
+      if (i >= 0){ builder.groups.splice(i, 1); if (g === "Legs") builder.sub = ""; }
+      else builder.groups.push(g);
+      renderBuilder();
+    });
+  });
+  $("builderSubs").querySelectorAll("[data-bsub]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var s = b.getAttribute("data-bsub");
+      builder.sub = builder.sub === s ? "" : s;
+      renderBuilder();
+    });
+  });
+  renderBuilderLibrary();
+  renderBuilderItems();
+  $("builderSplit").innerHTML = splitBarsHtml(builder.items, false);
+}
+function renderBuilderLibrary(){
+  if (!builder) return;
+  var added = {};
+  builder.items.forEach(function(it){ added[it.id] = 1; });
+  var list = builderFilteredExercises();
+  $("builderLibrary").innerHTML = '<p class="small mut mb">' + list.length + " exercise" + (list.length === 1 ? "" : "s") + '</p>' + (list.length ? list.map(function(e){
+    var tg = exTags(e);
+    return '<div class="flexb" style="padding:6px 0;border-bottom:1px solid var(--line)"><span><b>' + esc(e.name) + '</b> <span class="small mut">' + esc(tg.primary) + (tg.secondary.length ? " · also " + tg.secondary.join(", ") : "") + (tg.sub.length ? " · " + tg.sub.join("/") : "") + " · " + (e.equip === "none" ? "No equipment" : e.equip === "dumbbells" ? "Dumbbells" : "Full gym") + '</span></span>' +
+      (added[e.id] ? '<span class="pill">Added ✓</span>' : '<button class="btn sm" type="button" data-badd="' + e.id + '">Add</button>') + '</div>';
+  }).join("") : '<p class="small mut">No exercises match — clear a muscle group or the search.</p>');
+  $("builderLibrary").querySelectorAll("[data-badd]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var ex = exerciseById(b.getAttribute("data-badd")); if (!ex) return;
+      builder.items.push({ id: ex.id, sets: 3, target: ex.unit === "sec" ? 30 : 10 });
+      renderBuilder();
+    });
+  });
+}
+function renderBuilderItems(){
+  if (!builder) return;
+  var box = $("builderItems");
+  if (!builder.items.length){ box.innerHTML = '<p class="small mut">No exercises yet — add some above.</p>'; return; }
+  box.innerHTML = builder.items.map(function(it, i){
+    var e = exerciseById(it.id); if (!e) return "";
+    var unit = e.unit === "sec" ? "sec" : "reps";
+    return '<div class="excard"><div class="flexb"><b>' + (i + 1) + ". " + esc(e.name) + '</b><span>' +
+      '<button class="btn sec sm" type="button" data-bup="' + i + '" aria-label="move exercise up">↑</button> ' +
+      '<button class="btn sec sm" type="button" data-bdown="' + i + '" aria-label="move exercise down">↓</button> ' +
+      '<button class="setdel" type="button" data-bdel="' + i + '" aria-label="remove exercise">✕</button></span></div>' +
+      '<div class="row mt"><div class="field"><label>Sets</label><input type="number" id="bSets' + i + '" min="1" max="20" inputmode="numeric" value="' + it.sets + '" data-bsets="' + i + '"><button type="button" class="micbtn" data-mic-for="bSets' + i + '" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>' +
+      '<div class="field"><label>Target ' + unit + '</label><input type="number" id="bTgt' + i + '" min="1" inputmode="numeric" value="' + it.target + '" data-btgt="' + i + '"><button type="button" class="micbtn" data-mic-for="bTgt' + i + '" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div></div></div>';
+  }).join("");
+  function onNum(inp){
+    var i = +(inp.getAttribute("data-bsets") !== null ? inp.getAttribute("data-bsets") : inp.getAttribute("data-btgt"));
+    var it = builder && builder.items[i]; if (!it) return;
+    var e = exerciseById(it.id);
+    if (inp.getAttribute("data-bsets") !== null) it.sets = Math.round(clamp(num(inp.value, it.sets), 1, 20));
+    else it.target = Math.round(clamp(num(inp.value, it.target), 1, e && e.unit === "sec" ? 3600 : 500));
+    $("builderSplit").innerHTML = splitBarsHtml(builder.items, false);
+  }
+  box.querySelectorAll("[data-bsets],[data-btgt]").forEach(function(inp){
+    inp.addEventListener("input", function(){ onNum(inp); });
+    inp.addEventListener("change", function(){ onNum(inp); });
+  });
+  box.querySelectorAll("[data-bup]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var i = +b.getAttribute("data-bup"); if (i <= 0) return;
+      var t = builder.items[i - 1]; builder.items[i - 1] = builder.items[i]; builder.items[i] = t;
+      renderBuilder();
+    });
+  });
+  box.querySelectorAll("[data-bdown]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var i = +b.getAttribute("data-bdown"); if (i >= builder.items.length - 1) return;
+      var t = builder.items[i + 1]; builder.items[i + 1] = builder.items[i]; builder.items[i] = t;
+      renderBuilder();
+    });
+  });
+  box.querySelectorAll("[data-bdel]").forEach(function(b){
+    b.addEventListener("click", function(){
+      builder.items.splice(+b.getAttribute("data-bdel"), 1);
+      renderBuilder();
+    });
+  });
+  if (typeof voiceAvailable === "function" && !voiceAvailable()){
+    box.querySelectorAll("[data-mic-for]").forEach(function(b){ b.style.display = "none"; });
+    box.querySelectorAll(".micNote").forEach(function(n){ n.textContent = "Voice isn't available in this browser — typing works."; });
+  }
+}
+function syncBuilderFromDom(){
+  if (!builder) return;
+  builder.items.forEach(function(it, i){
+    var s = $("bSets" + i), t = $("bTgt" + i), e = exerciseById(it.id);
+    if (s) it.sets = Math.round(clamp(num(s.value, it.sets), 1, 20));
+    if (t) it.target = Math.round(clamp(num(t.value, it.target), 1, e && e.unit === "sec" ? 3600 : 500));
+  });
+}
+function saveTemplate(){
+  if (!builder) return;
+  syncBuilderFromDom();
+  var name = ($("tplName").value || "").trim();
+  if (!name){ $("builderMsg").textContent = "Give your workout a name first."; return; }
+  if (!builder.items.length){ $("builderMsg").textContent = "Add at least one exercise first."; return; }
+  var items = builder.items.map(function(it){ return { id: it.id, sets: it.sets, target: it.target }; });
+  if (builder.tplId){
+    var t = templateById(builder.tplId);
+    if (t){ t.name = name.slice(0, 60); t.items = items; }
+  } else {
+    state.templates.push({ id: uid(), name: name.slice(0, 60), created: todayStr(), items: items });
+  }
+  saveState(state);
+  closeBuilder();
+  renderTemplates();
+  toast("Template saved — it's under Build your own workout.");
+}
+function startTemplate(id){
+  var t = templateById(id);
+  if (!t || !t.items.length) return;
+  stopPlayerTimers();
+  session = { source: "template", dayIdx: -1, dayName: t.name, date: todayStr(), deload: false, startedAt: Date.now(), entries: t.items.map(function(it){
+    var ex = exerciseById(it.id);
+    var px = { id: it.id, repMin: it.target, repMax: it.target, target: it.target + (ex && ex.unit === "sec" ? " sec" : " reps"), restSec: ex && ex.unit === "sec" ? 60 : 90 };
+    return newSessionEntry(px, ex, it.sets, lastWeightFor(it.id));
+  }) };
+  showPlayer();
+  toast("Template started — log it set by set.");
+}
+function renderTemplates(){
+  var box = $("templateList"); if (!box) return;
+  var tpls = state.templates || [];
+  if (!tpls.length){ box.innerHTML = '<p class="small mut">No saved templates yet — build your first workout above.</p>'; return; }
+  box.innerHTML = tpls.map(function(t){
+    var names = t.items.map(function(it){ var e = exerciseById(it.id); return e ? e.name : it.id; }).join(" · ");
+    return '<div class="excard"><div class="flexb"><b>' + esc(t.name) + '</b><span class="small mut">' + t.items.length + " exercises</span></div>" +
+      '<div class="small mut mt">' + esc(names) + '</div>' +
+      '<div class="small mt">Muscle split: ' + esc(splitText(t.items, false)) + '</div>' +
+      '<div class="row mt"><button class="btn sm" type="button" data-tstart="' + t.id + '">Start workout</button>' +
+      '<button class="btn sec sm" type="button" data-tedit="' + t.id + '">Edit</button>' +
+      '<button class="btn sec sm" type="button" data-tdup="' + t.id + '">Duplicate</button>' +
+      '<button class="btn sec sm" type="button" data-tdel="' + t.id + '">Delete</button></div></div>';
+  }).join("");
+  box.querySelectorAll("[data-tstart]").forEach(function(b){
+    b.addEventListener("click", function(){ startTemplate(b.getAttribute("data-tstart")); });
+  });
+  box.querySelectorAll("[data-tedit]").forEach(function(b){
+    b.addEventListener("click", function(){ var t = templateById(b.getAttribute("data-tedit")); if (t) openBuilder(t); });
+  });
+  box.querySelectorAll("[data-tdup]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var t = templateById(b.getAttribute("data-tdup")); if (!t) return;
+      state.templates.push({ id: uid(), name: (t.name + " (copy)").slice(0, 60), created: todayStr(), items: t.items.map(function(it){ return { id: it.id, sets: it.sets, target: it.target }; }) });
+      saveState(state);
+      renderTemplates();
+      toast("Template duplicated.");
+    });
+  });
+  box.querySelectorAll("[data-tdel]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var t = templateById(b.getAttribute("data-tdel")); if (!t) return;
+      if (typeof confirm === "function" && !confirm("Delete the template “" + t.name + "”? Your logged workouts stay — only the template goes.")) return;
+      state.templates = state.templates.filter(function(x){ return x.id !== t.id; });
+      saveState(state);
+      renderTemplates();
+      toast("Template deleted.");
+    });
+  });
+}
+
 /* ---------- Hevy-style set-by-set player (v2.2.2) ----------
    Per-set weight/reps/done with a PREVIOUS column from the most recent
    prior logged session, a live session header (duration, volume of checked
@@ -4121,7 +4701,7 @@ function voiceStatus(target, msg){
   if (s) s.textContent = msg;
 }
 var VOICE_NUMWORDS = { one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12, a:1, an:1 };
-var VOICE_FOOD_SYNONYMS = { toast: "bread" };
+var VOICE_FOOD_SYNONYMS = { toast: "bread", coke: "cola soda" };
 /* Split a spoken food list ("two eggs and toast") into phrases with quantities. */
 /* Split a spoken food list into phrases with quantities (v2.1.2 rework).
    Real speech is messy: filler prefixes ("I had a…", "for breakfast I ate…"),
@@ -4131,6 +4711,20 @@ var VOICE_FOOD_SYNONYMS = { toast: "bread" };
    sentence; this version strips the narration, segments on every joiner,
    and reads quantity + size + unit per segment. */
 var VOICE_UNITS = { piece: "piece", pieces: "piece", slice: "slice", slices: "slice", strip: "strip", strips: "strip", glass: "glass", glasses: "glass", cup: "cup", cups: "cup", bowl: "bowl", bowls: "bowl", can: "can", cans: "can", bottle: "bottle", bottles: "bottle", scoop: "scoop", scoops: "scoop", serving: "serving", servings: "serving", handful: "handful", handfuls: "handful" };
+/* Dishes whose names contain "and" are ONE food, not two: the joiner is
+   swapped for a placeholder before chunk splitting and restored after
+   ("mac and cheese", "red beans and rice", "chips and queso"...). */
+var FOOD_PHRASE_PROTECT = ["mac and cheese", "red beans and rice", "chips and guacamole", "chips and queso", "bacon and cheese", "steak and cheese", "mashed potatoes and gravy"];
+var FOOD_WITH_PROTECT = ["with cheese"];
+function protectFoodPhrases(t){
+  FOOD_PHRASE_PROTECT.forEach(function(ph){
+    t = t.replace(new RegExp("\\b" + ph.replace(/ /g, "\\s+") + "\\b", "g"), ph.replace(/ and /g, "  "));
+  });
+  FOOD_WITH_PROTECT.forEach(function(ph){
+    t = t.replace(new RegExp("\\b" + ph.replace(/ /g, "\\s+") + "\\b", "g"), ph.replace(/^with\s+/, " "));
+  });
+  return t;
+}
 function parseFoodPhrases(text){
   var raw = String(text || "").toLowerCase().replace(/\s+/g, " ").trim().replace(/[.!?]+$/, "");
   if (!raw) return [];
@@ -4138,7 +4732,8 @@ function parseFoodPhrases(text){
   raw = raw.replace(/^(for\s+(breakfast|lunch|dinner|supper|brunch|a snack|snack)\s+)+/, "");
   raw = raw.replace(/^(i\s+(had|ate|eat|got|drank|drink|ordered|made)\s+)+/, "");
   raw = raw.replace(/^(i\s+(had|ate|eat|got|drank|drink)\s+)+/, "");
-  return raw.split(/\s*(?:,|\+|&|\band\b|\bwith\b|\bplus\b)\s*/).map(function(s){ return s.trim(); }).filter(Boolean).map(function(p){
+  raw = protectFoodPhrases(raw);
+  return raw.split(/\s*(?:,|\+|&|\band\b|\bwith\b|\bplus\b)\s*/).map(function(s){ return s.trim().replace(//g, "and").replace(//g, "with"); }).filter(Boolean).map(function(p){
     var qty = null, size = null, unit = null, rest = p;
     rest = rest.replace(/^(a|an)\s+(?=\d|\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b)/, "");
     var m = rest.match(/^(\d+(?:\.\d+)?)\s+(.+)$/);
@@ -4153,7 +4748,15 @@ function parseFoodPhrases(text){
     if (um && VOICE_UNITS[um[1]]){ unit = VOICE_UNITS[um[1]]; rest = um[2]; }
     rest = rest.replace(/^(some|of|the)\s+/, "").trim();
     if (qty === null) qty = 1;
-    return { phrase: p, query: rest, qty: clamp(qty, 0.05, 100), unit: unit, size: size };
+    /* Numbered combo meals: "a number two", "number 2 combo", and the
+       leftover after a leading quantity ("two number twos" -> qty 2,
+       rest "number twos"). The combo number is carried on the parsed
+       phrase; voiceFoodMatches resolves it against the chain's menu.
+       The chunk text itself is never matched as a food name. */
+    var combo = null;
+    var cm = rest.match(/^number\s+(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)s?(?:\s+(?:combo|meal))?$/);
+    if (cm){ combo = VOICE_NUMWORDS[cm[1]] !== undefined ? VOICE_NUMWORDS[cm[1]] : parseInt(cm[1], 10); rest = ""; }
+    return { phrase: p, query: rest, qty: clamp(qty, 0.05, 100), unit: unit, size: size, combo: combo };
   });
 }
 /* Convert a spoken quantity into servings of the matched food: spoken
@@ -4163,6 +4766,13 @@ function parseFoodPhrases(text){
    which is the quantity step the confirm row offers. */
 function voiceServingsFor(parsed, food){
   var servings = parsed.qty;
+  /* A bare spoken count of a countable multi-piece serving is a count of
+     pieces, not of servings: "10 chicken McNuggets" is the 10 pc item
+     (1 serving), "two tacos" is the 2-taco serving. */
+  if (!parsed.unit && food && food.serving){
+    var cntOnly = String(food.serving).toLowerCase().match(/^(\d+(?:\.\d+)?)\s*(pc|ct|count|piece|pieces|slice|slices|strip|strips|taco|tacos|nugget|nuggets|tender|tenders|wing|wings|stick|sticks)\b/);
+    if (cntOnly && num(cntOnly[1], 1) >= 2 && parsed.qty !== 1) servings = parsed.qty / num(cntOnly[1], 1);
+  }
   if (parsed.unit && food && food.serving){
     var sv = String(food.serving).toLowerCase();
     var cnt = sv.match(/^(\d+(?:\.\d+)?)\s*(slice|piece|strip|pc|ct|count)/);
@@ -4197,8 +4807,8 @@ function matchFoodPhrase(foods, query){
    happened. Nothing is ever invented: a total miss stays flagged. */
 var CHAIN_VARIANTS = [
   { chain: "Braum's",       names: ["braum's", "braums", "brahms", "brams", "broms"] },
-  { chain: "McDonald's",    names: ["mcdonald's", "mcdonalds", "mcdonald"] },
-  { chain: "Burger King",   names: ["burger king"] },
+  { chain: "McDonald's",    names: ["mcdonald's", "mcdonalds", "mcdonald", "mickey d's", "mickey d"] },
+  { chain: "Burger King",   names: ["burger king", "bk"] },
   { chain: "Wendy's",       names: ["wendy's", "wendys"] },
   { chain: "Sonic",         names: ["sonic"] },
   { chain: "Whataburger",   names: ["whataburger", "what a burger", "waterburger"] },
@@ -4210,7 +4820,20 @@ var CHAIN_VARIANTS = [
   { chain: "Little Caesars", names: ["little caesars", "little caesar's", "little ceasars", "caesars"] },
   { chain: "Subway",        names: ["subway"] },
   { chain: "KFC",           names: ["kfc", "kentucky fried chicken"] },
-  { chain: "Dairy Queen",   names: ["dairy queen"] }
+  { chain: "Dairy Queen",   names: ["dairy queen"] },
+  { chain: "Arby's",        names: ["arby's", "arbys", "arby", "rvs", "rv's", "harby's"] },
+  { chain: "Raising Cane's", names: ["raising cane's", "raising canes", "raising cane", "canes", "cane's"] },
+  { chain: "Popeyes",       names: ["popeyes", "popeye's", "pop eyes"] },
+  { chain: "Freddy's",      names: ["freddy's", "freddys", "freddy"] },
+  { chain: "Chipotle",      names: ["chipotle", "chipolte"] },
+  { chain: "Panera",        names: ["panera bread", "panera"] },
+  { chain: "Five Guys",     names: ["five guys", "5 guys"] },
+  { chain: "Jack in the Box", names: ["jack in the box", "jack n the box", "jack-n-the-box"] },
+  { chain: "Church's Chicken", names: ["church's chicken", "churchs chicken", "church's", "churchs"] },
+  { chain: "Wingstop",      names: ["wingstop", "wing stop"] },
+  { chain: "Jimmy John's",  names: ["jimmy john's", "jimmy johns", "jimmy john"] },
+  { chain: "Qdoba",         names: ["qdoba", "qdoba's", "qdoba mexican"] },
+  { chain: "Culver's",      names: ["culver's", "culvers", "culver"] }
 ];
 function chainNorm(s){ return String(s || "").toLowerCase().replace(/[’]/g, "'"); }
 function detectChain(text){
@@ -4238,10 +4861,14 @@ function stripChainMentions(text, chain){
   });
   return out.replace(/\s+/g, " ").trim();
 }
-var FOOD_TOKEN_STOP = { the:1, a:1, an:1, and:1, with:1, of:1, on:1, inch:1, oz:1, ct:1, pc:1, count:1, pack:1, style:1 };
+var FOOD_TOKEN_STOP = { the:1, a:1, an:1, and:1, with:1, of:1, on:1, at:1, home:1, sub:1, inch:1, oz:1, ct:1, pc:1, count:1, pack:1, style:1 };
+var FOOD_TOKEN_ALIASES = { coke: "cola", jr: "junior" };
 function foodTokens(s){
   return chainNorm(s).replace(/\([^)]*\)/g, " ").replace(/[^a-z0-9/ ]/g, " ").split(/\s+/).filter(Boolean).map(function(w){
     if (w.length > 3 && w.charAt(w.length - 1) === "s" && w.slice(-2) !== "ss") w = w.slice(0, -1);
+    if (FOOD_TOKEN_ALIASES[w]) w = FOOD_TOKEN_ALIASES[w];
+    else if (w.length > 1 && w.charAt(w.length - 1) === "s" && FOOD_TOKEN_ALIASES[w.slice(0, -1)]) w = FOOD_TOKEN_ALIASES[w.slice(0, -1)];
+    if (VOICE_NUMWORDS[w] !== undefined && w !== "a" && w !== "an") w = String(VOICE_NUMWORDS[w]);
     return w;
   }).filter(function(w){ return !FOOD_TOKEN_STOP[w]; });
 }
@@ -4282,12 +4909,47 @@ function stripChainFromQuery(query, chain){
   return out.replace(/\s+/g, " ").trim();
 }
 
+/* Spoken day words ("today", "tonight", "yesterday", "tomorrow",
+   "this morning"...) are the LOG DATE, never part of a food name.
+   They are lifted out before parsing and carried on the returned
+   array as dayOffset/dayWord so the confirm screen logs the entry
+   on the day the user named. */
+var SPOKEN_DATE_RE = /\b(today|tonight|this morning|this afternoon|this evening|yesterday|tomorrow)\b/g;
+function extractSpokenDate(text){
+  var probe = " " + chainNorm(text).replace(/\s+/g, " ") + " ";
+  var offset = 0, word = null;
+  if (/\byesterday\b/.test(probe)){ offset = -1; word = "yesterday"; }
+  else if (/\btomorrow\b/.test(probe)){ offset = 1; word = "tomorrow"; }
+  else { var tm = probe.match(/\b(today|tonight|this morning|this afternoon|this evening)\b/); if (tm){ offset = 0; word = tm[1]; } }
+  if (word === null) return { text: text, offset: 0, word: null };
+  var cleaned = probe.replace(SPOKEN_DATE_RE, " ").replace(/\s+/g, " ").trim();
+  return { text: cleaned, offset: offset, word: word };
+}
+/* A combo/numbered item's number as printed in its dataset name:
+   "Combo #2 ...", "#4 Turkey Tom", "No. 4 ...", "Number 2 ...". */
+function comboNumberOf(name){
+  var t = String(name || "");
+  var m = t.match(/#\s?(\d{1,2})\b/) || t.match(/\bcombo\s+(\d{1,2})\b/i) || t.match(/\bnumber\s+(\d{1,2})\b/i) || t.match(/\bno\.\s?(\d{1,2})\b/i);
+  return m ? parseInt(m[1], 10) : null;
+}
+function comboFoodFor(pool, n){
+  var hits = (pool || []).filter(function(f){ return comboNumberOf(f.name) === n; });
+  return hits[0] || null;
+}
 function voiceFoodMatches(text){
   var foods = allFoods(state);
-  var chain = detectChain(text);
-  var stripped = chain ? stripChainMentions(text, chain) : text;
-  return parseFoodPhrases(stripped).map(function(p){
+  var dInfo = extractSpokenDate(text);
+  var chain = detectChain(dInfo.text);
+  var stripped = chain ? stripChainMentions(dInfo.text, chain) : dInfo.text;
+  var out = parseFoodPhrases(stripped).map(function(p){
     var food = null, approx = false, fallbackFrom = null, sizeForServings = p.size;
+    /* Numbered combo at the named chain: an exact menu lookup, not a
+       guess — the row IS that chain's published Combo #N. No chain, or
+       the chain publishes no such combo: stays flagged, never invented. */
+    if (p.combo != null && chain){
+      var comboHit = comboFoodFor(EXTRA_FOODS.filter(function(f){ return f.chain === chain; }), p.combo);
+      if (comboHit) food = comboHit;
+    }
     /* "big mac": the size word is part of the food's name, not a portion.
        Try the size-included query too and let the better match win; when
        it wins, the size word must not scale the servings. */
@@ -4308,8 +4970,16 @@ function voiceFoodMatches(text){
     } else {
       var plainPool = foods.filter(function(f){ return !f.chain; });
       var fFull = matchFoodPhrase(plainPool, fullQuery) || matchFoodPhrase(foods, fullQuery);
-      food = fFull || matchFoodPhrase(plainPool, p.query) || matchFoodPhrase(foods, p.query);
-      if (fFull) sizeForServings = null;
+      /* An explicit size word ("a large fries") picks the sized row by
+         token match before the substring fallback can land on a
+         different size of the same food. */
+      var sizedHit = null;
+      if (p.size){ var sm2 = bestTokenMatch(plainPool, fullQuery); if (sm2 && sm2.score >= 0.99) sizedHit = sm2.food; }
+      food = sizedHit || fFull || matchFoodPhrase(plainPool, p.query) || matchFoodPhrase(foods, p.query);
+      if (fFull || sizedHit) sizeForServings = null;
+      /* No chain was named: a branded hit is an inference, so it is
+         always labelled a closest match on the confirm screen. */
+      if (food && food.chain) approx = true;
       if (!food){
         var scored = bestTokenMatch(foods, p.query);
         if (scored && scored.score >= 0.75){
@@ -4322,9 +4992,20 @@ function voiceFoodMatches(text){
       }
     }
     var pForServings = { qty: p.qty, unit: p.unit, size: sizeForServings };
-    return { phrase: p.phrase, query: p.query, spokenQty: p.qty, unit: p.unit, size: p.size,
-             qty: food ? voiceServingsFor(pForServings, food) : p.qty, food: food, chain: chain, approx: approx, fallbackFrom: fallbackFrom };
+    var qtyOut = food ? voiceServingsFor(pForServings, food) : p.qty;
+    /* "3 finger combo", "three cheese nachos": when the number the user
+       led with is part of the matched item's own name (and was not part
+       of the matched query), it names the item — it is not a quantity. */
+    if (food && p.combo == null && p.unit == null && p.qty > 1 &&
+        foodTokens(food.name).indexOf(String(p.qty)) !== -1 && foodTokens(p.query).indexOf(String(p.qty)) === -1){
+      qtyOut = 1;
+    }
+    return { phrase: p.phrase, query: p.query, spokenQty: p.qty, unit: p.unit, size: p.size, combo: (p.combo != null ? p.combo : null),
+             qty: qtyOut, food: food, chain: chain, approx: approx, fallbackFrom: fallbackFrom };
   });
+  out.dayOffset = dInfo.offset;
+  out.dayWord = dInfo.word;
+  return out;
 }
 var voiceFoodLast = [];
 var voiceDashLast = [];
@@ -4340,16 +5021,21 @@ function renderVoiceFoodMatches(txt, surface){
   var box = $(dashboard ? "voiceDashMatches" : "voiceFoodMatches"); if (!box) return;
   var matches = voiceFoodMatches(txt);
   if (dashboard) voiceDashLast = matches; else voiceFoodLast = matches;
+  var dayOffset = matches.dayOffset || 0, dayWord = matches.dayWord || null;
+  var logDate = addDays(todayStr(), dayOffset);
+  var dayLabel = dayOffset === -1 ? "yesterday" : (dayOffset === 1 ? "tomorrow" : "today");
+  if (!dashboard && dayWord){ var fdEl = $("foodDate"); if (fdEl) fdEl.value = logDate; }
   var matched = matches.filter(function(m){ return !!m.food; }).length;
   var defaultMeal = defaultMealForNow();
   var qp = dashboard ? "dvq" : "vq", ep = dashboard ? "dve" : "ve", tp = dashboard ? "dvt" : "vt";
-  var mealPicker = dashboard ? '<div class="row" style="align-items:end;margin-bottom:6px"><div class="field" style="flex:0 1 210px;margin-bottom:0"><label>Meal for today</label><select id="dashVoiceMeal">' + ["Breakfast","Lunch","Dinner","Snack"].map(function(meal){ return '<option' + (meal === defaultMeal ? ' selected' : '') + '>' + meal + '</option>'; }).join("") + '</select></div></div>' : '';
+  var mealPicker = dashboard ? '<div class="row" style="align-items:end;margin-bottom:6px"><div class="field" style="flex:0 1 210px;margin-bottom:0"><label>Meal for ' + dayLabel + '</label><select id="dashVoiceMeal">' + ["Breakfast","Lunch","Dinner","Snack"].map(function(meal){ return '<option' + (meal === defaultMeal ? ' selected' : '') + '>' + meal + '</option>'; }).join("") + '</select></div></div>' : '';
   function totalsLine(f, qty){
     return "Total for " + fmtQty(qty) + ": <b>" + Math.round(num(f.cal) * qty) + " kcal</b> · P " + Math.round(num(f.p) * qty) + "g · C " + Math.round(num(f.c) * qty) + "g · F " + Math.round(num(f.fat) * qty) + "g";
   }
   box.innerHTML = '<div class="card flat" style="background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px">' +
     '<h3 style="margin-bottom:4px"><span class="hIco">' + icon("mic", 18) + '</span>Heard: “' + esc(txt) + '”</h3>' +
     '<p class="small mut mb">Voice dictation — speak, then confirm. Check each match and tap <b>Add</b>; nothing is logged until you do. Anything ForgeFit doesn\'t know is flagged below — its nutrition is never guessed.</p>' + mealPicker +
+    (dayOffset !== 0 ? '<p class="small mut mb">Logging for <b>' + dayLabel + '</b> (' + logDate + ') — you said \u201c' + esc(dayWord) + '\u201d.</p>' : '') +
     matches.map(function(m, i){
       if (!m.food) return '<div class="flexb" style="padding:6px 0;border-bottom:1px solid var(--line)"><span>⚠️ <b>No match for “' + esc(m.phrase) + '”</b> <span class="small mut">— nothing was invented for it. Add it yourself with the values you know:</span></span><button class="btn sec sm" ' + (dashboard ? 'data-dash-voice-manual' : 'data-voice-manual') + '="' + i + '" type="button">Add as custom food</button></div>';
       var f = m.food;
@@ -4381,10 +5067,10 @@ function renderVoiceFoodMatches(txt, surface){
         if (ec) food = { name: food.name, serving: food.serving, cal: num(ec.value, food.cal), p: num(epr ? epr.value : food.p, food.p), c: num(ecb ? ecb.value : food.c, food.c), fat: num(eft ? eft.value : food.fat, food.fat), m: food.m, src: food.src, chain: food.chain };
       }
       var meal = dashboard ? (($("dashVoiceMeal") || {}).value || defaultMeal) : $("foodMeal").value;
-      var date = dashboard ? todayStr() : ($("foodDate").value || todayStr());
+      var date = dashboard ? logDate : (($("foodDate") || {}).value || todayStr());
       addFoodEntry(food, qty, meal, date);
       if (dashboard){
-        voiceStatus("dashboard", "Added " + food.name + " to " + meal.toLowerCase() + " for today — totals updated.");
+        voiceStatus("dashboard", "Added " + food.name + " to " + meal.toLowerCase() + " for " + dayLabel + " — totals updated.");
         b.textContent = "Added ✓"; b.disabled = true;
         setTimeout(function(){ if (document.body && document.body.contains(b)){ b.textContent = "Add"; b.disabled = false; } }, 1800);
       }
@@ -5082,6 +5768,10 @@ function init(){
   $("btnFinishWorkout").addEventListener("click", finishWorkout);
   if ($("btnFinishWorkoutTop")) $("btnFinishWorkoutTop").addEventListener("click", finishWorkout);
   if ($("btnFreeWorkout")) $("btnFreeWorkout").addEventListener("click", startFreeWorkout);
+  if ($("btnBuildWorkout")) $("btnBuildWorkout").addEventListener("click", function(){ openBuilder(null); });
+  if ($("btnSaveTemplate")) $("btnSaveTemplate").addEventListener("click", saveTemplate);
+  if ($("btnCancelBuilder")) $("btnCancelBuilder").addEventListener("click", closeBuilder);
+  if ($("builderSearch")) $("builderSearch").addEventListener("input", function(){ if (builder){ builder.search = this.value; renderBuilderLibrary(); } });
   $("btnCancelWorkout").addEventListener("click", cancelWorkout);
   ["exSearch","exMuscle","exEquip"].forEach(function(id){ $(id).addEventListener("input", renderLibrary); $(id).addEventListener("change", renderLibrary); });
   $("foodSearch").addEventListener("input", renderFoodResults);
@@ -5309,6 +5999,11 @@ var FF_API = {
   weekStart: weekStart, addDays: addDays, daysBetween: daysBetween, blankDay: blankDay, exerciseHistory: exerciseHistory,
   exerciseById: exerciseById, allFoods: allFoods, version: FF_VERSION,
   fmtDuration: fmtDuration, sessionVolumeLb: sessionVolumeLb, exerciseMet: exerciseMet, estimateWorkoutBurn: estimateWorkoutBurn, previousSetText: previousSetText, REST_PRESETS: REST_PRESETS,
+  BUILDER_GROUPS: BUILDER_GROUPS, LEG_SUBTAGS: LEG_SUBTAGS, MUSCLE_MAP: MUSCLE_MAP, exTags: exTags, sanitizeTemplate: sanitizeTemplate,
+  splitCredits: splitCredits, muscleSplit: muscleSplit, splitText: splitText, splitBarsHtml: splitBarsHtml,
+  openBuilder: openBuilder, closeBuilder: closeBuilder, saveTemplate: saveTemplate, startTemplate: startTemplate,
+  renderTemplates: renderTemplates, renderBuilder: renderBuilder, builderFilteredExercises: builderFilteredExercises,
+  getBuilder: function(){ return builder; }, getSession: function(){ return session; }, finishWorkout: finishWorkout,
   tabOrder: FF_TABS, currentViewName: currentViewName, swipeTargetView: swipeTargetView,
   swipeStartBlocked: swipeStartBlocked, swipeFlowBlocked: swipeFlowBlocked,
   isConnectFlowOpen: function(){ return ffConnectFlowOpen; },
@@ -5317,6 +6012,7 @@ var FF_API = {
   trainerAnswer: trainerAnswer, trainerChips: trainerChips, TRAINER_TOPICS: TRAINER_TOPICS,
   introNeedsShow: introNeedsShow, INTRO_SLIDES: INTRO_SLIDES, voiceServingsFor: voiceServingsFor,
   voiceFoodMatches: voiceFoodMatches, renderVoiceFoodMatches: renderVoiceFoodMatches, defaultMealForNow: defaultMealForNow,
+  extractSpokenDate: extractSpokenDate, comboNumberOf: comboNumberOf, comboFoodFor: comboFoodFor,
   EXTRA_FOODS: EXTRA_FOODS, CHAIN_VARIANTS: CHAIN_VARIANTS, detectChain: detectChain, stripChainMentions: stripChainMentions, bestTokenMatch: bestTokenMatch,
   parseVoiceWorkout: parseVoiceWorkout, parsePlanAdjustment: parsePlanAdjustment, applyPlanAdjustment: applyPlanAdjustment, planAdjustNoteHtml: planAdjustNoteHtml, logVoiceWorkout: logVoiceWorkout, renderVoiceWorkout: renderVoiceWorkout, addFoodEntry: addFoodEntry,
   cancelVoiceDictation: cancelVoiceDictation, startVoiceDictation: startVoiceDictation, handleVoiceTranscript: handleVoiceTranscript,
