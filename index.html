@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ForgeFit AI — Personal Trainer &amp; Nutrition Coach</title>
+<title>LogEasy — Personal Trainer &amp; Nutrition Coach</title>
 <style>
 :root{
   --bg:#0d1117; --bg2:#151b26; --card:#1a2231; --card2:#212c40; --line:#2c3a52;
@@ -212,6 +212,21 @@ summary{cursor:pointer;font-weight:600;padding:6px 0}
 .micNote{display:block;margin-top:2px}
 details.typedAlt{margin:8px 0 4px}
 details.card>summary{cursor:pointer;font-weight:600}
+
+/* v2.4.0: today at a glance + next-action card + adaptive target card */
+.glanceGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+@media (min-width:760px){.glanceGrid{grid-template-columns:repeat(4,1fr)}}
+button.glanceCard{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;min-height:108px;cursor:pointer;color:var(--txt);font:inherit;box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 10px 26px rgba(0,0,0,.28)}
+button.glanceCard:hover,button.glanceCard:focus-visible{border-color:var(--acc)}
+button.glanceCard .gVal{font-size:27px;font-weight:800;line-height:1.15;margin:3px 0}
+.nextAct{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:linear-gradient(135deg,#1a3a24,#14251b 55%,#12242e);border:1px solid #2e6b41;border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
+.nextAct .naText{font-size:16px;font-weight:700}
+/* v2.4.0: quantity quick-add chips + favorites/recents rows */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chips button{background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:999px;min-width:52px;min-height:40px;padding:4px 12px;font-size:13.5px;font-weight:600;cursor:pointer}
+.chips button:hover{border-color:var(--acc)}
+button.favStar{min-width:44px;min-height:44px;font-size:17px}
+.quickRow{padding:7px 0;border-bottom:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -231,6 +246,9 @@ details.card>summary{cursor:pointer;font-weight:600}
 <!-- ============ DASHBOARD ============ -->
 <section class="view active" id="view-dashboard">
   <div id="dashNoProfile"></div>
+  <div class="glanceGrid" id="glanceRow" aria-label="Today at a glance"></div>
+  <div id="nextActionCard"></div>
+  <div id="adaptiveCard"></div>
   <div class="card" id="voiceHero">
     <h3 style="margin-top:0">🎙️ Log by voice</h3>
     <p class="small mut">On-device voice entry — speak, check the match, then confirm. Nothing is saved until you do, and estimates are labelled. Typing works everywhere too.</p>
@@ -430,7 +448,8 @@ details.card>summary{cursor:pointer;font-weight:600}
       <span class="small mut" id="voiceFoodStatus"></span>
     </div>
     <div id="voiceFoodMatches" class="mt"></div>
-    <p class="small mut mt">Eating out? ForgeFit carries published nutrition for 28 restaurant chains — say or search the chain (Braum's, McDonald's, Whataburger, Taco Bell…). Restaurant values are the chains' published figures and vary by location; you can edit any number on the confirm screen before adding.</p>
+    <p class="small mut mt">Eating out? LogEasy carries published nutrition for 29 restaurant chains — say or search the chain (Braum's, McDonald's, Whataburger, Taco Bell…). Restaurant values are the chains' published figures and vary by location; you can edit any number on the confirm screen before adding.</p>
+    <div id="foodQuick"></div>
     <div id="foodResults"></div>
     <details class="mt" id="customFoodDetails"><summary>＋ Add a custom food</summary>
       <div class="row mt">
@@ -462,7 +481,7 @@ details.card>summary{cursor:pointer;font-weight:600}
           <div class="field"><label>Vitamin D (mcg)</label><input id="cfVitD" type="number" min="0" step="0.1" inputmode="decimal"><button type="button" class="micbtn" data-mic-for="cfVitD" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
           <div class="field"><label>Vitamin B12 (mcg)</label><input id="cfVitB12" type="number" min="0" step="0.01" inputmode="decimal"><button type="button" class="micbtn" data-mic-for="cfVitB12" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
         </div>
-        <p class="small mut">Blank fields stay blank — ForgeFit shows “—” for a nutrient it doesn't know instead of guessing a number.</p>
+        <p class="small mut">Blank fields stay blank — LogEasy shows “—” for a nutrient it doesn't know instead of guessing a number.</p>
       </details>
       <button class="btn sm" id="btnCustomFood" type="button">Save custom food</button>
     </details>
@@ -476,6 +495,7 @@ details.card>summary{cursor:pointer;font-weight:600}
   <div class="card">
     <div class="flexb"><h3 style="margin:0">Today’s food log</h3>
       <div class="field" style="margin:0;flex:0 1 170px"><label style="margin:0">Date</label><input id="foodDate" type="date"></div>
+      <button class="btn sec sm" id="btnCopyYesterday" type="button" style="min-height:44px">Copy yesterday → this day</button>
     </div>
     <div id="foodLogList" class="mt"></div>
   </div>
@@ -490,27 +510,40 @@ details.card>summary{cursor:pointer;font-weight:600}
   <h2><span class="hIco"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="7.5" y="6" width="9" height="12" rx="2.5"/><path d="M9.6 6 10.1 2.8h3.8L14.4 6"/><path d="M9.6 18l.5 3.2h3.8l.5-3.2"/><path d="M12 9.8v2.4l1.8 1.1"/></svg></span>Device &amp; App Data Hub</h2>
   <div class="card" id="connectFlow">
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="7.5" y="6" width="9" height="12" rx="2.5"/><path d="M9.6 6 10.1 2.8h3.8L14.4 6"/><path d="M9.6 18l.5 3.2h3.8l.5-3.2"/><path d="M12 9.8v2.4l1.8 1.1"/></svg></span>Connect your device data</h3>
-    <p class="small">ForgeFit reads the export file <b>you choose</b>, right on this device. Your health data is never uploaded, and there is no live or background sync in this offline file.</p>
-    <div class="field mt"><label>Which device or platform do you use?</label>
-      <select id="devicePlatform">
-        <option value="">Choose your device/platform…</option>
-        <option value="apple">Apple Watch / iPhone Health</option>
-        <option value="fitbit">Fitbit</option>
-        <option value="garmin">Garmin</option>
-        <option value="samsung">Samsung Health</option>
-        <option value="google">Google Fit / Health Connect</option>
-        <option value="other">Other tracker / spreadsheet</option>
-        <option value="none">None — I'll enter data manually</option>
-      </select>
+    <div class="msg warnb" id="wizardHonesty"><b>Please read first:</b> this offline version does <b>not</b> connect live to your watch or phone app, and it does not sync in the background. Instead, you save a file from your device app, then pick that file here — LogEasy reads it right on this device and nothing is uploaded. A live one-tap sync belongs to a future connected edition; it is not in this version.</div>
+    <p class="mt" id="wizardProgress" aria-live="polite"><b>Step 1 of 3</b> — Pick your device or app</p>
+    <div id="wizardStep1">
+      <div class="field mt"><label>Which device or app do you use?</label>
+        <select id="devicePlatform">
+          <option value="">Choose your device/platform…</option>
+          <option value="apple">Apple Watch / iPhone Health</option>
+          <option value="fitbit">Fitbit</option>
+          <option value="garmin">Garmin</option>
+          <option value="samsung">Samsung Health</option>
+          <option value="google">Google Fit / Health Connect</option>
+          <option value="other">Other tracker / spreadsheet</option>
+          <option value="none">None — I'll enter data manually</option>
+        </select>
+      </div>
+      <p class="small mut">Pick one, then tap Next. Going back never loses the device you picked.</p>
+      <button class="btn blue mt" id="btnWizardNext1" type="button" style="min-height:48px">Next</button>
     </div>
-    <div id="deviceSteps" class="mt"></div>
-    <div style="border-top:1px solid var(--line);margin-top:14px;padding-top:14px">
-      <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 4v10.5"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4.5 20h15"/></svg></span>Auto Import Device Data</h3>
-      <p class="small mut">Choose one or more export files at once. ForgeFit detects Apple Health XML, Fitbit CSV or JSON, other activity JSON, and generic CSV, then fills in every supported field it finds. This is one-tap import from an export — not live sync.</p>
+    <div id="wizardStep2" style="display:none">
+      <div id="deviceSteps" class="mt"></div>
+      <div class="row mt">
+        <button class="btn sec" id="btnWizardBack2" type="button" style="min-height:48px">Back</button>
+        <button class="btn blue" id="btnWizardNext2" type="button" style="min-height:48px">I have the file — Next</button>
+      </div>
+    </div>
+    <div id="wizardStep3" style="display:none">
+      <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 4v10.5"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4.5 20h15"/></svg></span>Auto Import Device Data — pick your file</h3>
+      <p class="small mut">Tap the box below and choose the export file you just saved. You can choose more than one file at once. LogEasy detects Apple Health XML, Fitbit CSV or JSON, other activity JSON, and generic CSV, then fills in every supported field it finds. This is import from a file you saved — not live sync.</p>
       <input type="file" id="fileAuto" accept=".xml,.csv,.json,application/json,text/csv" multiple class="mt">
       <div id="autoImportReport" class="mt"></div>
+      <div id="wizardConfirm" class="mt"></div>
       <div class="row mt">
-        <button class="btn sec" id="btnSkipDeviceSetup" type="button">Skip &amp; finish setup</button>
+        <button class="btn sec" id="btnWizardBack3" type="button" style="min-height:48px">Back</button>
+        <button class="btn sec" id="btnSkipDeviceSetup" type="button" style="min-height:48px">Skip &amp; finish setup</button>
       </div>
     </div>
   </div>
@@ -538,7 +571,7 @@ details.card>summary{cursor:pointer;font-weight:600}
       <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3c1 3-1.5 4.8-2.8 6.2C7.8 10.7 6.5 12.3 6.5 14.5A5.5 5.5 0 0 0 12 20a5.5 5.5 0 0 0 5.5-5.5c0-1.8-.9-3.2-1.8-4.5-.3 1-1 1.9-2 2.5.5-3-.3-6.7-1.7-9.5Z"/></svg></span>Import from ForgeKitchen — meal (.json)</h3>
       <p class="small mut">Pairs with ForgeKitchen, our companion recipe app: export a meal there, import it here, and it appears in that day's food log with calories, protein, carbs, fat, fiber and sodium counted. (The offline editions connect by sending/importing a file — there's no live sync.)</p>
       <input type="file" id="fileKitchen" accept=".json,application/json" class="mt">
-      <p class="small mut mt">Don't have it yet? <a href="https://travisbriggs.gumroad.com/l/vipawz" target="_blank" rel="noopener">Get ForgeKitchen</a> — ForgeFit owners take $10 off ($39 instead of $49) with code <b>FORGEPAIR</b>, or get both apps in the Forge Bundle ($99). Recipes and meal plans that send straight to this log.</p>
+      <p class="small mut mt">Don't have it yet? <a href="https://travisbriggs.gumroad.com/l/vipawz" target="_blank" rel="noopener">Get ForgeKitchen</a> — LogEasy owners take $10 off ($39 instead of $49) with code <b>FORGEPAIR</b>, or get both apps in the Forge Bundle ($99). Recipes and meal plans that send straight to this log.</p>
     </div>
   </div>
   <div class="card flat" style="margin-top:14px">
@@ -607,7 +640,7 @@ details.card>summary{cursor:pointer;font-weight:600}
   <details class="card" id="photoFold"><summary>Progress photo journal — local only</summary>
   <div class="card">
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 8h3l2-2.5h6L17 8h3v11H4Z"/><circle cx="12" cy="13" r="3.4"/></svg></span>Progress photo journal — local only</h3>
-    <p class="small mut">Add dated photos with the weight recorded that day. Photos are compressed and stored only in this browser on your device, like the rest of your ForgeFit data. They are included in a backup only if you export one — keep backups private. ForgeFit does <b>not</b> edit your body or create an AI target-weight photo in this offline file; that preview is a separate connected/native feature being planned.</p>
+    <p class="small mut">Add dated photos with the weight recorded that day. Photos are compressed and stored only in this browser on your device, like the rest of your LogEasy data. They are included in a backup only if you export one — keep backups private. LogEasy does <b>not</b> edit your body or create an AI target-weight photo in this offline file; that preview is a separate connected/native feature being planned.</p>
     <div class="row mt">
       <div class="field"><label>Date</label><input id="photoDate" type="date"></div>
       <div class="field"><label>Weight that day (lb)</label><input id="photoWeight" type="number" min="0" step="0.1" inputmode="decimal"><button type="button" class="micbtn" data-mic-for="photoWeight" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
@@ -696,6 +729,36 @@ details.card>summary{cursor:pointer;font-weight:600}
     <button class="btn" id="btnSaveProfile" type="button">Save profile &amp; update my plan</button>
     <div id="profileMsg" class="mt"></div>
   </div>
+  <details class="card" id="helpSection"><summary>Help &amp; support</summary>
+    <p class="small mt">Short, plain how-tos for the jobs LogEasy is used for every day. Tap a topic to open it.</p>
+    <details><summary>Log food by voice</summary>
+      <p class="small">On the Today page (or in the Nutrition tab), tap <b>“Tell me what you ate”</b> and say what you had, like “two eggs and toast”. LogEasy shows you the matches it found — check them, change a quantity if you need to, then tap <b>Add</b> for each one. Nothing is saved until you tap Add. If your browser can't use the microphone, typing works just as well (see the next topic).</p>
+    </details>
+    <details><summary>Log food by typing</summary>
+      <p class="small">Go to the <b>Nutrition</b> tab, type the food in the search box, pick the meal, and tap <b>Add</b>. Eating something that isn't listed? Open <b>“Add a custom food”</b> on that same page, fill in the name and the numbers you know, and tap <b>Save custom food</b> — then you can search for it and add it like any other food.</p>
+    </details>
+    <details><summary>Your day at a glance &amp; the next-step card</summary>
+      <p class="small">The four big cards at the top of the <b>Today</b> page show calories left today, steps today, last night's sleep and your current weight — all from your own logs and imports. A card showing “—” means LogEasy doesn't have that number yet; the line under it says how to add it. Tap any card to jump to that number's page. Under the cards, one <b>next-step card</b> suggests the single most useful thing left today (like logging lunch). Tap the ✕ to dismiss it — it stays away for the rest of the day.</p>
+    </details>
+    <details><summary>Re-log fast: favorites, recents &amp; copy yesterday</summary>
+      <p class="small">In the <b>Nutrition</b> tab, the <b>Favorites &amp; recent</b> list sits above the search results. Tap the ☆ beside any food (in search results or the quick list) to pin it as a favorite; your most recently logged foods appear automatically. Set a quantity — the 0.5 / 1 / 1.5 / 2 buttons fill it in for you — and tap <b>Add</b> to log it again in one go. Ate the same as yesterday? Open the food log and tap <b>Copy yesterday → this day</b> to copy the whole day across; you can still delete any item you didn't have.</p>
+    </details>
+    <details><summary>Adaptive target suggestions</summary>
+      <p class="small">Once you have about two weeks of weigh-ins, LogEasy compares your actual weight trend with your goal pace and may show a <b>target suggestion</b> card on the Today page — with the math and the weigh-ins it used printed right on the card. Nothing ever changes on its own: your calorie target only moves if you tap <b>Use … kcal</b>. Tap <b>Not now</b> and it won't ask again for a week. The suggestion is figured on your device from your own weigh-ins; it is an estimate, not medical advice. If you turn a suggestion on, the card tells you it's active and offers a <b>Remove adjustment</b> button.</p>
+    </details>
+    <details><summary>Log a workout</summary>
+      <p class="small">Go to the <b>Train</b> tab. Start today's planned workout, pick a day from your month plan, or tap <b>Log workout</b> to start an empty session and add exercises as you go. Fill in the weight and reps for each set, tick the sets you did, then tap <b>Finish &amp; save workout</b>. You can also tap <b>“Tell me what you trained”</b> and say it — you still confirm it before anything is saved.</p>
+    </details>
+    <details><summary>Import device data</summary>
+      <p class="small">Go to the <b>Devices</b> tab and follow the three steps in <b>Connect your device data</b>: pick your device or app, save an export file from that app using the steps shown, then pick that file in LogEasy and read the confirmation of what came in. This version imports a file — it does not sync live with your watch or phone app.</p>
+    </details>
+    <details><summary>Back up / restore your data</summary>
+      <p class="small">Go to the <b>Progress</b> tab, open <b>Backup &amp; reports</b>, and tap <b>Export backup (JSON)</b> to save a backup file. Keep that file somewhere safe. To restore it later — on this device or a new one — open the same place, choose the backup file under <b>Restore a backup</b>, and your logs come back.</p>
+    </details>
+    <p class="small mt">All of your LogEasy data lives only on this device, in this browser/app — nothing is uploaded anywhere. Back it up with <b>Progress → Backup &amp; reports → Export backup (JSON)</b> before you switch phones or browsers, and keep the backup file somewhere safe.</p>
+    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.4.1&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
+    <p class="small mut">Email opens your own email app, addressed to us, with the app version already in the subject line.</p>
+  </details>
   <details class="card" id="profileMore"><summary>More settings — encouragement, appearance, legal &amp; about</summary>
   <div class="card">
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 3h-15Z"/><path d="M10 21a2.2 2.2 0 0 0 4 0"/></svg></span>Encouragement</h3>
@@ -726,8 +789,8 @@ details.card>summary{cursor:pointer;font-weight:600}
     <button class="btn sec" id="btnOpenLegal" type="button">View Terms, Disclaimer &amp; Privacy</button>
     <button class="btn sec" id="btnShowIntro" type="button">See the intro again</button>
   </div>
-  <details class="card"><summary>ℹ️ About ForgeFit AI</summary>
-    <p class="small mut mt">ForgeFit AI <b>version 2.3.0</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
+  <details class="card"><summary>ℹ️ About LogEasy</summary>
+    <p class="small mut mt">LogEasy <b>version 2.4.1</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
   </details>
   </details>
 </section>
@@ -739,7 +802,7 @@ details.card>summary{cursor:pointer;font-weight:600}
 <div class="legalGate" id="legalGate" role="dialog" aria-modal="true" aria-labelledby="legalGateTitle">
   <div class="sheet">
     <div class="gateScroll">
-      <h2 id="legalGateTitle" style="margin-top:0">ForgeFit AI — Terms of Use</h2>
+      <h2 id="legalGateTitle" style="margin-top:0">LogEasy — Terms of Use</h2>
       <p class="warn" id="legalGateUpdate" style="display:none"></p>
       <p class="sumline">Your data stays on your device.</p>
       <p class="sumline">Estimates are aids, not guarantees.</p>
@@ -767,7 +830,7 @@ details.card>summary{cursor:pointer;font-weight:600}
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 20.5S4 15.5 4 9.9A4.4 4.4 0 0 1 12 7a4.4 4.4 0 0 1 8 2.9c0 5.6-8 10.6-8 10.6Z"/></svg></span>Health Disclaimer</h3>
     <div class="legalBody" id="legalHealthBody"></div>
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="5.5" y="10.5" width="13" height="10" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg></span>Privacy</h3>
-    <div class="legalBody"><p>ForgeFit AI collects <b>no data</b>. There are no accounts and no sign-in. Everything you enter or import is stored only in this browser, on this device — nothing is uploaded, tracked, or shared, and we never see it. Backups and reports exist only when you export them, and where you keep those files is up to you. (Connected features, if they ever ship, will ask for separate consent before anything leaves your device — accepting these Terms is not that consent.)</p></div>
+    <div class="legalBody"><p>LogEasy collects <b>no data</b>. There are no accounts and no sign-in. Everything you enter or import is stored only in this browser, on this device — nothing is uploaded, tracked, or shared, and we never see it. Backups and reports exist only when you export them, and where you keep those files is up to you. (Connected features, if they ever ship, will ask for separate consent before anything leaves your device — accepting these Terms is not that consent.)</p></div>
     <p class="small mut mt">Sold by White Wolf Tree Service LLC (White Wolf Digital) — whitewolfoklahoma@gmail.com.</p>
     <button class="btn sec mt" id="btnLegalClose2" type="button" style="min-height:48px">✕ Close</button>
   </div>
@@ -816,7 +879,7 @@ details.card>summary{cursor:pointer;font-weight:600}
 <script>
 "use strict";
 /* =====================================================================
-   ForgeFit AI — core data & logic (DOM-independent where possible so the
+   LogEasy — core data & logic (DOM-independent where possible so the
    coaching engine, math and import parsers can be tested headlessly).
    ===================================================================== */
 
@@ -1353,6 +1416,17 @@ var EXTRA_FOODS = [
   brandFood("Culver's", "Vanilla Custard Concrete Mixer, medium", "1 medium", 740, 13, 96, 34, {fiber:1, sugar:84, sodium:320}),
   brandFood("Culver's", "George's Chili Supreme, cup", "1 cup", 290, 17, 28, 12, {fiber:6, sugar:7, sodium:1010}),
   /* Generic staples — typical values (USDA fast-food reference data) */
+  /* Hardee's / Carl's Jr. — Hardee's published nutrition (hardees.com
+     nutrition tables, retrieved 2026-10-29). Carl's Jr. sells the same
+     named items with the same published values; its names map here. */
+  brandFood("Hardee's", "Famous Star with Cheese", "1 sandwich", 670, 28, 52, 40, {fiber:3, sugar:10, sodium:1370, chol:75}),
+  brandFood("Hardee's", "Super Star with Cheese", "1 sandwich", 950, 50, 54, 62, {fiber:4, sugar:11, sodium:1890, chol:145}),
+  brandFood("Hardee's", "Big Cheeseburger", "1 sandwich", 520, 27, 40, 33, {fiber:2, sugar:8, sodium:1080, chol:65}),
+  brandFood("Hardee's", "Mushroom & Swiss Thickburger", "1 sandwich", 580, 31, 40, 38, {fiber:2, sugar:9, sodium:1280, chol:95}),
+  /* Numbered/meal bundles the chains do not publish as single totals:
+     sums of the chains' own published component values above. */
+  brandFood("Burger King", "Whopper Meal", "Whopper + medium fries + medium Coca-Cola", 1230, 32, 153, 55, {fiber:6, sugar:69, sodium:1550, chol:90}),
+  brandFood("Whataburger", "Whatameal #1 — Whataburger, fries & drink", "1 meal (medium fries + 32 oz drink)", 1400, 34, 220, 45, {fiber:8, sugar:116, sodium:1455, chol:45}),
   genericFood("Double Cheeseburger", "1 sandwich", 440, 25, 28, 25, {fiber:1, sugar:6, sodium:960, chol:78}),
   genericFood("Hamburger", "1 sandwich", 250, 12, 30, 9, {fiber:1, sugar:6, sodium:520, chol:30}),
   genericFood("Pepperoni Pizza Slice", "1 slice", 285, 12, 36, 10, {fiber:2, sugar:3, sodium:640, chol:20}),
@@ -1373,7 +1447,7 @@ function allFoods(state){ return FOODS.map(foodObj).concat(EXTRA_FOODS).concat((
 "use strict";
 /* ---------- state ---------- */
 var FF_KEY = "forgefit_v1";
-var FF_VERSION = "2.3.0";
+var FF_VERSION = "2.4.1";
 /* Terms of Use version bundled with this build (legal pack v1.0). Bump this
    ONE constant when the terms text changes and users are re-asked once. */
 var FF_TERMS_VERSION = "1.0";
@@ -1407,6 +1481,11 @@ function blankState(){
     bgPhoto: null,               // {dataUrl, dim} — custom background photo, local only (v2.1.1)
     avatarPhoto: null,           // {dataUrl} — profile picture, center-cropped square, local only (v2.1.2)
     introSeenFor: "",            // app version the welcome intro was last seen for (v2.1.2) — new users + upgraders see it once per version
+    favoriteFoods: [],           // v2.4.0 food names pinned as favorites (resolved against the food DB at render; a name with no match is skipped, never invented)
+    glanceDismissed: "",         // v2.4.0 date the dashboard next-step card was dismissed (stays away for that day only)
+    targetAdjustKcal: 0,         // v2.4.0 user-confirmed adaptive calorie-target adjustment (kcal/day); 0 = none. Applied only via dailyTargets for the live profile
+    targetAdjustDate: "",        // v2.4.0 date the current targetAdjustKcal was confirmed
+    adaptiveLastShown: "",       // v2.4.0 date an adaptive suggestion was last shown/applied/dismissed — the once-a-week nag gate
     legal: null                  // {termsVersion, acceptedDate, disclaimerShown} once terms are accepted (v2.1.2); rides along in backup exports
   };
 }
@@ -1424,6 +1503,12 @@ function normalizeState(s){
   if (!Array.isArray(s.workoutLogs)) s.workoutLogs = [];
   if (!Array.isArray(s.foodLogs)) s.foodLogs = [];
   if (!Array.isArray(s.customFoods)) s.customFoods = [];
+  if (!Array.isArray(s.favoriteFoods)) s.favoriteFoods = [];
+  s.favoriteFoods = s.favoriteFoods.filter(function(n){ return typeof n === "string" && n; }).filter(function(n, i, a){ return a.indexOf(n) === i; }).slice(0, 60);
+  s.glanceDismissed = typeof s.glanceDismissed === "string" ? s.glanceDismissed : "";
+  s.targetAdjustKcal = Math.max(-1000, Math.min(1000, Math.round(num(s.targetAdjustKcal))));
+  s.targetAdjustDate = typeof s.targetAdjustDate === "string" ? s.targetAdjustDate : "";
+  s.adaptiveLastShown = typeof s.adaptiveLastShown === "string" ? s.adaptiveLastShown : "";
   if (!Array.isArray(s.templates)) s.templates = [];
   s.templates = s.templates.map(sanitizeTemplate).filter(Boolean);
   if (!s.planAdjust || typeof s.planAdjust !== "object" || Array.isArray(s.planAdjust)) s.planAdjust = {};
@@ -1495,8 +1580,8 @@ function saveState(s){ try { FFStore.set(FF_KEY, JSON.stringify(s)); } catch(e){
    Texts from workspace legal pack (terms-of-use.md + health-disclaimer.md),
    converted to HTML and bundled in-file — the app stays fully offline.
    Pattern: legal/in-app-legal-pattern.md. */
-var FF_TERMS_HTML = "<p><b>Version 1.0</b> <b>Seller: White Wolf Tree Service LLC, selling digital products under the name \"White Wolf Digital\"</b> <b>Contact: whitewolfoklahoma@gmail.com</b></p>\n<h4>1. What you're buying</h4>\n<p>Our apps (including ForgeFit AI, ForgeKitchen, TreeBid Pro, SnowBid, WashPrice Pro, RoofSquares, JobProfit Tracker, PastureLedger, and the other titles sold under White Wolf Digital) are single-file software tools. When you buy one, you are buying a <b>license to use the file</b>, not ownership of the software itself.</p>\n<h4>2. Your license</h4>\n<ul>\n<li>You may use the app for your own personal or business work.</li>\n<li>You may open it on your own devices (phone, tablet, computer) and move your own data between them using the app's built-in backup/export tools.</li>\n<li>You may <b>not</b> resell, redistribute, give away, upload, or share the app file (or a copy of it) with anyone else — including posting it online, bundling it with other products, or selling access to it.</li>\n<li>You may <b>not</b> claim the app as your own work, remove its branding or notices, or use it to build a competing product for resale.</li>\n<li>One purchase = one buyer. A business purchase covers the buyer and their own employees using it for that business's work; it does not cover other businesses.</li>\n</ul>\n<h4>3. Your data stays yours — and stays on your device</h4>\n<ul>\n<li>The current versions of our apps run <b>entirely on your device</b>. They have no accounts, no sign-in, no analytics, and they collect, transmit, and store <b>none</b> of your information on any server. We never see your data.</li>\n<li>Your records are stored in your browser/app storage on your device. <b>You are responsible for backing them up</b> using the app's export tools. If you clear your browser data, lose your device, or uninstall the app, your records may be permanently lost, and we cannot recover them — we never had a copy.</li>\n<li>Files you export (backups, quotes, PDFs) are under your control. Where you store or send them is up to you.</li>\n</ul>\n<h4>4. Estimates are tools, not guarantees</h4>\n<p>Every number our apps produce — bids, prices, costs, calorie targets, projections, schedules, totals — is an <b>estimate generated from the information you enter and the settings you choose</b>. Outputs are aids for your own judgment, not guarantees of price, profit, outcome, or result. You are responsible for checking any output before relying on it (see also the disclaimer that applies to your app: Health Disclaimer for fitness/nutrition apps, Estimator Disclaimer for contractor tools). If an input is wrong, the output will be wrong.</p>\n<h4>5. Acceptable use</h4>\n<p>Don't use the apps to break the law, infringe anyone's rights, or misrepresent quotes, invoices, or records to your own customers. For the fitness apps, the guardrails in the app (healthy-rate limits, calorie floor) are part of the product — don't treat the app as a way around them.</p>\n<h4>6. Provided \"as is\"</h4>\n<p>The apps are provided <b>\"as is\" and \"as available,\" without warranties of any kind</b>, express or implied — including merchantability, fitness for a particular purpose, accuracy of calculations, and uninterrupted or error-free operation — to the maximum extent allowed by law. Software has bugs; browsers change; we work to fix problems but do not promise any app is error-free or will work on every device or browser forever.</p>\n<h4>7. Limitation of liability</h4>\n<p>To the maximum extent allowed by law:</p>\n<ul>\n<li>We are <b>not liable for indirect, incidental, special, or consequential damages</b> — including lost profits, lost or mispriced jobs, lost data, or business interruption — arising from use of the apps.</li>\n<li>Our total liability for any claim connected to an app is limited to the <b>amount you paid for that app</b>.</li>\n<li>Nothing in these terms limits liability that cannot legally be limited.</li>\n</ul>\n<h4>8. Refunds</h4>\n<p>Refunds are handled <b>by the storefront you bought from, under that storefront's policy</b> — Gumroad's refund policy for Gumroad purchases, and Google Play's refund policy for Play purchases. These terms do not add to, replace, or override the storefront's refund rules. If a file is defective and won't open, contact us at whitewolfoklahoma@gmail.com and we'll fix or replace the file.</p>\n<h4>9. Updates and changes to these terms</h4>\n<ul>\n<li>We may release updated versions of an app. Updates may add, change, or remove features.</li>\n<li>We may update these terms. The version you agreed to is recorded in the app (version number and date) at first-run acceptance. If terms change, the app may ask you to accept the new version once on next open. Updated terms apply going forward, not retroactively.</li>\n<li>If you don't agree to an updated version of the terms, stop using the app.</li>\n</ul>\n<h4>10. Governing law</h4>\n<p>These terms are governed by the laws of the <b>State of Oklahoma</b>, USA.</p>\n<h4>11. Contact</h4>\n<p>White Wolf Tree Service LLC (White Wolf Digital) — whitewolfoklahoma@gmail.com.</p>\n<h4>CONNECTED FEATURES — takes effect only when these features ship</h4>\n<p><i>The sections below apply only to future connected features (device sync via Health Connect, AI voice logging, and the AI Goal Preview in ForgeFit). They do not apply to the current offline versions, which never transmit data.</i></p>\n<ul>\n<li><b>Opt-in only.</b> Connected features are off by default. Each one asks for your separate, explicit consent — on its own consent screen, in plain language — before anything leaves your device. Declining never disables the app's offline features.</li>\n<li><b>What gets sent.</b> Only what the consent screen names, only when you use the feature: for example, a meal description (text, or audio only if cloud transcription is on) for AI voice logging, or the single photo you choose for an AI Goal Preview.</li>\n<li><b>No retention by us.</b> Our relay service passes your request to the named AI provider and keeps nothing — no copies of your photos, audio, transcripts, or entries are stored on our servers. Provider handling is described on the consent screen and in the Privacy Policy.</li>\n<li><b>Health data stays on the device.</b> Device sync (Health Connect) reads your health data on your phone and stores it in the app on your phone. It is not uploaded to us.</li>\n<li><b>Allowances.</b> Some connected features run on third-party AI services we pay for per use, so they may include a monthly allowance described in the app (for example, a set number of AI previews or voice entries per month), with optional additional credits. Allowances and pricing will be shown in the app before you use the feature; they are not a subscription unless the app says so in plain words.</li>\n<li><b>Permissions.</b> Connected features may request device permissions (such as Health Connect access or the microphone) at the moment you first use them. You can revoke permissions any time in your device settings; the related feature will simply stop working.</li>\n</ul>";
-var FF_HEALTH_HTML = "<p><b>Applies to: ForgeFit AI, ForgeKitchen, and their add-ons (including the High-Protein Meal-Plan Pack). Short version: these apps are general fitness and nutrition information tools. They are not medical advice and not a medical device.</b></p>\n<h4>Not medical advice</h4>\n<ul>\n<li>ForgeFit and ForgeKitchen provide <b>general fitness and nutrition information for healthy adults</b>. Nothing in the apps — workout programs, calorie or macro targets, food data, projections, or AI-generated suggestions — is medical advice, a diagnosis, or a treatment plan.</li>\n<li>The apps are <b>not medical devices</b> and are not intended to diagnose, treat, cure, or prevent any disease or condition.</li>\n<li><b>Talk to a doctor or another qualified professional</b> before starting a workout program or changing how you eat — especially if you are pregnant, nursing, under 18, have a medical condition (including heart, joint, metabolic, or eating-related conditions), take medication affected by diet or exercise, or have been inactive for a long time. A registered dietitian is the right source for a personal nutrition plan.</li>\n</ul>\n<h4>Numbers are approximations</h4>\n<ul>\n<li>Calorie and macro targets are computed from standard formulas (such as Mifflin-St Jeor) and population averages. Your real needs can differ — sometimes by a lot.</li>\n<li>Food nutrition values come from built-in databases, package labels, and standard reference data. Home-cooked and restaurant food varies with ingredients, portions, and preparation, so logged values are <b>approximations, not exact measurements</b>.</li>\n<li><b>AI estimates</b> (connected feature, when shipped): when you describe a meal to the AI, its nutrition values are <b>estimates shown as ranges and labeled \"AI estimate.\"</b> They are educated approximations, not label facts. You can review and correct every AI-created entry.</li>\n<li>The projected end-of-month weight change uses the standard 3,500 kcal ≈ 1 lb approximation. It is a planning estimate, <b>not a prediction or a guarantee</b> — real bodies don't follow arithmetic exactly.</li>\n</ul>\n<h4>Exercise safety</h4>\n<ul>\n<li>Workouts are general programs, not personal coaching. Use weights and intensity appropriate to your own level, and learn proper form before lifting heavy.</li>\n<li><b>Stop exercising and seek help if you feel pain, dizziness, chest pain, or shortness of breath.</b> Warm up, use equipment safely, and don't train through an injury.</li>\n<li>You are responsible for your own health decisions. Using the apps is at your own risk, within the limits of the Terms of Use.</li>\n</ul>\n<h4>Built-in guardrails</h4>\n<p>ForgeFit already limits what it will plan: weight loss is never planned faster than 1% of body weight per week, weight gain never faster than 0.5% per week, and no day is planned below a 1,200-calorie floor. If your goal implies a faster rate, the app slows it to the healthy rate and tells you. These guardrails are a safety feature of the software — they are not medical guidance and don't replace a professional's judgment.</p>\n<h4>CONNECTED FEATURES — takes effect only when these features ship</h4>\n<ul>\n<li><b>AI Goal Preview (visualization only):</b> the preview shows an AI-generated <b>visualization of a possible appearance</b> at a target weight. It is <b>not a prediction</b> of how you will look, not a promise of results, and not a medical or health assessment. Previews are only generated for target weights inside healthy ranges — requests outside those ranges are refused. The feature is for users 18 and over.</li>\n<li><b>Device data:</b> steps, calories, sleep, weight, and heart-rate values come from your own devices and the apps that feed them. Consumer devices measure approximately; the app displays what the device reported and does not verify it.</li>\n</ul>";
+var FF_TERMS_HTML = "<p><b>Version 1.0</b> <b>Seller: White Wolf Tree Service LLC, selling digital products under the name \"White Wolf Digital\"</b> <b>Contact: whitewolfoklahoma@gmail.com</b></p>\n<h4>1. What you're buying</h4>\n<p>Our apps (including LogEasy, ForgeKitchen, TreeBid Pro, SnowBid, WashPrice Pro, RoofSquares, JobProfit Tracker, PastureLedger, and the other titles sold under White Wolf Digital) are single-file software tools. When you buy one, you are buying a <b>license to use the file</b>, not ownership of the software itself.</p>\n<h4>2. Your license</h4>\n<ul>\n<li>You may use the app for your own personal or business work.</li>\n<li>You may open it on your own devices (phone, tablet, computer) and move your own data between them using the app's built-in backup/export tools.</li>\n<li>You may <b>not</b> resell, redistribute, give away, upload, or share the app file (or a copy of it) with anyone else — including posting it online, bundling it with other products, or selling access to it.</li>\n<li>You may <b>not</b> claim the app as your own work, remove its branding or notices, or use it to build a competing product for resale.</li>\n<li>One purchase = one buyer. A business purchase covers the buyer and their own employees using it for that business's work; it does not cover other businesses.</li>\n</ul>\n<h4>3. Your data stays yours — and stays on your device</h4>\n<ul>\n<li>The current versions of our apps run <b>entirely on your device</b>. They have no accounts, no sign-in, no analytics, and they collect, transmit, and store <b>none</b> of your information on any server. We never see your data.</li>\n<li>Your records are stored in your browser/app storage on your device. <b>You are responsible for backing them up</b> using the app's export tools. If you clear your browser data, lose your device, or uninstall the app, your records may be permanently lost, and we cannot recover them — we never had a copy.</li>\n<li>Files you export (backups, quotes, PDFs) are under your control. Where you store or send them is up to you.</li>\n</ul>\n<h4>4. Estimates are tools, not guarantees</h4>\n<p>Every number our apps produce — bids, prices, costs, calorie targets, projections, schedules, totals — is an <b>estimate generated from the information you enter and the settings you choose</b>. Outputs are aids for your own judgment, not guarantees of price, profit, outcome, or result. You are responsible for checking any output before relying on it (see also the disclaimer that applies to your app: Health Disclaimer for fitness/nutrition apps, Estimator Disclaimer for contractor tools). If an input is wrong, the output will be wrong.</p>\n<h4>5. Acceptable use</h4>\n<p>Don't use the apps to break the law, infringe anyone's rights, or misrepresent quotes, invoices, or records to your own customers. For the fitness apps, the guardrails in the app (healthy-rate limits, calorie floor) are part of the product — don't treat the app as a way around them.</p>\n<h4>6. Provided \"as is\"</h4>\n<p>The apps are provided <b>\"as is\" and \"as available,\" without warranties of any kind</b>, express or implied — including merchantability, fitness for a particular purpose, accuracy of calculations, and uninterrupted or error-free operation — to the maximum extent allowed by law. Software has bugs; browsers change; we work to fix problems but do not promise any app is error-free or will work on every device or browser forever.</p>\n<h4>7. Limitation of liability</h4>\n<p>To the maximum extent allowed by law:</p>\n<ul>\n<li>We are <b>not liable for indirect, incidental, special, or consequential damages</b> — including lost profits, lost or mispriced jobs, lost data, or business interruption — arising from use of the apps.</li>\n<li>Our total liability for any claim connected to an app is limited to the <b>amount you paid for that app</b>.</li>\n<li>Nothing in these terms limits liability that cannot legally be limited.</li>\n</ul>\n<h4>8. Refunds</h4>\n<p>Refunds are handled <b>by the storefront you bought from, under that storefront's policy</b> — Gumroad's refund policy for Gumroad purchases, and Google Play's refund policy for Play purchases. These terms do not add to, replace, or override the storefront's refund rules. If a file is defective and won't open, contact us at whitewolfoklahoma@gmail.com and we'll fix or replace the file.</p>\n<h4>9. Updates and changes to these terms</h4>\n<ul>\n<li>We may release updated versions of an app. Updates may add, change, or remove features.</li>\n<li>We may update these terms. The version you agreed to is recorded in the app (version number and date) at first-run acceptance. If terms change, the app may ask you to accept the new version once on next open. Updated terms apply going forward, not retroactively.</li>\n<li>If you don't agree to an updated version of the terms, stop using the app.</li>\n</ul>\n<h4>10. Governing law</h4>\n<p>These terms are governed by the laws of the <b>State of Oklahoma</b>, USA.</p>\n<h4>11. Contact</h4>\n<p>White Wolf Tree Service LLC (White Wolf Digital) — whitewolfoklahoma@gmail.com.</p>\n<h4>CONNECTED FEATURES — takes effect only when these features ship</h4>\n<p><i>The sections below apply only to future connected features (device sync via Health Connect, AI voice logging, and the AI Goal Preview in LogEasy). They do not apply to the current offline versions, which never transmit data.</i></p>\n<ul>\n<li><b>Opt-in only.</b> Connected features are off by default. Each one asks for your separate, explicit consent — on its own consent screen, in plain language — before anything leaves your device. Declining never disables the app's offline features.</li>\n<li><b>What gets sent.</b> Only what the consent screen names, only when you use the feature: for example, a meal description (text, or audio only if cloud transcription is on) for AI voice logging, or the single photo you choose for an AI Goal Preview.</li>\n<li><b>No retention by us.</b> Our relay service passes your request to the named AI provider and keeps nothing — no copies of your photos, audio, transcripts, or entries are stored on our servers. Provider handling is described on the consent screen and in the Privacy Policy.</li>\n<li><b>Health data stays on the device.</b> Device sync (Health Connect) reads your health data on your phone and stores it in the app on your phone. It is not uploaded to us.</li>\n<li><b>Allowances.</b> Some connected features run on third-party AI services we pay for per use, so they may include a monthly allowance described in the app (for example, a set number of AI previews or voice entries per month), with optional additional credits. Allowances and pricing will be shown in the app before you use the feature; they are not a subscription unless the app says so in plain words.</li>\n<li><b>Permissions.</b> Connected features may request device permissions (such as Health Connect access or the microphone) at the moment you first use them. You can revoke permissions any time in your device settings; the related feature will simply stop working.</li>\n</ul>";
+var FF_HEALTH_HTML = "<p><b>Applies to: LogEasy, ForgeKitchen, and their add-ons (including the High-Protein Meal-Plan Pack). Short version: these apps are general fitness and nutrition information tools. They are not medical advice and not a medical device.</b></p>\n<h4>Not medical advice</h4>\n<ul>\n<li>LogEasy and ForgeKitchen provide <b>general fitness and nutrition information for healthy adults</b>. Nothing in the apps — workout programs, calorie or macro targets, food data, projections, or AI-generated suggestions — is medical advice, a diagnosis, or a treatment plan.</li>\n<li>The apps are <b>not medical devices</b> and are not intended to diagnose, treat, cure, or prevent any disease or condition.</li>\n<li><b>Talk to a doctor or another qualified professional</b> before starting a workout program or changing how you eat — especially if you are pregnant, nursing, under 18, have a medical condition (including heart, joint, metabolic, or eating-related conditions), take medication affected by diet or exercise, or have been inactive for a long time. A registered dietitian is the right source for a personal nutrition plan.</li>\n</ul>\n<h4>Numbers are approximations</h4>\n<ul>\n<li>Calorie and macro targets are computed from standard formulas (such as Mifflin-St Jeor) and population averages. Your real needs can differ — sometimes by a lot.</li>\n<li>Food nutrition values come from built-in databases, package labels, and standard reference data. Home-cooked and restaurant food varies with ingredients, portions, and preparation, so logged values are <b>approximations, not exact measurements</b>.</li>\n<li><b>AI estimates</b> (connected feature, when shipped): when you describe a meal to the AI, its nutrition values are <b>estimates shown as ranges and labeled \"AI estimate.\"</b> They are educated approximations, not label facts. You can review and correct every AI-created entry.</li>\n<li>The projected end-of-month weight change uses the standard 3,500 kcal ≈ 1 lb approximation. It is a planning estimate, <b>not a prediction or a guarantee</b> — real bodies don't follow arithmetic exactly.</li>\n</ul>\n<h4>Exercise safety</h4>\n<ul>\n<li>Workouts are general programs, not personal coaching. Use weights and intensity appropriate to your own level, and learn proper form before lifting heavy.</li>\n<li><b>Stop exercising and seek help if you feel pain, dizziness, chest pain, or shortness of breath.</b> Warm up, use equipment safely, and don't train through an injury.</li>\n<li>You are responsible for your own health decisions. Using the apps is at your own risk, within the limits of the Terms of Use.</li>\n</ul>\n<h4>Built-in guardrails</h4>\n<p>LogEasy already limits what it will plan: weight loss is never planned faster than 1% of body weight per week, weight gain never faster than 0.5% per week, and no day is planned below a 1,200-calorie floor. If your goal implies a faster rate, the app slows it to the healthy rate and tells you. These guardrails are a safety feature of the software — they are not medical guidance and don't replace a professional's judgment.</p>\n<h4>CONNECTED FEATURES — takes effect only when these features ship</h4>\n<ul>\n<li><b>AI Goal Preview (visualization only):</b> the preview shows an AI-generated <b>visualization of a possible appearance</b> at a target weight. It is <b>not a prediction</b> of how you will look, not a promise of results, and not a medical or health assessment. Previews are only generated for target weights inside healthy ranges — requests outside those ranges are refused. The feature is for users 18 and over.</li>\n<li><b>Device data:</b> steps, calories, sleep, weight, and heart-rate values come from your own devices and the apps that feed them. Consumer devices measure approximately; the app displays what the device reported and does not verify it.</li>\n</ul>";
 function legalSummaryLines(){
   return ["Your data stays on your device.", "Estimates are aids, not guarantees.", "Fitness content isn't medical advice."];
 }
@@ -1520,7 +1605,7 @@ function acceptTerms(s, dateStr){
    guidance. This is NOT a live AI and is never presented as one: the panel
    header says so, answers only use the user's data + the guidance below,
    and medical questions deflect to a professional (health disclaimer). */
-var TRAINER_DEFLECT = "That's one for a professional, not an app. If you're dealing with pain, an injury, dizziness, chest discomfort, a medical condition, pregnancy, or medication questions, talk to a doctor or another qualified professional before training or changing how you eat. ForgeFit gives general fitness information for healthy adults — it isn't medical advice. If something hurts, the right move is to stop and get it checked, not to push through.";
+var TRAINER_DEFLECT = "That's one for a professional, not an app. If you're dealing with pain, an injury, dizziness, chest discomfort, a medical condition, pregnancy, or medication questions, talk to a doctor or another qualified professional before training or changing how you eat. LogEasy gives general fitness information for healthy adults — it isn't medical advice. If something hurts, the right move is to stop and get it checked, not to push through.";
 var TRAINER_CHIPS = ["What's my workout today?", "How many calories do I have left?", "Am I on pace this month?", "Suggest an exercise swap", "I'm sore — what should I do?", "When is my deload week?", "How much protein do I need?", "I missed a day — now what?"];
 function trainerChips(){ return TRAINER_CHIPS.slice(); }
 function trainerTodayDay(s){  if (s.monthPlan && Array.isArray(s.monthPlan.days)){
@@ -1547,18 +1632,18 @@ function trainerSwapAnswer(s, q){
 var TRAINER_TOPICS = [
   { id: "soreness", keys: ["sore", "soreness", "doms", "ache", "achy", "stiff"], text: "Muscle soreness 24–72 hours after a hard or new session (DOMS) is normal and isn't a good measure of workout quality. Light movement, walking, easy cycling and sleep help more than total rest. Train a different muscle group today, or repeat the planned session at ~60% effort if you're very sore. Sharp, joint, or one-sided pain is different — that's a stop-and-get-checked signal, not soreness." },
   { id: "missed", keys: ["missed", "skip a day", "skipped", "fell off", "miss a day", "behind schedule"], text: "A missed day is just a missed day — don't double up or punish yourself with a marathon session. Best move: do the missed workout next (your plan order matters more than the calendar), or pick up with today's session if the week has moved on. Consistency over months beats perfection in any single week." },
-  { id: "plateau", keys: ["plateau", "stuck", "not progressing", "no progress", "stall"], text: "Plateaus usually break with one of four levers: (1) progression — add a rep or a little weight (ForgeFit flags lifts ready to progress in your coach tips); (2) recovery — sleep and protein move more lifts than any program tweak; (3) a deload week to shed fatigue; (4) patience — strength comes in waves, and 3–4 flat weeks at the same weights while reps creep up IS progress. Check you're eating enough for your goal: cutting hard and gaining strength rarely happen together." },
+  { id: "plateau", keys: ["plateau", "stuck", "not progressing", "no progress", "stall"], text: "Plateaus usually break with one of four levers: (1) progression — add a rep or a little weight (LogEasy flags lifts ready to progress in your coach tips); (2) recovery — sleep and protein move more lifts than any program tweak; (3) a deload week to shed fatigue; (4) patience — strength comes in waves, and 3–4 flat weeks at the same weights while reps creep up IS progress. Check you're eating enough for your goal: cutting hard and gaining strength rarely happen together." },
   { id: "restdays", keys: ["rest day", "rest days", "how many days off", "train every day", "recovery day"], text: "Muscles adapt between sessions, not during them. Most people do best training each muscle group 2× per week with at least one full rest day weekly. Light activity on rest days (walking, easy mobility) is fine and often helps soreness. Your month plan already builds rest days in — trust the layout rather than adding secret extra sessions." },
-  { id: "overload", keys: ["progressive overload", "overload", "add weight", "heavier", "when to increase"], text: "Progressive overload = gradually asking a little more of a muscle over time. ForgeFit's rule: when you hit the TOP of a lift's rep range on every working set, two sessions in a row, add 2.5–5 lb next time (or 1–2 reps / a slower tempo if you have no weights). Small, repeatable jumps beat heroic ones — adding 5 lb a month is 60 lb in a year." },
-  { id: "macros", keys: ["macro", "macros", "carbs", "fat grams", "split"], text: "Macros are just where your calories come from: protein builds and protects muscle, carbs fuel training, fats cover hormones and health. ForgeFit sets protein first (~0.8 g per lb of goal body weight), then fat, and lets carbs fill the rest — that's why your targets show protein as the priority. Day to day, hitting total calories and protein matters far more than perfect carb/fat splits." },
+  { id: "overload", keys: ["progressive overload", "overload", "add weight", "heavier", "when to increase"], text: "Progressive overload = gradually asking a little more of a muscle over time. LogEasy's rule: when you hit the TOP of a lift's rep range on every working set, two sessions in a row, add 2.5–5 lb next time (or 1–2 reps / a slower tempo if you have no weights). Small, repeatable jumps beat heroic ones — adding 5 lb a month is 60 lb in a year." },
+  { id: "macros", keys: ["macro", "macros", "carbs", "fat grams", "split"], text: "Macros are just where your calories come from: protein builds and protects muscle, carbs fuel training, fats cover hormones and health. LogEasy sets protein first (~0.8 g per lb of goal body weight), then fat, and lets carbs fill the rest — that's why your targets show protein as the priority. Day to day, hitting total calories and protein matters far more than perfect carb/fat splits." },
   { id: "warmup", keys: ["warm up", "warmup", "warm-up"], text: "Five minutes is enough: 2–3 minutes of easy movement to raise your temperature (brisk walk, easy bike, jumping jacks), then 1–2 light sets of the first exercise, building to your working weight. Warm muscles and rehearsed movement patterns lift better and get hurt less. Save long static stretching for after training." },
   { id: "form", keys: ["form", "technique", "how do i do", "proper way"], text: "General form rules that cover most lifts: brace your midsection like you're about to be poked in the stomach, move through the fullest range you can control, lower every rep under control (about 2–3 seconds), and stop a set when your form breaks down — not two reps after. Every exercise in the Train tab's library carries its own cues. If a movement ever causes sharp pain, stop; that's a professional question, not a form tweak." },
   { id: "sleep", keys: ["sleep", "tired", "recovery", "rest enough"], text: "Sleep is the cheapest performance upgrade there is: most adaptation (muscle repair, hormone balance, motor learning) happens overnight. Aim for 7–9 hours; you'll notice grip, mood and top sets all sag after short nights. If last night was rough, keep the session but trim a set or two — showing up at 80% beats skipping." },
   { id: "motivation", keys: ["motivat", "don't feel like", "dont feel like", "give up", "hard to start", "lazy"], text: "Motivation follows action more often than it precedes it. Shrink the ask: put your shoes on and do just the first exercise — most people finish the session once they've started. On truly flat days, a 15-minute easy version still counts and keeps the habit (and your streak) alive. Future-you is counting on boring consistency, not heroic days." },
-  { id: "hunger", keys: ["hungry", "hunger", "cravings", "snack"], text: "Some hunger on a fat-loss plan is expected, but ravenous-all-day usually means the deficit is too steep, protein/fibre is low, or sleep was short. Practical levers: protein at every meal, high-volume foods (vegetables, fruit, potatoes, soups), a planned snack instead of grazing, and not drinking your calories. ForgeFit never plans below its 1,200-calorie floor or faster than its healthy-rate caps — if you're struggling, that's worth more than willpower speeches." },
-  { id: "expectations", keys: ["how fast", "how long", "how much weight", "results", "expect"], text: "Healthy, sustainable rates — the ones ForgeFit plans around: fat loss up to about 1% of body weight per week at the very most (most people do better slower), muscle gain around 0.25–0.5% per week. The first week's scale change is mostly water. Judge progress on 3–4 week trends in weight, measurements and photos — all in your Progress tab — not on any single weigh-in." },
+  { id: "hunger", keys: ["hungry", "hunger", "cravings", "snack"], text: "Some hunger on a fat-loss plan is expected, but ravenous-all-day usually means the deficit is too steep, protein/fibre is low, or sleep was short. Practical levers: protein at every meal, high-volume foods (vegetables, fruit, potatoes, soups), a planned snack instead of grazing, and not drinking your calories. LogEasy never plans below its 1,200-calorie floor or faster than its healthy-rate caps — if you're struggling, that's worth more than willpower speeches." },
+  { id: "expectations", keys: ["how fast", "how long", "how much weight", "results", "expect"], text: "Healthy, sustainable rates — the ones LogEasy plans around: fat loss up to about 1% of body weight per week at the very most (most people do better slower), muscle gain around 0.25–0.5% per week. The first week's scale change is mostly water. Judge progress on 3–4 week trends in weight, measurements and photos — all in your Progress tab — not on any single weigh-in." },
   { id: "supplements", keys: ["supplement", "creatine", "protein powder", "vitamin", "pre-workout", "preworkout"], text: "Basics first: food, sleep and consistent training deliver most of the result. The short list with decent general evidence for healthy adults: creatine monohydrate (3–5 g/day, boring and effective for strength), protein powder as a convenience when you can't hit your protein target with food, and caffeine before training if you tolerate it. Everything else is a distant third. Specific products, doses for a condition, or anything interacting with medication is a professional's call, not mine." },
-  { id: "home", keys: ["no equipment", "at home", "home workout", "no gym", "bodyweight"], text: "Bodyweight training works — push-ups, split squats, hip hinges, rows under a sturdy table, and single-leg work can build real strength, especially in your first year. Progress by making leverage harder (elevate feet, slow down, pause, go single-limb) rather than adding endless reps. Set your equipment to 'No equipment' in the Profile tab and every plan ForgeFit builds stays bodyweight-only." },
+  { id: "home", keys: ["no equipment", "at home", "home workout", "no gym", "bodyweight"], text: "Bodyweight training works — push-ups, split squats, hip hinges, rows under a sturdy table, and single-leg work can build real strength, especially in your first year. Progress by making leverage harder (elevate feet, slow down, pause, go single-limb) rather than adding endless reps. Set your equipment to 'No equipment' in the Profile tab and every plan LogEasy builds stays bodyweight-only." },
   { id: "travel", keys: ["travel", "hotel", "vacation", "trip", "away"], text: "Travel rule: something beats nothing, and the habit is the cargo. A 20-minute hotel-room circuit (push-ups, split squats, glute bridges, planks) 2–3 times in a trip week keeps the chain alive; walk a lot; don't try to 'make up' missed sessions when you're home — just resume the plan where it makes sense." },
   { id: "shorttime", keys: ["no time", "busy", "short workout", " min", "quick workout"], text: "Short on time? Do the first two exercises of today's session as a superset (alternate them, minimal rest) for 15–20 minutes. Compound movements give you most of the benefit; the isolation finishers are the optional part. A short session done beats a perfect session postponed — and it keeps your streak and momentum intact." },
   { id: "stretching", keys: ["stretch", "mobility", "flexibility", "tight"], text: "Mobility work is best sprinkled, not marathon'd: 5 minutes after training or on rest days — couch stretch and hip hinges for hips, thoracic rotations and band-free shoulder circles for the upper back, calf work for ankles. Move to mild tension, never pain, and breathe slowly. If a joint is genuinely restricted or painful, that's assessment territory for a professional." },
@@ -1664,7 +1749,7 @@ function healthyRateInfo(profile){
   };
 }
 function dailyTargets(profile){
-  if (!profile) return { cal:0, p:0, c:0, fat:0, bmr:0, tdee:0, adj:0, rateLbPerWeek:0, rateCapLbPerWeek:0, rateCapped:false };
+  if (!profile) return { cal:0, p:0, c:0, fat:0, bmr:0, tdee:0, adj:0, calAdj:0, rateLbPerWeek:0, rateCapLbPerWeek:0, rateCapped:false };
   var b = bmr(profile), t = Math.round(b * num(profile.activity,1.55));
   var kg = lbToKg(num(profile.weightLb));
   var rate = healthyRateInfo(profile), adj = rate.dailyDelta, pPerKg = 1.8;
@@ -1674,7 +1759,20 @@ function dailyTargets(profile){
   var p = Math.round(pPerKg * kg);
   var fat = Math.round((cal * 0.25) / 9);
   var c = Math.max(0, Math.round((cal - p*4 - fat*9) / 4));
-  return { cal: cal, p: p, c: c, fat: fat, bmr: b, tdee: t, adj: adj, rateLbPerWeek: rate.lbPerWeek, rateCapLbPerWeek: rate.capLbPerWeek, rateCapped: rate.capped, healthyRate: rate };
+  /* v2.4.0: a user-confirmed adaptive adjustment (see adaptiveSuggestion)
+     rides on the LIVE profile's target only — the identity check means
+     preview profiles and other states are never affected. Protein stays
+     bodyweight-based; fat and carbs re-derive from the adjusted calories,
+     exactly the way macrosForCalories splits a calorie number. The 1,200
+     kcal floor still holds after the adjustment. */
+  var calAdj = 0;
+  try { if (typeof state !== "undefined" && state && state.profile === profile) calAdj = Math.round(num(state.targetAdjustKcal)); } catch(e){ calAdj = 0; }
+  if (calAdj){
+    cal = Math.max(1200, cal + calAdj);
+    fat = Math.round((cal * 0.25) / 9);
+    c = Math.max(0, Math.round((cal - p*4 - fat*9) / 4));
+  }
+  return { cal: cal, p: p, c: c, fat: fat, bmr: b, tdee: t, adj: adj, calAdj: calAdj, rateLbPerWeek: rate.lbPerWeek, rateCapLbPerWeek: rate.capLbPerWeek, rateCapped: rate.capped, healthyRate: rate };
 }
 function macrosForCalories(profile, cal){
   var p = dailyTargets(profile).p;
@@ -1960,7 +2058,7 @@ function generateMonthPlan(state, startDate){
   var rate = healthyRateInfo(state.profile), startWeight = num(state.profile.weightLb);
   var projectedChange = Math.round((cal.totalDelta / 3500) * 100) / 100;
   var adjustment = "";
-  if (rate.capped) adjustment = "Healthy-rate adjustment: your goal's usual pace would target about " + rate.requestedLbPerWeek + " lb/week. ForgeFit clamped it to " + rate.lbPerWeek + " lb/week (" + (rate.direction < 0 ? "no more than 1% of body weight" : "no more than 0.5% of body weight") + ") to avoid an extreme " + (rate.direction < 0 ? "deficit" : "surplus") + ".";
+  if (rate.capped) adjustment = "Healthy-rate adjustment: your goal's usual pace would target about " + rate.requestedLbPerWeek + " lb/week. LogEasy clamped it to " + rate.lbPerWeek + " lb/week (" + (rate.direction < 0 ? "no more than 1% of body weight" : "no more than 0.5% of body weight") + ") to avoid an extreme " + (rate.direction < 0 ? "deficit" : "surplus") + ".";
   if (cal.floorLimited) adjustment += (adjustment ? " " : "") + "Calorie-floor adjustment: the 1,200-calorie safety floor kept some daily targets higher than the raw plan, so the projected change is smaller than the unclamped math.";
   return {
     version: FF_VERSION, created: todayStr(), startDate: start, endDate: addDays(start, 27), cycleDays: 28,
@@ -2082,7 +2180,7 @@ function deloadDue(state){
 }
 function coachMessages(state){
   var msgs = [];
-  if (!state.profile){ msgs.push({ kind:"blue", text:"Welcome to ForgeFit! Set up your profile (Profile tab) and I'll build your training plan and calorie targets automatically." }); return msgs; }
+  if (!state.profile){ msgs.push({ kind:"blue", text:"Welcome to LogEasy! Set up your profile (Profile tab) and I'll build your training plan and calorie targets automatically." }); return msgs; }
   var today = todayStr();
   var streak = workoutStreak(state);
   if (streak >= 3) msgs.push({ kind:"", text:"" + streak + "-day workout streak — consistency like this is exactly what drives results. Keep the chain alive." });
@@ -2321,7 +2419,7 @@ function applyBackground(){
   if (val) val.textContent = String(bg ? bg.dim : BG_DEFAULT_DIM);
   if (st) st.textContent = bg
     ? "Background photo is on, dimmed " + bg.dim + "% so text stays readable. It lives only in this browser on this device."
-    : "No background photo — the standard ForgeFit theme is showing.";
+    : "No background photo — the standard LogEasy theme is showing.";
 }
 /* Validates + stores a background data URL. Returns true on success; on any
    refusal the previous background is kept untouched. */
@@ -2774,7 +2872,7 @@ function parseJSONActivity(text){
   try { root = JSON.parse(String(text || "")); }
   catch(e){ return { ok:false, error:"That JSON file could not be parsed — it may be truncated or corrupted. No data was changed." }; }
   if (root && !Array.isArray(root) && (root.profile !== undefined || root.foodLogs !== undefined || root.workoutLogs !== undefined))
-    return { ok:false, error:"That looks like a ForgeFit backup, not a device export. Restore backups from the Progress tab instead." };
+    return { ok:false, error:"That looks like a LogEasy backup, not a device export. Restore backups from the Progress tab instead." };
   var days = {}, rhrValues = {}, records = 0;
   function addCandidate(c){
     if (!c) return;
@@ -2818,7 +2916,7 @@ function parseJSONActivity(text){
     day.distanceMi = Math.round(num(day.distanceMi)*100)/100; day.sleepH = Math.round(num(day.sleepH)*10)/10; if (day.weightLb) day.weightLb = Math.round(num(day.weightLb)*10)/10;
   });
   var n = Object.keys(days).length;
-  if (!n) return { ok:false, error:"The JSON opened, but no dated activity, sleep, weight or heart-rate records ForgeFit supports were found in it." };
+  if (!n) return { ok:false, error:"The JSON opened, but no dated activity, sleep, weight or heart-rate records LogEasy supports were found in it." };
   var lower = String(text).toLowerCase();
   var source = lower.indexOf("fitbit") >= 0 ? "Fitbit JSON" : lower.indexOf("google fit") >= 0 || lower.indexOf("healthconnect") >= 0 || lower.indexOf("health connect") >= 0 ? "Google Fit / Health Connect JSON" : "Device JSON";
   return { ok:true, days: days, records: records, dayCount: n, source: source };
@@ -2851,10 +2949,10 @@ function detectAutoImport(fileName, text){
 var DEVICE_PLATFORMS = {
   apple: { name:"Apple Watch / iPhone Health", steps:["Open the Health app and tap your profile picture.", "Tap “Export All Health Data” and save the ZIP.", "Unzip it, then choose export.xml with Auto Import below."] },
   fitbit: { name:"Fitbit", steps:["Go to fitbit.com → Settings → Data export, or use Google Takeout for Fitbit.", "Download the daily activity CSV or JSON export.", "Choose one or more files with Auto Import below — steps, calories, distance, active minutes and sleep fill in automatically."] },
-  garmin: { name:"Garmin", steps:["In Garmin Connect, open Reports or your activity history and export a daily CSV (or request your account data export).", "Choose the CSV with Auto Import below.", "If its columns are unusual, ForgeFit opens the column-mapping fallback instead of guessing."] },
-  samsung: { name:"Samsung Health", steps:["In Samsung Health, open Settings → Download personal data / export your data.", "Choose the daily CSV export with Auto Import below.", "If its columns are unusual, use the generic CSV importer and column-mapping fallback."] },
+  garmin: { name:"Garmin", steps:["In Garmin Connect, open Reports or your activity history and export a daily CSV (or request your account data export).", "Choose the CSV with Auto Import below.", "If its columns are unusual, LogEasy opens the column-mapping fallback instead of guessing."] },
+  samsung: { name:"Samsung Health", steps:["Open the Samsung Health app on your phone.", "Tap the ⋮ button (three dots, top right corner), then tap Settings.", "Scroll down and tap “Download personal data”, then tap Download.", "If it asks, allow the permission and sign in with your Samsung account. Wait until the download finishes, then tap OK.", "Open the My Files app, tap Downloads, and open the Samsung Health folder. The daily files inside are spreadsheets (CSV) — those are the files LogEasy reads.", "Come back here and tap “I have the file — Next” below, then choose one of those CSV files. If LogEasy cannot match its columns, it will ask you to match them — it never guesses."] },
   google: { name:"Google Fit / Health Connect", steps:["Use Google Takeout → Fit for a JSON/CSV export, or export from Health Connect where your device offers it.", "Choose the exported files with Auto Import below.", "Dated steps, calories, distance, workouts and sleep that use supported fields fill in automatically."] },
-  other: { name:"Other tracker / spreadsheet", steps:["Export a daily CSV with a date column plus any of: steps, calories, distance, active minutes, workouts, sleep, weight or resting heart rate.", "Choose it with Auto Import below — “other” routes to the generic CSV path.", "If the columns cannot be recognized, ForgeFit opens the column-mapping fallback."] },
+  other: { name:"Other tracker / spreadsheet", steps:["Export a daily CSV with a date column plus any of: steps, calories, distance, active minutes, workouts, sleep, weight or resting heart rate.", "Choose it with Auto Import below — “other” routes to the generic CSV path.", "If the columns cannot be recognized, LogEasy opens the column-mapping fallback."] },
   none: { name:"No device", steps:["No export needed. Use Quick log on the Dashboard or the manual day entry below.", "You can connect a device later — this connect flow stays in the Devices tab."] }
 };
 function devicePlatformInfo(key){ return DEVICE_PLATFORMS[key] || null; }
@@ -3023,7 +3121,7 @@ function renderDevicePrompt(){
   var el = $("devicePrompt"); if (!el) return;
   if (hasDeviceData(state) || state.devicePromptDismissed){ el.innerHTML = ""; return; }
   el.innerHTML = '<div class="card"><div class="flexb"><h3 style="margin:0"><span class="hIco">' + icon("watch", 19) + '</span>Bring in your watch &amp; tracker data</h3><button class="btn sec sm" id="btnDismissDevicePrompt" type="button">Dismiss</button></div>' +
-    '<p class="small mut mt">Connect your device in the Devices tab and ForgeFit fills in steps, calories, workouts, sleep and more automatically from the export you choose. The file is read on this device and nothing is uploaded.</p>' +
+    '<p class="small mut mt">Connect your device in the Devices tab and LogEasy fills in steps, calories, workouts, sleep and more automatically from the export you choose. The file is read on this device and nothing is uploaded.</p>' +
     '<button class="btn" id="btnOpenConnect" type="button">Connect device data</button></div>';
   $("btnDismissDevicePrompt").addEventListener("click", function(){ state.devicePromptDismissed = true; saveState(state); renderDashboard(); });
   $("btnOpenConnect").addEventListener("click", openConnectFlow);
@@ -3044,7 +3142,7 @@ function renderStepHeadline(){
     '<span class="row" style="flex:0 1 250px"><input id="stepGoalInput" type="number" min="1000" max="50000" step="500" value="' + goal + '" aria-label="Daily step goal"><button class="btn sec sm" id="btnSaveStepGoal" type="button">Save goal</button><button class="micbtn" type="button" data-mic-for="stepGoalInput" aria-label="Dictate step goal">🎤</button></span></div>' +
     (act.steps ?
       '<div class="big">' + act.steps.toLocaleString() + '</div><div class="small"><b>' + Math.round(pct) + '% of your ' + goal.toLocaleString() + '-step goal</b>' + (source ? ' · from ' + esc(source) : '') + '</div><div class="bar"><i style="width:' + pct + '%;background:var(--acc)"></i></div>' :
-      '<div class="big">No step data yet</div><p class="small mut">Today\'s steps haven\'t been imported yet, so ForgeFit is not showing a misleading 0. Import today\'s device export, or use Quick log below if you enter steps manually.</p><button class="btn" id="btnImportToday" type="button">Import today\'s data</button>') +
+      '<div class="big">No step data yet</div><p class="small mut">Today\'s steps haven\'t been imported yet, so LogEasy is not showing a misleading 0. Import today\'s device export, or use Quick log below if you enter steps manually.</p><button class="btn" id="btnImportToday" type="button">Import today\'s data</button>') +
     '</div>';
   $("btnSaveStepGoal").addEventListener("click", function(){
     var v = Math.round(num($("stepGoalInput").value));
@@ -3056,7 +3154,7 @@ function renderStepHeadline(){
 function renderDashboard(){
   var today = todayStr();
   $("dashNoProfile").innerHTML = state.profile ? "" :
-    '<div class="err" style="background:#12222e;border-color:#1e4258;color:var(--txt)">👋 <b>Start here:</b> set up your profile in the <b>Profile</b> tab (bottom right). ForgeFit will build your workout plan and calorie targets from it. Or tap <b>Load demo</b> at the top to explore with sample data first.</div>';
+    '<div class="err" style="background:#12222e;border-color:#1e4258;color:var(--txt)">👋 <b>Start here:</b> set up your profile in the <b>Profile</b> tab (bottom right). LogEasy will build your workout plan and calorie targets from it. Or tap <b>Load demo</b> at the top to explore with sample data first.</div>';
   renderEncouragement();
   // today's brief: the one calm summary — today's workout + the big actions
   var tp = null;
@@ -3087,6 +3185,7 @@ function renderDashboard(){
     statCard("Active calories", act.activeCal ? act.activeCal + " kcal" : "—", "exercise minutes: " + (act.exerciseMin || 0)) +
     statCard("Workout streak", streak + (streak === 1 ? " day" : " days"), weekWorkouts + " workout(s) in the last 7 days") +
     statCard("Current weight", currentWeightLb(state) ? currentWeightLb(state) + " lb" : "—", state.profile && state.profile.targetWeightLb ? "target: " + state.profile.targetWeightLb + " lb" : "add a weigh-in in Progress");
+  renderGlance(today);
   // calorie ring
   var pct = t.cal ? clamp(eaten.cal / t.cal, 0, 1) : 0;
   var C = 2 * Math.PI * 52;
@@ -3133,6 +3232,265 @@ function renderDashboard(){
   var stepDays = 0, stepSum = 0;
   for (var j = 0; j < 7; j++){ var aa = state.activity[addDays(ws, j)]; if (aa && aa.steps){ stepDays++; stepSum += aa.steps; } }
   $("weeklySummary").textContent = "This week: " + wkLogs + " workout(s) logged" + (stepDays ? ", averaging " + Math.round(stepSum/stepDays).toLocaleString() + " steps on " + stepDays + " tracked day(s)." : ". Import a device file in the Devices tab to fill in your steps and active calories automatically.");
+}
+
+/* ---------- v2.4.0: today at a glance, next step, adaptive target,
+   favorites / recents / copy-yesterday ----------
+   Everything below derives from the same single records the rest of the
+   app uses (foodLogs, activity, weights, profile) at render time — no
+   second copies, so an edit anywhere shows here immediately (§10). */
+
+/* Weigh-in points from BOTH places LogEasy stores weight: the Progress
+   weigh-in list and the daily activity records. One point per date; the
+   weigh-in list wins when both exist (it is the primary source, the same
+   precedence currentWeightLb uses). Sorted oldest → newest. */
+function weightTrendPoints(s){
+  var byDate = {};
+  Object.keys((s && s.activity) || {}).forEach(function(d){
+    var lb = num(s.activity[d] && s.activity[d].weightLb);
+    if (lb > 0 && parseDate(d)) byDate[d] = lb;
+  });
+  ((s && s.weights) || []).forEach(function(w){
+    if (w && parseDate(w.date) && num(w.lb) > 0) byDate[w.date] = num(w.lb);
+  });
+  return Object.keys(byDate).sort().map(function(d){ return { date: d, lb: byDate[d] }; });
+}
+
+/* Adaptive target suggestion (v2.4.0). Pure function of state + today —
+   it never mutates anything; applying is a separate explicit tap.
+   Method: least-squares slope over weigh-ins spanning at least 13 days
+   inside the last 21 days, with the newest weigh-in no more than 3 days
+   old. The proposal is (goal pace − actual trend) × 500 kcal — the app's
+   own 3,500 kcal ≈ 1 lb approximation — clamped to ±150 kcal and rounded
+   to the nearest 10. Returns null when there isn't ~14 days of data, the
+   data is stale, or the user is within ±25 kcal of on-pace: the feature
+   stays silent rather than nagging. */
+function adaptiveSuggestion(s, today){
+  if (!s || !s.profile) return null;
+  today = today || todayStr();
+  var pts = weightTrendPoints(s).filter(function(p){ var age = daysBetween(p.date, today); return age >= 0 && age <= 21; });
+  if (pts.length < 2) return null;
+  var first = pts[0], last = pts[pts.length - 1];
+  var span = daysBetween(first.date, last.date);
+  if (span < 13) return null;
+  if (daysBetween(last.date, today) > 3) return null;
+  var n = pts.length, sx = 0, sy = 0, sxx = 0, sxy = 0;
+  pts.forEach(function(p){ var x = daysBetween(first.date, p.date), y = p.lb; sx += x; sy += y; sxx += x * x; sxy += x * y; });
+  var den = n * sxx - sx * sx; if (!den) return null;
+  var perWeek = Math.round(((n * sxy - sx * sy) / den) * 7 * 100) / 100;
+  var rate = healthyRateInfo(s.profile);
+  var expected = rate.direction * rate.lbPerWeek;
+  var rawDelta = (expected - perWeek) * 500;
+  var roundedRaw = Math.round(rawDelta / 10) * 10;
+  var delta = Math.max(-150, Math.min(150, roundedRaw));
+  if (Math.abs(delta) < 25) return null;
+  var cur = dailyTargets(s.profile).cal;
+  return { perWeek: perWeek, expected: expected, goal: s.profile.goal || "", rawDelta: Math.round(rawDelta),
+           delta: delta, capped: delta !== roundedRaw, current: cur, proposed: Math.max(1200, cur + delta),
+           points: n, from: first.date, to: last.date, spanDays: span };
+}
+
+/* The ONE next-step card (v2.4.0): the single most useful thing left
+   today, derived only from what is actually missing. Priority: set up
+   profile → log the current meal → start today's planned workout →
+   add steps → weigh in (none in the last 7 days). Returns null when
+   nothing is missing — no card at all rather than a filler card. */
+function nextActionFor(s, today, now){
+  if (!s || !s.profile) return { icon: "👋", text: "Set up your profile", sub: "LogEasy builds your plan and calorie targets from it.", view: "profile", cta: "Open Profile" };
+  today = today || todayStr(); now = now || new Date();
+  var eaten = foodDayTotals(s, today);
+  var meal = defaultMealForNow(now);
+  var mealLogged = (s.foodLogs || []).some(function(f){ return f.date === today && f.meal === meal; });
+  if (!mealLogged) return { icon: "🍽️", text: "Log " + meal.toLowerCase(), sub: eaten.items ? "You've logged " + Math.round(eaten.cal) + " kcal so far today — " + meal.toLowerCase() + " isn't in yet." : "Nothing logged yet today.", view: "nutrition", cta: "Log food" };
+  var tp = null;
+  if (s.monthPlan && Array.isArray(s.monthPlan.days)) tp = s.monthPlan.days.filter(function(d){ return d.date === today; })[0] || null;
+  if (!tp && s.plan) tp = s.plan.days.filter(function(d){ return d.date === today; })[0] || null;
+  var loggedToday = (s.workoutLogs || []).some(function(l){ return l.date === today; });
+  if (tp && !tp.rest && !loggedToday) return { icon: "🏋️", text: "Start today's workout", sub: (tp.name || "Training") + " — " + (tp.exercises ? tp.exercises.length : 0) + " exercises planned.", view: "train", cta: "Open Train" };
+  var act = s.activity[today] || blankDay();
+  if (!num(act.steps)) return { icon: "👟", text: "Add today's steps", sub: "Import a device file in the Devices tab, or quick-log them further down this page.", view: "activity", cta: "Open Devices" };
+  var pts = weightTrendPoints(s);
+  var lastW = pts.length ? pts[pts.length - 1].date : "";
+  if (!lastW || daysBetween(lastW, today) >= 7) return { icon: "⚖️", text: "Log a weigh-in", sub: lastW ? "Last weigh-in was " + lastW + "." : "No weigh-in logged yet — it powers your weight trend.", view: "progress", cta: "Open Progress" };
+  return null;
+}
+
+function lastSleep(s, today){
+  var dates = [today, addDays(today, -1), addDays(today, -2)];
+  for (var i = 0; i < dates.length; i++){ var a = (s.activity || {})[dates[i]]; if (a && num(a.sleepH) > 0) return { hours: num(a.sleepH), date: dates[i] }; }
+  return null;
+}
+function glanceData(s, today){
+  today = today || todayStr();
+  var t = dailyTargets(s.profile), eaten = foodDayTotals(s, today);
+  var act = (s.activity || {})[today] || blankDay();
+  var sl = lastSleep(s, today);
+  var pts = weightTrendPoints(s);
+  var lastW = pts.length ? pts[pts.length - 1] : null;
+  return {
+    hasProfile: !!s.profile,
+    calLeft: s.profile ? Math.max(0, t.cal - eaten.cal) : null, calEaten: eaten.cal, calTarget: t.cal,
+    steps: num(act.steps), stepGoal: num(s.stepGoal, 10000),
+    sleepH: sl ? sl.hours : 0, sleepDate: sl ? sl.date : "",
+    weightLb: currentWeightLb(s), weightDate: lastW ? lastW.date : "", targetWeightLb: s.profile ? num(s.profile.targetWeightLb) : 0
+  };
+}
+function glanceCardHtml(label, value, sub, view){
+  return '<button type="button" class="glanceCard" data-glance="' + view + '"><div class="small mut">' + esc(label) + '</div><div class="gVal">' + esc(value) + '</div><div class="small mut">' + esc(sub) + '</div></button>';
+}
+function renderGlance(today){
+  today = today || todayStr();
+  var g = glanceData(state, today);
+  var row = $("glanceRow");
+  if (row){
+    row.innerHTML =
+      glanceCardHtml("Calories left today", g.hasProfile ? g.calLeft.toLocaleString() + " kcal" : "—", g.hasProfile ? g.calEaten.toLocaleString() + " of " + g.calTarget.toLocaleString() + " kcal eaten" : "Set up your profile to see targets", "nutrition") +
+      glanceCardHtml("Steps today", g.steps ? g.steps.toLocaleString() : "—", g.steps ? "goal " + g.stepGoal.toLocaleString() : "Import a device file or quick-log below", "activity") +
+      glanceCardHtml("Last night's sleep", g.sleepH ? (Math.round(g.sleepH * 10) / 10) + " h" : "—", g.sleepH ? (g.sleepDate === today || g.sleepDate === addDays(today, -1) ? "last night" : "on " + g.sleepDate) : "Quick-log sleep below or import it", "activity") +
+      glanceCardHtml("Current weight", g.weightLb ? g.weightLb + " lb" : "—", g.targetWeightLb ? "target " + g.targetWeightLb + " lb" : (g.weightDate ? "weighed " + g.weightDate : "Add a weigh-in in Progress"), "progress");
+    row.querySelectorAll("[data-glance]").forEach(function(b){
+      b.addEventListener("click", function(){ switchView(b.getAttribute("data-glance")); });
+    });
+  }
+  var naBox = $("nextActionCard");
+  if (naBox){
+    var na = state.glanceDismissed === today ? null : nextActionFor(state, today);
+    naBox.innerHTML = na
+      ? '<div class="nextAct"><span class="naText">' + na.icon + " " + esc(na.text) + '</span><span class="small mut" style="flex:1 1 220px">' + esc(na.sub) + '</span><span class="row" style="flex:0 0 auto"><button class="btn" id="btnNextAction" type="button" style="min-height:48px">' + esc(na.cta) + '</button><button class="btn sec" id="btnNextActionDismiss" type="button" style="min-height:48px" aria-label="Dismiss for today">✕</button></span></div>'
+      : "";
+    if (na){
+      $("btnNextAction").addEventListener("click", function(){ switchView(na.view); });
+      $("btnNextActionDismiss").addEventListener("click", function(){
+        state.glanceDismissed = today; saveState(state); renderDashboard();
+      });
+    }
+  }
+  renderAdaptiveCard(today);
+}
+function fmtRate(v){ return (v > 0 ? "+" : "") + (Math.round(v * 10) / 10); }
+function renderAdaptiveCard(today){
+  var box = $("adaptiveCard"); if (!box) return;
+  today = today || todayStr();
+  var adj = Math.round(num(state.targetAdjustKcal));
+  var sug = adaptiveSuggestion(state, today);
+  var due = !state.adaptiveLastShown || daysBetween(state.adaptiveLastShown, today) >= 7;
+  if (sug && due){
+    /* Being shown counts for the once-a-week gate — set it as the card
+       renders, the same save-during-render pattern renderMonthPlan uses,
+       so a reload or a "Not now" tap can't re-nag inside the week. */
+    if (state.adaptiveLastShown !== today){ state.adaptiveLastShown = today; saveState(state); }
+    var trendTxt = sug.perWeek === 0 ? "been flat" : "been trending " + (sug.perWeek < 0 ? "down" : "up") + " about " + (Math.round(Math.abs(sug.perWeek) * 10) / 10) + " lb/week";
+    var goalTxt = sug.goal === "lose" ? "Your goal pace is losing about " + (Math.round(Math.abs(sug.expected) * 10) / 10) + " lb/week"
+      : sug.goal === "gain" || sug.goal === "performance" ? "Your goal pace is gaining about " + (Math.round(Math.abs(sug.expected) * 10) / 10) + " lb/week"
+      : "Your goal is to hold your weight steady";
+    box.innerHTML = '<div class="card" style="border-color:#2e6b41;background:linear-gradient(135deg,#1a3a24,#14251b 55%,#12242e)">' +
+      '<h3 style="margin-top:0">⚖️ Target check — from your weigh-ins</h3>' +
+      '<p>Your weight has ' + trendTxt + ' over the last ' + sug.spanDays + ' days (' + sug.points + ' weigh-ins, ' + esc(sug.from) + ' → ' + esc(sug.to) + '). ' + goalTxt + '.</p>' +
+      '<p><b>Suggested target: ' + sug.proposed.toLocaleString() + ' kcal/day</b> — you\'re on ' + sug.current.toLocaleString() + ' now (' + (sug.delta > 0 ? "+" : "") + sug.delta + ' kcal).</p>' +
+      '<p class="small mut">How this was figured: (goal pace ' + fmtRate(sug.expected) + ' lb/week − your trend ' + fmtRate(sug.perWeek) + ' lb/week) × 500 kcal per lb/week = ' + (sug.rawDelta > 0 ? "+" : "") + sug.rawDelta + ' kcal' + (sug.capped ? ', held to the ±150 kcal limit' : '') + ', rounded to the nearest 10. Worked out on this device from your own weigh-ins — an estimate from the rough 3,500 kcal ≈ 1 lb rule, not medical advice. Nothing changes unless you tap below.</p>' +
+      '<div class="row"><button class="btn" id="btnAdaptiveApply" type="button" style="min-height:48px">Use ' + sug.proposed.toLocaleString() + ' kcal</button><button class="btn sec" id="btnAdaptiveDismiss" type="button" style="min-height:48px">Not now</button></div></div>';
+    $("btnAdaptiveApply").addEventListener("click", function(){
+      state.targetAdjustKcal = Math.max(-1000, Math.min(1000, Math.round(num(state.targetAdjustKcal)) + sug.delta));
+      state.targetAdjustDate = today;
+      state.adaptiveLastShown = today;
+      saveState(state); renderAll();
+      toast("Calorie target updated — it now shows the same everywhere your target appears.");
+    });
+    $("btnAdaptiveDismiss").addEventListener("click", function(){ renderDashboard(); });
+    return;
+  }
+  if (adj){
+    box.innerHTML = '<div class="card flat" style="margin-bottom:14px"><b>Adaptive adjustment on:</b> your daily calorie target includes ' + (adj > 0 ? "+" : "") + adj + ' kcal/day, confirmed by you' + (state.targetAdjustDate ? " on " + esc(state.targetAdjustDate) : "") + '. <button class="btn sec sm" id="btnAdaptiveRemove" type="button" style="min-height:44px">Remove adjustment</button></div>';
+    $("btnAdaptiveRemove").addEventListener("click", function(){
+      state.targetAdjustKcal = 0; state.targetAdjustDate = "";
+      saveState(state); renderAll();
+      toast("Adaptive adjustment removed — your target is back to the plan figure.");
+    });
+    return;
+  }
+  box.innerHTML = "";
+}
+
+/* ---------- favorites / recents / copy-yesterday (v2.4.0) ---------- */
+function isFavorite(name){ return (state.favoriteFoods || []).indexOf(name) >= 0; }
+function toggleFavorite(name){
+  var favs = state.favoriteFoods || (state.favoriteFoods = []);
+  var i = favs.indexOf(name);
+  if (i >= 0) favs.splice(i, 1); else favs.push(name);
+  saveState(state); renderNutrition();
+}
+function resolveFoodByName(s, name){
+  var all = allFoods(s);
+  for (var i = 0; i < all.length; i++) if (all[i].name === name) return all[i];
+  return null;
+}
+/* Rebuild a per-serving food object from a log entry (entry values were
+   stored pre-multiplied by qty). Used only when the food no longer
+   resolves in the database — e.g. a custom food that was deleted — so a
+   recent row never has to invent numbers. */
+function foodFromLogEntry(f){
+  var q = num(f.qty, 1) || 1;
+  return { name: f.name, serving: f.serving, cal: Math.round(num(f.cal) / q), p: Math.round(num(f.p) / q), c: Math.round(num(f.c) / q), fat: Math.round(num(f.fat) / q), m: f.m ? scaleMicros(f.m, 1 / q) : null, db: !!f.dbFood };
+}
+/* Quick-log rows: pinned favorites first (in pin order), then the most
+   recently logged distinct foods, newest first, capped at 12 rows. A
+   favorite that no longer resolves in the database is skipped — never
+   rendered with invented numbers. */
+function quickFoodRows(s){
+  var rows = [], seen = {};
+  (s.favoriteFoods || []).forEach(function(name){
+    var f = resolveFoodByName(s, name);
+    if (f && !seen[name]){ seen[name] = 1; rows.push({ food: f, fav: true }); }
+  });
+  var logs = s.foodLogs || [];
+  for (var i = logs.length - 1; i >= 0 && rows.length < 12; i--){
+    var e = logs[i]; if (!e || seen[e.name]) continue; seen[e.name] = 1;
+    rows.push({ food: resolveFoodByName(s, e.name) || foodFromLogEntry(e), fav: false });
+  }
+  return rows;
+}
+var lastQuickRows = [];
+function qtyChipsHtml(inputId){
+  return '<span class="chips" role="group" aria-label="Quick quantity">' + [0.5, 1, 1.5, 2].map(function(v){ return '<button type="button" data-chip-for="' + inputId + '" data-chip-val="' + v + '">' + v + '</button>'; }).join("") + '</span>';
+}
+function renderFoodQuick(){
+  var box = $("foodQuick"); if (!box) return;
+  lastQuickRows = quickFoodRows(state);
+  if (!lastQuickRows.length){ box.innerHTML = ""; return; }
+  box.innerHTML = '<h3 style="margin-top:12px">⭐ Favorites &amp; recent</h3>' +
+    '<p class="small mut">One-tap re-logging: set a quantity (the number buttons fill it in for you), then tap Add. Tap ☆ on any food to pin it as a favorite.</p>' +
+    lastQuickRows.map(function(r, i){
+      var f = r.food;
+      return '<div class="quickRow"><div class="flexb"><span><b>' + esc(f.name) + '</b> <span class="small mut">' + esc(f.serving) + " — " + f.cal + " kcal · P " + f.p + " · C " + f.c + " · F " + f.fat + (r.fav ? ' <span class="pill">favorite</span>' : '') + '</span></span>' +
+      '<span class="row" style="flex:0 1 260px"><input type="number" min="0.05" step="0.25" value="1" id="qlq' + i + '" inputmode="decimal" aria-label="quantity"><button class="btn sm" data-ql-add="' + i + '" type="button">Add</button>' +
+      '<button class="btn sec sm favStar" data-ql-fav="' + i + '" type="button" aria-label="Toggle favorite">' + (r.fav ? "★" : "☆") + '</button></span></div>' + qtyChipsHtml("qlq" + i) + '</div>';
+    }).join("");
+  document.querySelectorAll("[data-ql-add]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var i = +b.getAttribute("data-ql-add");
+      var qEl = $("qlq" + i);
+      var qty = clamp(num(qEl ? qEl.value : 1, 1), 0.05, 100);
+      addFoodEntry(lastQuickRows[i].food, qty, $("foodMeal").value, $("foodDate").value || todayStr());
+    });
+  });
+  document.querySelectorAll("[data-ql-fav]").forEach(function(b){
+    b.addEventListener("click", function(){ toggleFavorite(lastQuickRows[+b.getAttribute("data-ql-fav")].food.name); });
+  });
+}
+/* Copy yesterday: duplicates the previous day's food entries onto the
+   target day as new records in the same foodLogs set (new ids), so the
+   log, the dashboard and the glance cards all agree (§10). Returns the
+   number of entries copied. */
+function copyYesterdayEntries(s, targetDate){
+  var src = addDays(targetDate, -1);
+  var items = (s.foodLogs || []).filter(function(f){ return f.date === src; });
+  items.forEach(function(f){
+    var c = {}; for (var k in f) c[k] = f[k];
+    c.id = uid(); c.date = targetDate;
+    if (f.m && typeof f.m === "object"){ c.m = {}; for (var mk in f.m) c.m[mk] = f.m[mk]; }
+    s.foodLogs.push(c);
+  });
+  return items.length;
 }
 
 /* ---------- trainer ---------- */
@@ -3729,7 +4087,7 @@ function updatePlayerStats(){
   if (bEl) bEl.textContent = burn ? "~" + burn.total + " kcal" : "—";
   if (nEl) nEl.textContent = burn
     ? "Est. burn is an estimate from your body weight, exercise intensity (METs) and elapsed time. Your device totals for the day are kept separate and always win — this estimate is never added on top of them."
-    : "Add your weight in the Profile tab (or log a weigh-in) and ForgeFit can estimate this workout's calorie burn. No weight on file, no guessed number.";
+    : "Add your weight in the Profile tab (or log a weigh-in) and LogEasy can estimate this workout's calorie burn. No weight on file, no guessed number.";
 }
 function stopPlayerTimers(){
   if (playerTimer !== null && typeof clearInterval === "function") clearInterval(playerTimer);
@@ -3962,6 +4320,8 @@ function renderNutrition(){
   $("targetExplain").innerHTML = state.profile
     ? "How your coach sets targets: resting burn (BMR) <b>" + t.bmr + " kcal</b> via the Mifflin-St Jeor equation for a " + esc(state.profile.sex) + ", " + state.profile.age + ", " + state.profile.weightLb + " lb. Maintenance (TDEE) = BMR × activity " + state.profile.activity + " = <b>" + t.tdee + " kcal</b>. Healthy-rate goal adjustment (" + esc(state.profile.goal) + "): <b>" + (t.adj > 0 ? "+" : "") + t.adj + " kcal</b> for <b>" + t.rateLbPerWeek + " lb/week</b>" + (t.rateCapped ? " — clamped to the healthy cap of " + t.rateCapLbPerWeek + " lb/week" : "") + " → target <b>" + t.cal + " kcal</b>, never below the 1,200-kcal floor. The Train tab lays the same math out as weekly and monthly budgets. Protein is set by bodyweight (" + (state.profile.goal === "lose" ? "2.2" : state.profile.goal === "maintain" ? "1.8" : "2.0") + " g/kg), fat at 25% of calories, carbs fill the rest."
     : "Set up your profile to see how targets are calculated.";
+  if (state.profile && t.calAdj) $("targetExplain").innerHTML += ' <b>Adaptive adjustment on:</b> your confirmed suggestion of ' + (t.calAdj > 0 ? "+" : "") + t.calAdj + ' kcal/day' + (state.targetAdjustDate ? " (confirmed " + esc(state.targetAdjustDate) + ")" : "") + ' is included in the target above — manage it from the Target check card on the Today page.';
+  renderFoodQuick();
   renderFoodResults();
   // suggestions
   var sg = suggestFoods(state, date);
@@ -4005,8 +4365,9 @@ function renderFoodResults(){
   lastFoodResults = q ? foods.filter(function(f){ return f.name.toLowerCase().indexOf(q) >= 0; }).slice(0, 12) : foods.slice(0, 8);
   $("foodResults").innerHTML = (q ? "" : '<p class="small mut mb">Popular foods — start typing to search all ' + foods.length + ':</p>') +
     lastFoodResults.map(function(f, i){
-      return '<div class="flexb" style="padding:6px 0;border-bottom:1px solid var(--line)"><span><button class="foodNameBtn" data-panel-food="' + i + '" type="button">' + esc(f.name) + '</button> <span class="small mut">' + esc(f.serving) + " — " + f.cal + " kcal · P " + f.p + " · C " + f.c + " · F " + f.fat + '</span></span>' +
-      '<span class="row" style="flex:0 1 190px"><input type="number" min="0.25" step="0.25" value="1" id="fq' + i + '" inputmode="decimal" aria-label="quantity"><button class="btn sm" data-add-food="' + i + '" type="button">Add</button></span></div>';
+      return '<div style="padding:6px 0;border-bottom:1px solid var(--line)"><div class="flexb"><span><button class="foodNameBtn" data-panel-food="' + i + '" type="button">' + esc(f.name) + '</button> <span class="small mut">' + esc(f.serving) + " — " + f.cal + " kcal · P " + f.p + " · C " + f.c + " · F " + f.fat + '</span></span>' +
+      '<span class="row" style="flex:0 1 260px"><input type="number" min="0.05" step="0.25" value="1" id="fq' + i + '" inputmode="decimal" aria-label="quantity"><button class="btn sm" data-add-food="' + i + '" type="button">Add</button>' +
+      '<button class="btn sec sm favStar" data-fav-food="' + i + '" type="button" aria-label="Toggle favorite">' + (isFavorite(f.name) ? "★" : "☆") + '</button></span></div>' + qtyChipsHtml("fq" + i) + '</div>';
     }).join("");
   document.querySelectorAll("[data-add-food]").forEach(function(b){
     b.addEventListener("click", function(){
@@ -4015,6 +4376,9 @@ function renderFoodResults(){
       var qty = clamp(num(qEl ? qEl.value : 1, 1), 0.05, 100);
       addFoodEntry(lastFoodResults[i], qty, $("foodMeal").value, $("foodDate").value || todayStr());
     });
+  });
+  document.querySelectorAll("[data-fav-food]").forEach(function(b){
+    b.addEventListener("click", function(){ toggleFavorite(lastFoodResults[+b.getAttribute("data-fav-food")].name); });
   });
   document.querySelectorAll("[data-panel-food]").forEach(function(b){
     b.addEventListener("click", function(){ openFoodPanelForResult(+b.getAttribute("data-panel-food")); });
@@ -4053,7 +4417,7 @@ function openFoodPanel(o){
     microRowsHtml(o.m, o.complete) + '</table>' +
     '<p class="small mut mt">' + (o.complete
       ? 'Full reference data for this food from USDA FoodData Central — standard values for the food itself. Your actual plate varies with brand, cut, and preparation, so treat these as close approximations, not lab measurements.'
-      : 'This entry carries only the nutrients shown. Anything marked “—” is unknown for this food — ForgeFit never fills an unknown with a guessed number.') + '</p>';
+      : 'This entry carries only the nutrients shown. Anything marked “—” is unknown for this food — LogEasy never fills an unknown with a guessed number.') + '</p>';
   $("foodPanel").style.display = "flex";
 }
 function closeFoodPanel(){ var p = $("foodPanel"); if (p) p.style.display = "none"; }
@@ -4091,16 +4455,78 @@ function renderDeviceSteps(){
   var key = $("devicePlatform") ? $("devicePlatform").value : state.devicePlatform;
   var info = devicePlatformInfo(key);
   var el = $("deviceSteps"); if (!el) return;
-  if (!info){ el.innerHTML = '<p class="small mut">Pick a platform and ForgeFit shows the exact export steps here. The same Auto Import button works for every supported file.</p>'; return; }
-  el.innerHTML = '<div class="okb"><b>' + esc(info.name) + '</b><ol style="margin:8px 0 0 18px">' + info.steps.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join("") + '</ol>' +
-    (key === "none" ? '<div class="mt"><button class="btn sec sm" id="btnNoneDeviceSetup" type="button">Finish setup without a device</button></div>' : '') + '</div>';
+  if (!info){ el.innerHTML = '<p class="small mut">Go back and pick your device or app first — then this step shows you exactly how to save its file.</p>'; return; }
+  el.innerHTML = '<div class="okb"><b>Save your file from ' + esc(info.name) + '</b><p class="small" style="margin-top:6px">Do these steps in the ' + esc(info.name) + ' app or website. Take your time — LogEasy will wait right here, and tapping Back will not lose your choice.</p><ol style="margin:8px 0 0 18px">' + info.steps.map(function(s){ return '<li style="margin-bottom:6px">' + esc(s) + '</li>'; }).join("") + '</ol>' +
+    (key === "none" ? '<div class="mt"><button class="btn" id="btnNoneDeviceSetup" type="button" style="min-height:48px">Finish setup without a device</button></div>' : '') + '</div>';
   var nb = $("btnNoneDeviceSetup");
   if (nb) nb.addEventListener("click", function(){ state.deviceSetupComplete = true; saveState(state); toast("Setup finished — manual logging is ready, and this connect flow stays here if you get a device later."); switchView("dashboard"); renderAll(); });
+}
+/* ---------- connect wizard (v2.3.1): one decision per screen, numbered
+   steps, Back never loses the chosen platform. In-memory step only — the
+   platform choice itself keeps living in state.devicePlatform. ---------- */
+var wizardStep = 1;
+var lastWizardEntries = null;
+function wizardTotal(){
+  var k = state.devicePlatform || ($("devicePlatform") ? $("devicePlatform").value : "");
+  return k === "none" ? 2 : 3;
+}
+function wizardStepLabel(n){
+  if (n === 1) return "Pick your device or app";
+  if (n === 2) return wizardTotal() === 2 ? "Finish without a device" : "Save the file from your app";
+  return "Pick the file and check what came in";
+}
+function setWizardStep(n){
+  var total = wizardTotal();
+  wizardStep = Math.max(1, Math.min(total, n));
+  var s1 = $("wizardStep1"), s2 = $("wizardStep2"), s3 = $("wizardStep3"), p = $("wizardProgress"), nx2 = $("btnWizardNext2");
+  if (s1) s1.style.display = wizardStep === 1 ? "" : "none";
+  if (s2) s2.style.display = wizardStep === 2 ? "" : "none";
+  if (s3) s3.style.display = wizardStep === 3 ? "" : "none";
+  if (nx2) nx2.style.display = total === 2 ? "none" : "";
+  if (p) p.innerHTML = "<b>Step " + wizardStep + " of " + total + "</b> — " + esc(wizardStepLabel(wizardStep));
+  if (wizardStep === 2) renderDeviceSteps();
+}
+function renderWizard(){ setWizardStep(wizardStep); }
+/* Plain confirmation of exactly what an import did, built only from the
+   importer's own report (days touched/changed + the fields it actually
+   found). A data type the importer produced no figure for is never named. */
+function wizardFieldList(fields){
+  var labels = Object.keys(fields || {}).map(function(f){ return AUTO_FIELD_LABELS[f] || f; });
+  if (labels.length <= 1) return labels.join("");
+  return labels.slice(0, -1).join(", ") + " and " + labels[labels.length - 1];
+}
+function wizardConfirmationHtml(entries){
+  if (!entries || !entries.length) return "";
+  var parts = entries.map(function(e){
+    if (e.status === "imported" && e.report){
+      var r = e.report, fields = wizardFieldList(r.fields);
+      var range = r.dateRange ? " (" + r.dateRange.start + " to " + r.dateRange.end + ")" : "";
+      if (!fields) return "<b>" + esc(e.file) + "</b>: the file was read, but it held no data LogEasy could use — nothing was added from it.";
+      if (r.daysChanged > 0) return "<b>Imported " + r.daysChanged + " day(s) of " + esc(fields) + "</b>" + range + " from " + esc(e.file) + ".";
+      return "<b>" + esc(e.file) + "</b>: those " + r.daysTouched + " day(s) of " + esc(fields) + " were already in LogEasy, so nothing was added and nothing was double-counted.";
+    }
+    if (e.status === "meals") return "<b>" + esc(e.file) + "</b>: " + esc(e.message || "meals imported — see the Nutrition tab.");
+    if (e.status === "needsMapping") return "<b>" + esc(e.file) + "</b>: not imported yet — LogEasy could not match its columns. Use the column-matching form under “Advanced” below; nothing was imported from this file yet and nothing was guessed.";
+    return "<b>" + esc(e.file) + "</b>: not imported — " + esc(e.error || e.statusLabel || "the file could not be read.");
+  });
+  return '<div class="okb"><b>Done — here is exactly what happened:</b><br>' + parts.join("<br>") + '<br><span class="small">LogEasy only names the kinds of data it actually found in your file. If a kind is not named, this file gave LogEasy no number for it — nothing was guessed or made up.</span></div>';
+}
+function renderWizardConfirmation(entries){
+  lastWizardEntries = entries;
+  var el = $("wizardConfirm"); if (el) el.innerHTML = wizardConfirmationHtml(entries);
+}
+/* Help (§11): rebuild the Email-us href from FF_VERSION so a version bump
+   can never leave a stale version in the subject. Static href is fallback. */
+function syncHelpEmail(){
+  var a = $("helpEmailBtn"); if (!a) return;
+  a.href = "mailto:whitewolfbackoffice@gmail.com?subject=" + encodeURIComponent("LogEasy help — v" + FF_VERSION) +
+    "&body=" + encodeURIComponent("Tell us what you were trying to do and what happened:\n\n");
 }
 function renderActivity(){
   var platformSel = $("devicePlatform");
   if (platformSel && document.activeElement !== platformSel) platformSel.value = state.devicePlatform || "";
   renderDeviceSteps();
+  renderWizard();
   // sources panel
   var bySource = {};
   Object.keys(state.activity).forEach(function(d){
@@ -4157,7 +4583,7 @@ function renderAutoImportReport(entries){
     if (e.message) s += '<br><span class="small">' + esc(e.message) + '</span>';
     if (e.error) s += '<br><span class="small">Skipped/unrecognized: ' + esc(e.error) + '</span>';
     return s + '</div>';
-  }).join("") + '<div class="small mt">Reminder: this was a one-tap import from export files — ForgeFit does not live-sync or background-sync in this offline file.</div></div>';
+  }).join("") + '<div class="small mt">Reminder: this was a one-tap import from export files — LogEasy does not live-sync or background-sync in this offline file.</div></div>';
 }
 function showAutoGenericMapping(text, name){
   pendingAutoGeneric = { text:text, name:name };
@@ -4179,7 +4605,7 @@ function showAutoGenericMapping(text, name){
     pendingAutoGeneric = null; $("genericMapping").innerHTML = "";
     var entries = lastAutoEntries.filter(function(e){ return !(e.status === "needsMapping" && e.file === pending.name); });
     entries.push({ file:pending.name, status:"imported", statusLabel:"Generic CSV imported after column mapping", report:report });
-    saveState(state); renderAutoImportReport(entries); renderAll(); renderAutoImportReport(entries);
+    saveState(state); renderAutoImportReport(entries); renderAll(); renderAutoImportReport(entries); renderWizardConfirmation(entries);
     toast("Auto Import finished with your column mapping.");
   });
 }
@@ -4213,11 +4639,11 @@ function handleAutoFiles(input){
     var reader = new FileReader();
     reader.onload = function(){
       entries.push(processAutoImportFile(f.name, String(reader.result || "")));
-      if (--remaining === 0){ ffConnectFlowOpen = false; saveState(state); renderAutoImportReport(entries); renderAll(); renderAutoImportReport(entries); }
+      if (--remaining === 0){ ffConnectFlowOpen = false; saveState(state); renderAutoImportReport(entries); renderAll(); renderAutoImportReport(entries); renderWizardConfirmation(entries); }
     };
     reader.onerror = function(){
       entries.push({ file:f.name, status:"skipped", statusLabel:"Could not read file", error:"The browser could not read this file; no data from it was imported." });
-      if (--remaining === 0){ ffConnectFlowOpen = false; saveState(state); renderAutoImportReport(entries); renderAll(); renderAutoImportReport(entries); }
+      if (--remaining === 0){ ffConnectFlowOpen = false; saveState(state); renderAutoImportReport(entries); renderAll(); renderAutoImportReport(entries); renderWizardConfirmation(entries); }
     };
     reader.readAsText(f);
   });
@@ -4367,7 +4793,7 @@ function download(name, content, type){
   setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 300);
 }
 function exportCSV(){
-  var lines = ["ForgeFit AI export,,,,,"];
+  var lines = ["LogEasy export,,,,,"];
   lines.push("FOOD LOG,,,,,");
   lines.push("date,meal,name,servings_qty,calories,protein_g,carbs_g,fat_g");
   (state.foodLogs||[]).forEach(function(f){ lines.push([f.date, csvq(f.meal), csvq(f.name), f.qty, f.cal, f.p, f.c, f.fat].join(",")); });
@@ -4388,7 +4814,7 @@ function buildPrintReport(){
   for (var i = 0; i < 7; i++){ var ft = foodDayTotals(state, addDays(ws, i)); if (ft.items){ foodDays++; calSum += ft.cal; } }
   var w = mergedWeights();
   $("printReport").innerHTML =
-    '<div class="card"><h2>ForgeFit AI — Weekly Report</h2><p class="mut">Week of ' + ws + (state.profile ? " · " + esc(state.profile.name || "") + " · goal: " + esc(state.profile.goal) : "") + '</p>' +
+    '<div class="card"><h2>LogEasy — Weekly Report</h2><p class="mut">Week of ' + ws + (state.profile ? " · " + esc(state.profile.name || "") + " · goal: " + esc(state.profile.goal) : "") + '</p>' +
     '<p><b>Workouts completed:</b> ' + wk.length + ' (' + wk.map(function(l){ return esc(l.dayName) + " " + l.date; }).join(", ") + ')</p>' +
     '<p><b>Nutrition:</b> logged ' + foodDays + ' of 7 days' + (foodDays ? ', averaging ' + Math.round(calSum/foodDays) + ' kcal vs target ' + t.cal + ' kcal' : '') + '</p>' +
     '<p><b>Weight:</b> ' + (w.length ? w[w.length-1].lb + " lb latest (" + w[w.length-1].date + ")" + (w.length > 1 ? ", change " + Math.round((w[w.length-1].lb - w[0].lb)*10)/10 + " lb since " + w[0].date : "") : "no data") + '</p>' +
@@ -4429,7 +4855,7 @@ function saveProfileFromForm(){
   if (wasNewProfile) state.deviceSetupComplete = false;
   saveState(state);
   var t = dailyTargets(state.profile);
-  $("profileMsg").innerHTML = '<div class="okb">✅ Profile saved. Your targets: <b>' + t.cal + ' kcal</b> · protein ' + t.p + 'g · carbs ' + t.c + 'g · fat ' + t.fat + 'g. A full 28-day plan and a ' + state.monthPlan.totalTargetCalories.toLocaleString() + ' kcal month budget are waiting in the Train tab.' + (wasNewProfile ? '<br><b>Next step:</b> connect your device data (optional) — ForgeFit is taking you to that step now.' : '') + '</div>';
+  $("profileMsg").innerHTML = '<div class="okb">✅ Profile saved. Your targets: <b>' + t.cal + ' kcal</b> · protein ' + t.p + 'g · carbs ' + t.c + 'g · fat ' + t.fat + 'g. A full 28-day plan and a ' + state.monthPlan.totalTargetCalories.toLocaleString() + ' kcal month budget are waiting in the Train tab.' + (wasNewProfile ? '<br><b>Next step:</b> connect your device data (optional) — LogEasy is taking you to that step now.' : '') + '</div>';
   renderAll();
   if (wasNewProfile) setTimeout(openConnectFlow, 250);
   return true;
@@ -4585,9 +5011,9 @@ function closeTrainerPanel(){
    dictation bridge (speak -> transcribe -> confirm), never auto-logging. */
 var INTRO_SLIDES = [
   { icon: "mic", grad: "linear-gradient(135deg,#a78bfa,#818cf8)", title: "Talk to log",
-    text: "Tap \u201CTell me what you ate\u201D and just speak — ForgeFit transcribes it and lines it up for your confirmation. Nothing is logged until you tap Add. (Works in Chrome on Android and other browsers with the Web Speech API — if an in-app preview blocks the mic, open the file in Chrome.)" },
+    text: "Tap \u201CTell me what you ate\u201D and just speak — LogEasy transcribes it and lines it up for your confirmation. Nothing is logged until you tap Add. (Works in Chrome on Android and other browsers with the Web Speech API — if an in-app preview blocks the mic, open the file in Chrome.)" },
   { icon: "dumbbell", grad: "linear-gradient(135deg,#4ade80,#2dd4bf)", title: "Your AI trainer",
-    text: "Tell ForgeFit your goal and your equipment — nothing, dumbbells, or a full gym — and it builds your whole month: 28 days of workouts with build weeks, real progression, and a planned deload week. Every exercise comes with plain-English form cues." },
+    text: "Tell LogEasy your goal and your equipment — nothing, dumbbells, or a full gym — and it builds your whole month: 28 days of workouts with build weeks, real progression, and a planned deload week. Every exercise comes with plain-English form cues." },
   { icon: "watch", grad: "linear-gradient(135deg,#38bdf8,#818cf8)", title: "Your data walks in",
     text: "Import steps, workouts, and sleep from your watch or phone — Apple Health, Fitbit, Garmin, Samsung, Google Fit. Today's steps headline your home screen, and repeat imports never double-count." },
   { icon: "chat", grad: "linear-gradient(135deg,#2dd4bf,#4ade80)", title: "Ask your trainer",
@@ -4633,7 +5059,7 @@ var FK_GUMROAD_URL = "https://travisbriggs.gumroad.com/l/vipawz";
 function renderFkCard(){
   var el = $("fkPromo"); if (!el) return;
   el.innerHTML = '<div class="card fkCard" style="padding:13px 16px"><div class="flexb"><h3 style="margin:0"><span class="hIco">' + icon("flame", 19) + '</span>Cooking tonight?</h3><a class="btn sm" href="' + FK_GUMROAD_URL + '" target="_blank" rel="noopener" style="text-decoration:none">Get ForgeKitchen</a></div>' +
-    '<p class="small mt" style="margin-bottom:0">Recipes live in <b>ForgeKitchen</b> — send a meal from there and it lands in this log, macros counted. <b>ForgeFit owners: take $10 off ForgeKitchen ($39 instead of $49) with code FORGEPAIR</b> — or get both in the <b>Forge Bundle, $99</b>. The two offline apps connect by sending/importing a file; no account, no live sync.</p></div>';
+    '<p class="small mt" style="margin-bottom:0">Recipes live in <b>ForgeKitchen</b> — send a meal from there and it lands in this log, macros counted. <b>LogEasy owners: take $10 off ForgeKitchen ($39 instead of $49) with code FORGEPAIR</b> — or get both in the <b>Forge Bundle, $99</b>. The two offline apps connect by sending/importing a file; no account, no live sync.</p></div>';
 }
 /* ---------- swipe navigation (v2.1.1) ---------- */
 var FF_TABS = ["dashboard","train","nutrition","activity","progress","profile"];
@@ -4742,7 +5168,7 @@ function parseFoodPhrases(text){
       var w = rest.split(" ");
       if (w.length > 1 && VOICE_NUMWORDS[w[0]] !== undefined){ qty = VOICE_NUMWORDS[w[0]]; rest = w.slice(1).join(" "); }
     }
-    var sm = rest.match(/^(large|big|jumbo|small|medium|regular)\s+(.+)$/);
+    var sm = rest.match(/^(large|big|jumbo|grande|small|medium|regular)\s+(.+)$/);
     if (sm){ size = sm[1]; rest = sm[2]; }
     var um = rest.match(/^([a-z]+)\s+(?:of\s+)?(.+)$/);
     if (um && VOICE_UNITS[um[1]]){ unit = VOICE_UNITS[um[1]]; rest = um[2]; }
@@ -4756,6 +5182,10 @@ function parseFoodPhrases(text){
     var combo = null;
     var cm = rest.match(/^number\s+(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)s?(?:\s+(?:combo|meal))?$/);
     if (cm){ combo = VOICE_NUMWORDS[cm[1]] !== undefined ? VOICE_NUMWORDS[cm[1]] : parseInt(cm[1], 10); rest = ""; }
+    if (combo == null){
+      var hm = rest.match(/^#\s?(\d{1,2})(?:\s+(?:combo|meal))?$/) || rest.match(/^no\.?\s?(\d{1,2})(?:\s+(?:combo|meal))?$/);
+      if (hm){ combo = parseInt(hm[1], 10); rest = ""; }
+    }
     return { phrase: p, query: rest, qty: clamp(qty, 0.05, 100), unit: unit, size: size, combo: combo };
   });
 }
@@ -4821,6 +5251,7 @@ var CHAIN_VARIANTS = [
   { chain: "Subway",        names: ["subway"] },
   { chain: "KFC",           names: ["kfc", "kentucky fried chicken"] },
   { chain: "Dairy Queen",   names: ["dairy queen"] },
+  { chain: "Hardee's",      names: ["hardee's", "hardees", "carl's jr", "carls jr", "carl jr"] },
   { chain: "Arby's",        names: ["arby's", "arbys", "arby", "rvs", "rv's", "harby's"] },
   { chain: "Raising Cane's", names: ["raising cane's", "raising canes", "raising cane", "canes", "cane's"] },
   { chain: "Popeyes",       names: ["popeyes", "popeye's", "pop eyes"] },
@@ -4936,6 +5367,302 @@ function comboFoodFor(pool, n){
   var hits = (pool || []).filter(function(f){ return comboNumberOf(f.name) === n; });
   return hits[0] || null;
 }
+/* ---------- ingredient decomposition (v2.3.0) ----------
+   The offline answer to "any food, anywhere": when a spoken dish matches
+   no chain entry and no generic dish, LogEasy builds it from a core
+   ingredient table (USDA FoodData Central reference values per stated
+   unit) — either a stated standard build for a known dish shape, or the
+   ingredients actually named in the phrase. Ingredients the user did not
+   mention are NEVER added (the one exception is a dish's stated standard
+   build, whose full ingredient list is shown on the confirm screen).
+   Results are labelled "Estimate — built from ingredients" with the
+   breakdown visible and the totals editable before logging. A phrase
+   that can't be accounted for stays honestly flagged. */
+var INGREDIENTS = [
+  /* name, unit, cal, protein, carbs, fat, fiber, sugar, sodium, aliases */
+  ["Egg, large", "1 egg", 70, 6, 0, 5, 0, 0, 71, "egg|eggs"],
+  ["Bacon", "1 strip", 45, 3, 0, 4, 0, 0, 146, "bacon|bacon strip|bacon strips"],
+  ["Flour tortilla, large", "1 large tortilla (10-12 in)", 220, 6, 36, 5, 2, 1, 580, "large flour tortilla|burrito tortilla|grande tortilla"],
+  ["Flour tortilla (8-inch)", "1 tortilla", 146, 4, 25, 4, 1, 1, 330, "flour tortilla|tortilla|wrap tortilla"],
+  ["Flour tortilla (6-inch)", "1 small tortilla", 94, 3, 16, 2, 1, 0, 230, "small flour tortilla|taco tortilla"],
+  ["Corn tortilla", "1 tortilla", 52, 1, 11, 1, 2, 0, 11, "corn tortilla"],
+  ["Hard taco shell", "1 shell", 62, 1, 8, 3, 1, 0, 103, "taco shell|hard shell|crispy shell"],
+  ["Hamburger bun", "1 bun", 120, 4, 21, 2, 1, 3, 210, "bun|hamburger bun|burger bun"],
+  ["Hot dog bun", "1 bun", 120, 4, 21, 2, 1, 3, 220, "hot dog bun"],
+  ["Sub roll, 12-inch", "1 roll", 430, 13, 78, 6, 3, 4, 720, "sub roll|footlong roll|hoagie roll"],
+  ["White bread", "1 slice", 79, 3, 15, 1, 1, 1, 147, "white bread|bread slice|toast|slice of bread|sliced bread"],
+  ["Whole wheat bread", "1 slice", 81, 4, 14, 1, 2, 1, 146, "wheat bread|whole wheat bread|wheat toast"],
+  ["Texas toast", "1 slice", 130, 3, 18, 5, 1, 2, 190, "texas toast"],
+  ["Bagel, plain", "1 bagel", 270, 10, 53, 2, 2, 5, 450, "bagel"],
+  ["English muffin", "1 muffin", 134, 5, 26, 1, 2, 1, 264, "english muffin"],
+  ["Biscuit", "1 biscuit", 212, 4, 27, 10, 1, 2, 580, "biscuit"],
+  ["Croissant", "1 croissant", 231, 5, 26, 12, 1, 6, 424, "croissant"],
+  ["Dinner roll", "1 roll", 114, 3, 22, 2, 1, 1, 190, "roll|dinner roll"],
+  ["Cornbread", "1 piece", 173, 3, 28, 5, 2, 7, 428, "cornbread|corn bread"],
+  ["Ground beef patty, cooked", "1 patty (4 oz)", 280, 26, 0, 19, 0, 0, 72, "beef patty|burger patty|hamburger patty|patty"],
+  ["Seasoned ground beef", "1/2 cup cooked", 170, 15, 2, 11, 0, 1, 320, "taco meat|seasoned beef|ground beef|hamburger meat"],
+  ["Steak, sirloin cooked", "4 oz", 230, 32, 0, 11, 0, 0, 56, "steak|sirloin"],
+  ["Pork chop, cooked", "4 oz", 230, 30, 0, 11, 0, 0, 64, "pork chop"],
+  ["Ground turkey, cooked", "4 oz", 235, 29, 0, 12, 0, 0, 90, "ground turkey|turkey burger"],
+  ["Meatball, beef", "1 meatball (1 oz)", 72, 5, 2, 5, 0, 0, 105, "meatball|meatballs"],
+  ["Meatloaf", "1 slice", 250, 14, 10, 16, 1, 3, 460, "meatloaf|meat loaf"],
+  ["Chicken breast, cooked", "1 breast half (4 oz)", 187, 35, 0, 4, 0, 0, 84, "chicken breast|grilled chicken|chicken"],
+  ["Chicken thigh, cooked", "1 thigh", 209, 26, 0, 11, 0, 0, 95, "chicken thigh"],
+  ["Chicken drumstick, roasted", "1 drumstick", 172, 28, 0, 6, 0, 0, 93, "drumstick|chicken leg"],
+  ["Chicken wing, roasted", "1 wing", 99, 12, 0, 6, 0, 0, 48, "chicken wing|wing"],
+  ["Fried chicken fillet", "1 fillet", 340, 24, 16, 19, 1, 1, 760, "fried chicken fillet|crispy chicken fillet|breaded chicken"],
+  ["Fried chicken breast", "1 breast, breaded & fried", 450, 40, 13, 26, 1, 0, 890, "fried chicken breast|fried chicken"],
+  ["Deli turkey", "1 slice", 29, 5, 1, 1, 0, 0, 280, "deli turkey|turkey slice|sliced turkey"],
+  ["Deli ham", "1 slice", 30, 5, 1, 1, 0, 1, 320, "deli ham|ham slice|sliced ham"],
+  ["Ham, cooked", "3 oz", 151, 21, 1, 7, 0, 0, 940, "ham"],
+  ["Canadian bacon", "2 slices", 60, 11, 1, 2, 0, 0, 1000, "canadian bacon"],
+  ["Pork sausage patty", "1 patty", 140, 6, 0, 13, 0, 0, 290, "sausage patty|sausage"],
+  ["Sausage link", "1 link", 90, 4, 1, 8, 0, 0, 270, "sausage link|link sausage"],
+  ["Hot dog frank", "1 frank", 151, 5, 2, 13, 0, 1, 570, "hot dog|frank|wiener|frankfurter"],
+  ["Bologna", "1 slice", 88, 3, 2, 8, 0, 1, 299, "bologna|baloney"],
+  ["Pepperoni", "1 oz (about 5 slices)", 138, 6, 1, 12, 0, 0, 493, "pepperoni"],
+  ["Salami", "1 oz", 119, 6, 1, 10, 0, 0, 529, "salami"],
+  ["Tuna, canned in water", "3 oz", 100, 20, 0, 1, 0, 0, 290, "tuna"],
+  ["Salmon fillet, cooked", "4 oz", 233, 25, 0, 14, 0, 0, 58, "salmon"],
+  ["Cod fillet, baked", "4 oz", 119, 25, 0, 1, 0, 0, 88, "cod|baked fish|fish fillet"],
+  ["Shrimp, cooked", "3 oz", 84, 18, 0, 1, 0, 0, 146, "shrimp|prawns"],
+  ["Tofu, firm", "3 oz", 70, 7, 2, 4, 1, 0, 15, "tofu"],
+  ["American cheese", "1 slice", 65, 4, 1, 5, 0, 1, 275, "american cheese|cheese slice|processed cheese"],
+  ["Cheddar cheese", "1 oz slice", 115, 7, 0, 9, 0, 0, 180, "cheddar|cheddar cheese"],
+  ["Shredded cheese", "1/4 cup", 110, 7, 1, 9, 0, 0, 180, "shredded cheese|grated cheese|cheese"],
+  ["Mozzarella cheese", "1 oz", 84, 6, 1, 6, 0, 0, 138, "mozzarella|mozzarella cheese"],
+  ["Swiss cheese", "1 oz slice", 106, 8, 1, 8, 0, 0, 54, "swiss cheese|swiss"],
+  ["Provolone cheese", "1 oz slice", 100, 7, 1, 8, 0, 0, 189, "provolone|provolone cheese"],
+  ["Cream cheese", "1 oz", 99, 2, 2, 10, 0, 1, 89, "cream cheese"],
+  ["Pizza base (crust & sauce)", "1 slice of a 14-in pizza", 210, 6, 33, 5, 2, 3, 480, "pizza crust|pizza base"],
+  ["White rice, cooked", "1 cup", 205, 4, 45, 0, 1, 0, 2, "white rice|rice"],
+  ["Brown rice, cooked", "1 cup", 216, 5, 45, 2, 2, 1, 10, "brown rice"],
+  ["Spanish rice, cooked", "1 cup", 230, 5, 41, 5, 2, 1, 760, "spanish rice|mexican rice"],
+  ["Black beans, cooked", "1/2 cup", 114, 8, 20, 1, 8, 0, 1, "black beans|black bean"],
+  ["Pinto beans, cooked", "1/2 cup", 122, 8, 22, 1, 6, 1, 1, "pinto beans|pinto bean"],
+  ["Refried beans", "1/2 cup", 117, 7, 18, 1, 5, 1, 380, "refried beans|refried bean"],
+  ["Chili with beans", "1 cup", 290, 15, 32, 11, 7, 4, 870, "chili|chilli"],
+  ["Oatmeal, cooked", "1 cup", 166, 6, 28, 4, 4, 1, 9, "oatmeal|oats|porridge"],
+  ["Grits, cooked", "1 cup", 145, 3, 31, 1, 1, 0, 5, "grits"],
+  ["Granola", "1/2 cup", 250, 6, 30, 12, 4, 12, 25, "granola"],
+  ["Pancake (4-inch)", "1 pancake", 86, 2, 16, 1, 0, 3, 179, "pancake|pancakes|hotcake|hotcakes"],
+  ["Waffle (7-inch)", "1 waffle", 195, 6, 25, 11, 1, 5, 383, "waffle|waffles"],
+  ["French toast", "1 slice", 149, 5, 16, 7, 1, 6, 311, "french toast"],
+  ["Hash brown patty", "1 patty", 144, 2, 14, 9, 2, 0, 290, "hash brown|hash browns|hashbrown"],
+  ["French fries, homemade", "1 cup", 230, 3, 30, 11, 3, 0, 210, "homemade fries|home fries"],
+  ["Pasta, cooked", "1 cup", 221, 8, 43, 1, 3, 1, 1, "pasta|spaghetti|noodles|macaroni"],
+  ["Macaroni & cheese, prepared", "1 cup", 376, 10, 47, 17, 2, 6, 720, "mac and cheese|macaroni and cheese|mac n cheese"],
+  ["Quinoa, cooked", "1 cup", 222, 8, 39, 4, 5, 1, 13, "quinoa"],
+  ["Couscous, cooked", "1 cup", 176, 6, 36, 0, 2, 0, 8, "couscous"],
+  ["Tortilla chips", "1 oz", 142, 2, 18, 7, 2, 0, 150, "tortilla chips|chips"],
+  ["Potato chips", "1 oz", 152, 2, 15, 10, 1, 0, 148, "potato chips"],
+  ["Pretzels", "1 oz", 108, 3, 23, 1, 1, 1, 352, "pretzel|pretzels"],
+  ["Popcorn, air-popped", "1 cup", 31, 1, 6, 0, 1, 0, 1, "popcorn"],
+  ["Milk, whole", "1 cup", 150, 8, 12, 8, 0, 12, 91, "milk|whole milk|glass of milk"],
+  ["Yogurt, Greek plain nonfat", "1 cup", 146, 24, 7, 1, 0, 6, 61, "greek yogurt|yogurt"],
+  ["Cottage cheese", "1/2 cup", 100, 12, 3, 4, 0, 3, 350, "cottage cheese"],
+  ["Butter", "1 tbsp", 102, 0, 0, 12, 0, 0, 82, "butter"],
+  ["Vegetable oil", "1 tbsp", 124, 0, 0, 14, 0, 0, 0, "cooking oil|oil"],
+  ["Olive oil", "1 tbsp", 119, 0, 0, 14, 0, 0, 0, "olive oil"],
+  ["Mayonnaise", "1 tbsp", 94, 0, 0, 10, 0, 0, 70, "mayonnaise|mayo"],
+  ["Ketchup", "1 tbsp", 19, 0, 5, 0, 0, 4, 154, "ketchup|catsup"],
+  ["Mustard", "1 tsp", 3, 0, 0, 0, 0, 0, 57, "mustard"],
+  ["Ranch dressing", "2 tbsp", 129, 0, 2, 13, 0, 1, 270, "ranch dressing|ranch"],
+  ["BBQ sauce", "2 tbsp", 58, 0, 14, 0, 0, 12, 349, "bbq sauce|barbecue sauce"],
+  ["Salsa", "1/4 cup", 18, 1, 4, 0, 1, 2, 460, "salsa"],
+  ["Marinara sauce", "1/2 cup", 66, 2, 10, 2, 2, 5, 290, "marinara|tomato sauce|spaghetti sauce"],
+  ["Alfredo sauce", "1/4 cup", 110, 2, 3, 10, 0, 1, 340, "alfredo sauce|alfredo"],
+  ["Cheese sauce", "1/4 cup", 110, 4, 4, 8, 0, 2, 440, "cheese sauce|nacho cheese|queso"],
+  ["Sour cream", "2 tbsp", 60, 1, 1, 6, 0, 1, 16, "sour cream"],
+  ["Guacamole", "1/4 cup", 91, 1, 5, 8, 3, 1, 185, "guacamole|guac"],
+  ["Avocado", "1/2 avocado", 120, 2, 6, 11, 5, 0, 5, "avocado"],
+  ["Peanut butter", "2 tbsp", 188, 8, 6, 16, 2, 3, 147, "peanut butter"],
+  ["Jam or jelly", "1 tbsp", 56, 0, 14, 0, 0, 10, 6, "jam|jelly|preserves"],
+  ["Honey", "1 tbsp", 64, 0, 17, 0, 0, 17, 1, "honey"],
+  ["Brown sugar", "1 tbsp", 52, 0, 13, 0, 0, 13, 4, "brown sugar"],
+  ["Sugar", "1 tsp", 16, 0, 4, 0, 0, 4, 0, "sugar"],
+  ["Maple syrup", "1/4 cup", 210, 0, 54, 0, 0, 48, 7, "maple syrup|syrup"],
+  ["Hot sauce", "1 tsp", 0, 0, 0, 0, 0, 0, 110, "hot sauce"],
+  ["Soy sauce", "1 tbsp", 9, 1, 1, 0, 0, 0, 900, "soy sauce"],
+  ["Gravy", "1/4 cup", 30, 1, 3, 1, 0, 1, 260, "gravy"],
+  ["Lettuce", "1 cup shredded", 8, 1, 2, 0, 1, 1, 6, "lettuce|salad greens|greens"],
+  ["Tomato", "1 medium", 22, 1, 5, 0, 1, 3, 6, "tomato|tomatoes"],
+  ["Onion", "1/4 cup diced", 16, 1, 4, 0, 1, 2, 1, "onion|onions"],
+  ["Pickles", "3 slices", 5, 0, 1, 0, 0, 0, 350, "pickle|pickles|dill pickles"],
+  ["Cucumber", "1/2 cucumber", 8, 0, 2, 0, 0, 1, 1, "cucumber"],
+  ["Bell pepper", "1 medium", 31, 1, 6, 0, 2, 2, 2, "bell pepper|green pepper|peppers|pepper"],
+  ["Mushrooms", "1 cup sliced", 15, 2, 2, 0, 1, 1, 4, "mushroom|mushrooms"],
+  ["Broccoli, cooked", "1 cup", 55, 4, 11, 1, 5, 2, 64, "broccoli"],
+  ["Carrot", "1 medium", 25, 1, 6, 0, 2, 3, 42, "carrot|carrots"],
+  ["Corn, cooked", "1 cup", 132, 5, 29, 2, 3, 5, 20, "corn|sweet corn|corn on the cob"],
+  ["Green beans, cooked", "1 cup", 44, 2, 10, 0, 4, 2, 6, "green beans|green bean"],
+  ["Peas, cooked", "1 cup", 118, 8, 21, 0, 6, 6, 5, "peas|green peas"],
+  ["Spinach, cooked", "1 cup", 41, 5, 7, 1, 4, 0, 126, "spinach"],
+  ["Baked potato", "1 medium", 161, 4, 37, 0, 4, 2, 17, "baked potato|potato"],
+  ["Mashed potatoes", "1 cup", 214, 4, 35, 8, 3, 1, 380, "mashed potatoes|mashed potato"],
+  ["Sweet potato, baked", "1 medium", 103, 2, 24, 0, 4, 6, 41, "sweet potato"],
+  ["Coleslaw", "1/2 cup", 145, 1, 13, 10, 2, 9, 240, "coleslaw|cole slaw|slaw"],
+  ["Chicken noodle soup", "1 cup", 65, 3, 9, 2, 1, 1, 840, "chicken noodle soup|chicken soup"],
+  ["Tomato soup", "1 cup", 90, 2, 18, 1, 2, 9, 480, "tomato soup"],
+  ["Apple", "1 medium", 95, 1, 25, 0, 4, 19, 1, "apple"],
+  ["Banana", "1 medium", 105, 1, 27, 0, 3, 14, 1, "banana"],
+  ["Orange", "1 medium", 62, 1, 15, 0, 3, 12, 0, "orange"],
+  ["Grapes", "1 cup", 104, 1, 27, 0, 1, 23, 3, "grapes|grape"],
+  ["Strawberries", "1 cup", 49, 1, 12, 1, 2, 7, 1, "strawberries|strawberry"],
+  ["Blueberries", "1 cup", 84, 1, 21, 1, 4, 15, 1, "blueberries|blueberry"],
+  ["Peach", "1 medium", 58, 1, 14, 0, 2, 12, 0, "peach"],
+  ["Pear", "1 medium", 101, 1, 27, 0, 6, 17, 1, "pear"],
+  ["Mango", "1 cup pieces", 99, 1, 25, 1, 3, 23, 2, "mango"],
+  ["Pineapple", "1 cup chunks", 82, 1, 22, 0, 2, 16, 1, "pineapple"],
+  ["Watermelon", "1 cup diced", 46, 1, 11, 0, 1, 9, 1, "watermelon"],
+  ["Raisins", "1/4 cup", 108, 1, 29, 0, 1, 21, 4, "raisins|raisin"],
+  ["Orange juice", "1 cup", 112, 2, 26, 1, 1, 21, 2, "orange juice|oj"],
+  ["Almonds", "1 oz", 164, 6, 6, 14, 4, 1, 0, "almonds|almond"],
+  ["Walnuts", "1 oz", 185, 4, 4, 18, 2, 1, 1, "walnuts|walnut"],
+  ["Peanuts", "1 oz", 161, 7, 5, 14, 2, 1, 118, "peanuts|peanut"],
+  ["Ice cream, vanilla", "1/2 cup", 137, 2, 16, 7, 0, 14, 53, "ice cream|vanilla ice cream"],
+  ["Whipped cream", "2 tbsp", 52, 0, 2, 5, 0, 2, 8, "whipped cream"]
+];
+function ingredientByKey(key){
+  key = String(key).toLowerCase();
+  for (var i = 0; i < INGREDIENTS.length; i++){
+    var r = INGREDIENTS[i];
+    if (r[0].toLowerCase() === key) return r;
+    if (r[9].split("|").indexOf(key) >= 0) return r;
+  }
+  return null;
+}
+/* Stated standard builds. Components are [ingredient name, qty of its
+   unit]. The full list is shown on the confirm screen — nothing hidden. */
+var STANDARD_BUILDS = [
+  { re: /\bburrito bowl\b/, label: "Burrito Bowl", items: [["Seasoned ground beef", 1], ["Spanish rice, cooked", 0.5], ["Black beans, cooked", 1], ["Shredded cheese", 1], ["Salsa", 1]] },
+  { re: /\bburritos?\b/, label: "Burrito", items: [["Flour tortilla, large", 1], ["Seasoned ground beef", 1], ["Spanish rice, cooked", 0.5], ["Black beans, cooked", 1], ["Shredded cheese", 1], ["Salsa", 1]] },
+  { re: /\bquesadillas?\b/, label: "Quesadilla", items: [["Flour tortilla (8-inch)", 1], ["Shredded cheese", 2]] },
+  { re: /\btacos?\b/, label: "Taco", items: [["Hard taco shell", 1], ["Seasoned ground beef", 0.5], ["Shredded cheese", 0.5], ["Lettuce", 0.5], ["Salsa", 0.5]] },
+  { re: /\bnachos?\b/, label: "Nachos", items: [["Tortilla chips", 2], ["Cheese sauce", 1], ["Seasoned ground beef", 0.5], ["Salsa", 1]] },
+  { re: /\bclub sandwiches\b|\bclub sandwich\b/, label: "Club Sandwich", items: [["White bread", 3], ["Deli turkey", 2], ["Bacon", 2], ["Lettuce", 1], ["Tomato", 0.5], ["Mayonnaise", 1]] },
+  { re: /\bblt\b/, label: "BLT Sandwich", items: [["White bread", 2], ["Bacon", 4], ["Lettuce", 1], ["Tomato", 0.5], ["Mayonnaise", 1]] },
+  { re: /\bgrilled cheese\b/, label: "Grilled Cheese", items: [["White bread", 2], ["American cheese", 2], ["Butter", 0.5]] },
+  { re: /\btuna (?:salad )?sandwich\b/, label: "Tuna Sandwich", items: [["White bread", 2], ["Tuna, canned in water", 1], ["Mayonnaise", 1], ["Lettuce", 0.5]] },
+  { re: /\bchicken salad\b/, label: "Chicken Salad", items: [["Chicken breast, cooked", 1], ["Mayonnaise", 1.5], ["Lettuce", 0.5]] },
+  { re: /\bgrilled chicken sandwich\b/, label: "Grilled Chicken Sandwich", items: [["Hamburger bun", 1], ["Chicken breast, cooked", 1], ["Lettuce", 0.5], ["Tomato", 0.5], ["Mayonnaise", 0.5]] },
+  { re: /\b(?:crispy|fried) chicken sandwich\b/, label: "Crispy Chicken Sandwich", items: [["Hamburger bun", 1], ["Fried chicken fillet", 1], ["Lettuce", 0.5], ["Mayonnaise", 0.5]] },
+  { re: /\bomelettes?\b/, label: "Omelette", items: [["Egg, large", 3], ["Shredded cheese", 1], ["Butter", 0.5]] },
+  { re: /\bpizzas?\b/, label: "Pizza Slice", items: [["Pizza base (crust & sauce)", 1], ["Mozzarella cheese", 1]] },
+  { re: /\bhot dogs?\b/, label: "Hot Dog", items: [["Hot dog bun", 1], ["Hot dog frank", 1]] },
+  { re: /\bwraps?\b/, label: "Wrap", items: [["Flour tortilla (8-inch)", 1], ["Chicken breast, cooked", 1], ["Lettuce", 0.5], ["Ranch dressing", 0.5]] },
+  { re: /\boatmeal\b/, label: "Oatmeal", items: [["Oatmeal, cooked", 1], ["Milk, whole", 0.25]] },
+  { re: /\bsmoothie\b/, label: "Smoothie", items: [["Banana", 1], ["Milk, whole", 1], ["Honey", 0.5]] },
+  { re: /\bspaghetti\b|\bpasta\b/, label: "Pasta with Marinara", items: [["Pasta, cooked", 1.5], ["Marinara sauce", 1]] },
+  { re: /\bgarden salad\b|\bside salad\b|\bsalad\b/, label: "Garden Salad", items: [["Lettuce", 2], ["Tomato", 0.5], ["Cucumber", 0.5], ["Ranch dressing", 1]] },
+  { re: /\bfootlong\b|\bsub sandwiches\b|\bsub sandwich\b|\bhoagie\b/, label: "Footlong Sub", items: [["Sub roll, 12-inch", 1], ["Deli turkey", 4], ["American cheese", 2], ["Lettuce", 1], ["Tomato", 0.5], ["Mayonnaise", 1]] },
+  { re: /\bsandwich(?:es)?\b/, label: "Sandwich", items: [["White bread", 2], ["Deli turkey", 2], ["American cheese", 1], ["Lettuce", 0.5], ["Mayonnaise", 0.5]] }
+];
+var DECOMP_FILLER = { grilled:1, fried:1, baked:1, roasted:1, toasted:1, fresh:1, homemade:1, cooked:1, steamed:1, boiled:1, scrambled:1, sliced:1, diced:1, chopped:1, shredded:1, melted:1, hot:1, cold:1, plain:1, regular:1, style:1, with:1, and:1, of:1, a:1, an:1, the:1, some:1, my:1, made:1, from:1, diner:1, restaurant:1, cafe:1, at:1, home:1, bowl:1, plate:1, serving:1, order:1, side:1, large:1, big:1, small:1, medium:1, grande:1, jumbo:1, piece:1, pieces:1, slice:1, slices:1, cup:1, glass:1 };
+/* The decomposition vocabulary (v2.4.0 honesty gate): every word the
+   decomposition engine is allowed to spend — the filler/prep words, all
+   ingredient names and aliases, the standard-build dish names, and the
+   burger-branch words. Built once from the app's own data tables. */
+var DECOMP_VOCAB = null;
+function decompVocab(){
+  if (DECOMP_VOCAB) return DECOMP_VOCAB;
+  var set = {};
+  function add(str){ String(str || "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/).forEach(function(w){ if (w) set[w] = 1; }); }
+  Object.keys(DECOMP_FILLER).forEach(function(w){ set[w] = 1; });
+  INGREDIENTS.forEach(function(r){ add(r[0]); String(r[9] || "").split("|").forEach(add); });
+  STANDARD_BUILDS.forEach(function(b){ add(b.label); });
+  ["burger","hamburger","cheeseburger","double","veggie","blt","hoagie","sub","spaghetti","crispy",
+   "one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","dozen","half",
+   "can","cans","bottle","bottles"].forEach(function(w){ set[w] = 1; });
+  DECOMP_VOCAB = set;
+  return set;
+}
+function decomposeFoodPhrase(p){
+  var q = " " + String(p.query || "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ") + " ";
+  /* Honesty gate (v2.4.0): a phrase carrying a word the engine does not
+     understand ("unicorn burger", "unicorn steak") is NOT decomposed
+     into a confident-looking estimate assembled from unmentioned
+     ingredients. It returns null and stays honestly flagged for manual
+     entry — the no-match behaviour the parser battery has always
+     required. (Regression note: the gate was missing in v2.3.x, which
+     let nonsense phrases decompose; verified against the shipped
+     v2.3.1 file, whose battery profile this restores.) */
+  var vocab = decompVocab();
+  var hasUnknown = q.split(/\s+/).some(function(w){
+    if (!w || /^\d+$/.test(w)) return false;
+    return !(vocab[w] || vocab[w + "s"] || vocab[w + "es"] || (w.length > 1 && vocab[w.replace(/s$/, "")]));
+  });
+  if (hasUnknown) return null;
+  var scale = 1;
+  if (p.size === "large" || p.size === "grande" || p.size === "big" || p.size === "jumbo") scale = 1.3;
+  else if (p.size === "small") scale = 0.75;
+  function sumItems(list){
+    var tot = { cal: 0, p: 0, c: 0, fat: 0, fiber: 0, sugar: 0, sodium: 0 }, lines = [];
+    list.forEach(function(pair){
+      var r = ingredientByKey(pair[0]); if (!r) return;
+      var qty = pair[1] * scale;
+      tot.cal += r[2] * qty; tot.p += r[3] * qty; tot.c += r[4] * qty; tot.fat += r[5] * qty;
+      tot.fiber += r[6] * qty; tot.sugar += r[7] * qty; tot.sodium += r[8] * qty;
+      lines.push({ label: fmtQty(qty) + " × " + r[0] + " (" + r[1] + ")", cal: r[2] * qty });
+    });
+    return { tot: tot, lines: lines };
+  }
+  function toFood(name, s){
+    return { food: { name: name, serving: "estimate — built from ingredients", cal: Math.round(s.tot.cal), p: Math.round(s.tot.p), c: Math.round(s.tot.c), fat: Math.round(s.tot.fat),
+                     m: { fiber: Math.round(s.tot.fiber), sugar: Math.round(s.tot.sugar), sodium: Math.round(s.tot.sodium) }, src: "estimate" },
+             ingredients: s.lines };
+  }
+  /* 1) a stated standard build for a known dish shape */
+  for (var bi = 0; bi < STANDARD_BUILDS.length; bi++){
+    var b = STANDARD_BUILDS[bi];
+    if (b.re.test(q)){
+      var s = sumItems(b.items.slice());
+      if (s.lines.length) { var out = toFood(b.label, s); return out; }
+    }
+  }
+  if (/\bcheeseburgers?\b/.test(q) || /\b(?:ham\s*)?burgers?\b/.test(q)){
+    var bItems = [["Hamburger bun", 1], ["Ground beef patty, cooked", /\bdouble\b/.test(q) ? 2 : 1]];
+    if (/cheese/.test(q)) bItems.push(["American cheese", /\bdouble\b/.test(q) ? 2 : 1]);
+    bItems.push(["Lettuce", 0.5], ["Tomato", 0.5], ["Ketchup", 1], ["Mayonnaise", 0.5]);
+    var bs = sumItems(bItems);
+    if (bs.lines.length) return toFood(/cheese/.test(q) ? "Cheeseburger" : "Hamburger", bs);
+  }
+  if (/\bscrambled eggs?\b/.test(q) || /\bfried eggs?\b/.test(q) || /\beggs?\b/.test(q.trim())){
+    var eggQty = (p.qty && p.qty > 1 && !p.unit) ? p.qty : 2;
+    var es = sumItems([["Egg, large", eggQty], ["Butter", 0.5]]);
+    var eOut = toFood("Eggs (" + eggQty + ")", es);
+    eOut.qtyOverride = 1;
+    return eOut;
+  }
+  /* 2) the ingredients actually named in the phrase */
+  var found = [], used = q;
+  var sorted = INGREDIENTS.slice().sort(function(a, b){ return b[0].length - a[0].length; });
+  sorted.forEach(function(r){
+    var keys = [r[0].toLowerCase()].concat(r[9].split("|"));
+    for (var ki = 0; ki < keys.length; ki++){
+      var k = keys[ki];
+      var pat = new RegExp("\\b" + k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/s$/, "(?:s|es)?") + "\\b");
+      if (pat.test(used)){
+        found.push([r[0], 1]);
+        used = used.replace(pat, " ");
+        break;
+      }
+    }
+  });
+  if (found.length){
+    var restTokens = used.replace(/[^a-z ]/g, " ").split(/\s+/).filter(function(w){ return w && !DECOMP_FILLER[w]; });
+    if (found.length >= 2 || restTokens.length <= 1){
+      var s2 = sumItems(found);
+      if (s2.lines.length){
+        var nm = String(p.query || "Homemade dish").replace(/\s+/g, " ").trim();
+        nm = nm.charAt(0).toUpperCase() + nm.slice(1);
+        return toFood(nm, s2);
+      }
+    }
+  }
+  return null;
+}
+
 function voiceFoodMatches(text){
   var foods = allFoods(state);
   var dInfo = extractSpokenDate(text);
@@ -4991,6 +5718,30 @@ function voiceFoodMatches(text){
         }
       }
     }
+    /* v2.3.0 fallback order, final steps: a numbered combo with no chain
+       named resolves only when exactly one chain in the DB sells that
+       number (an inference, labelled a closest match — never silent);
+       then the ingredient decomposition engine; anything left stays
+       honestly flagged as not in the database. */
+    var decInfo = null;
+    if (!food && p.combo != null && !chain){
+      var comboHits = EXTRA_FOODS.filter(function(f){ return comboNumberOf(f.name) === p.combo; });
+      /* "a number two" with food words around it most plausibly means a
+         combo MEAL; numbered sandwiches (Jimmy John's #2) only win when
+         no meal row carries the number. Still ambiguous -> flagged. */
+      var mealHits = comboHits.filter(function(f){ return /combo|meal/i.test(f.name); });
+      var pick = mealHits.length ? mealHits : comboHits;
+      if (pick.length === 1){ food = pick[0]; approx = true; }
+    }
+    if (!food){
+      decInfo = decomposeFoodPhrase(p);
+      if (decInfo){ food = decInfo.food; sizeForServings = null; }
+    }
+    var assumedSize = null;
+    if (food && !p.size && /\b(?:fries|soda|cola|tea|coffee|shake|drink|dr pepper)\b/i.test(food.name)){
+      var szm = String(food.name).match(/\b(small|medium|large|regular)\b/i);
+      if (szm) assumedSize = szm[1].toLowerCase();
+    }
     var pForServings = { qty: p.qty, unit: p.unit, size: sizeForServings };
     var qtyOut = food ? voiceServingsFor(pForServings, food) : p.qty;
     /* "3 finger combo", "three cheese nachos": when the number the user
@@ -5000,8 +5751,10 @@ function voiceFoodMatches(text){
         foodTokens(food.name).indexOf(String(p.qty)) !== -1 && foodTokens(p.query).indexOf(String(p.qty)) === -1){
       qtyOut = 1;
     }
+    if (decInfo && decInfo.qtyOverride != null) qtyOut = decInfo.qtyOverride;
     return { phrase: p.phrase, query: p.query, spokenQty: p.qty, unit: p.unit, size: p.size, combo: (p.combo != null ? p.combo : null),
-             qty: qtyOut, food: food, chain: chain, approx: approx, fallbackFrom: fallbackFrom };
+             qty: qtyOut, food: food, chain: chain, approx: approx, fallbackFrom: fallbackFrom,
+             decomposed: !!decInfo, ingredients: decInfo ? decInfo.ingredients : null, assumedSize: assumedSize };
   });
   out.dayOffset = dInfo.offset;
   out.dayWord = dInfo.word;
@@ -5034,7 +5787,7 @@ function renderVoiceFoodMatches(txt, surface){
   }
   box.innerHTML = '<div class="card flat" style="background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px">' +
     '<h3 style="margin-bottom:4px"><span class="hIco">' + icon("mic", 18) + '</span>Heard: “' + esc(txt) + '”</h3>' +
-    '<p class="small mut mb">Voice dictation — speak, then confirm. Check each match and tap <b>Add</b>; nothing is logged until you do. Anything ForgeFit doesn\'t know is flagged below — its nutrition is never guessed.</p>' + mealPicker +
+    '<p class="small mut mb">Voice dictation — speak, then confirm. Check each match and tap <b>Add</b>; nothing is logged until you do. Anything LogEasy doesn\'t know is flagged below — its nutrition is never guessed.</p>' + mealPicker +
     (dayOffset !== 0 ? '<p class="small mut mb">Logging for <b>' + dayLabel + '</b> (' + logDate + ') — you said \u201c' + esc(dayWord) + '\u201d.</p>' : '') +
     matches.map(function(m, i){
       if (!m.food) return '<div class="flexb" style="padding:6px 0;border-bottom:1px solid var(--line)"><span>⚠️ <b>No match for “' + esc(m.phrase) + '”</b> <span class="small mut">— nothing was invented for it. Add it yourself with the values you know:</span></span><button class="btn sec sm" ' + (dashboard ? 'data-dash-voice-manual' : 'data-voice-manual') + '="' + i + '" type="button">Add as custom food</button></div>';
@@ -5044,6 +5797,8 @@ function renderVoiceFoodMatches(txt, surface){
       else if (m.approx) note += '<div class="small mut" style="margin-top:2px"><span class="pill">Closest match</span> Check this is the food you meant before adding.</div>';
       if (f.src === "brand") note += '<div class="small mut" style="margin-top:2px">Published nutrition values from ' + esc(f.chain || "the restaurant") + ' — restaurants vary; you can edit any number.</div>';
       else if (f.src === "generic") note += '<div class="small mut" style="margin-top:2px">Typical/generic values — you can edit any number.</div>';
+      else if (f.src === "estimate") note += '<div class="small mut" style="margin-top:2px"><span class="pill">Estimate — built from ingredients</span> This dish isn\'t in the database, so LogEasy added up the ingredients below from USDA reference values. If yours had more or less of anything, change the quantity or edit the totals.</div>' + (m.ingredients ? '<div class="small" style="margin-top:2px">' + m.ingredients.map(function(g){ return esc(g.label) + " — " + Math.round(g.cal) + " kcal"; }).join("<br>") + '</div>' : "");
+      if (m.assumedSize) note += '<div class="small mut" style="margin-top:2px">You didn\'t name a size — this is the ' + esc(m.assumedSize) + ' one. Adjust the quantity if yours was different.</div>';
       var editBox = f.src ? '<span class="row" style="gap:6px;margin-top:4px"><button class="btn sec sm" type="button" ' + (dashboard ? 'data-dash-voice-edit' : 'data-voice-edit') + '="' + i + '">Edit values</button></span>' +
         '<span id="' + ep + i + '" style="display:none" class="row">' +
         '<label class="small">kcal <input type="number" min="0" id="' + ep + i + 'cal" value="' + f.cal + '" style="width:76px" aria-label="calories"></label>' +
@@ -5086,7 +5841,7 @@ function renderVoiceFoodMatches(txt, surface){
     b.addEventListener("click", function(){
       var i = +b.getAttribute(dashboard ? "data-dash-voice-manual" : "data-voice-manual");
       var m = lastArr()[i]; if (!m) return;
-      showView("nutrition");
+      switchView("nutrition");
       var det = $("customFoodDetails"); if (det) det.open = true;
       var nm = $("cfName"); if (nm){ nm.value = m.query || m.phrase || ""; nm.focus(); if (nm.scrollIntoView) nm.scrollIntoView({ behavior: "smooth", block: "center" }); }
       voiceStatus("food", "Heard “" + (m.phrase || "") + "” — fill in the values you know and tap Add custom food. Nothing was guessed for it.");
@@ -5127,7 +5882,7 @@ function handleVoiceTranscript(target, txt){
    Thursday", "move leg day to Friday"). Adjustments route into the plan
    within hard bounds — load ×0.90–1.10, volume ×0.80–1.20, cumulative —
    and are NEVER tied to food or calories: there is no "burn it off" logic
-   anywhere in ForgeFit, and voice adjustments don't add any. */
+   anywhere in LogEasy, and voice adjustments don't add any. */
 var EXERCISE_VOICE_SYNONYMS = [
   ["bench press", "Barbell Bench Press"], ["overhead press", "Barbell Overhead Press"],
   ["shoulder press", "Dumbbell Shoulder Press"], ["squat", "Barbell Back Squat"],
@@ -5720,7 +6475,7 @@ function init(){
     renderAll();
   });
   $("btnClearDemo").addEventListener("click", function(){
-    if (!confirm("Erase ALL ForgeFit data on this device (profile, logs, imports)? This can't be undone — export a backup first if you need it.")) return;
+    if (!confirm("Erase ALL LogEasy data on this device (profile, logs, imports)? This can't be undone — export a backup first if you need it.")) return;
     state = blankState(); session = null; saveState(state);
     ["pName","pAge","pFt","pIn","pWeight","pTargetWeight","pAvoid"].forEach(function(id){ $(id).value = ""; });
     $("profileMsg").innerHTML = ""; toast("All data erased. Fresh start!");
@@ -5775,6 +6530,23 @@ function init(){
   $("btnCancelWorkout").addEventListener("click", cancelWorkout);
   ["exSearch","exMuscle","exEquip"].forEach(function(id){ $(id).addEventListener("input", renderLibrary); $(id).addEventListener("change", renderLibrary); });
   $("foodSearch").addEventListener("input", renderFoodResults);
+  /* Copy yesterday (v2.4.0): copies the previous day's entries onto the
+     day shown in the food log; the toast says how many and reminds the
+     user items can be deleted individually. */
+  if ($("btnCopyYesterday")) $("btnCopyYesterday").addEventListener("click", function(){
+    var target = ($("foodDate").value || todayStr());
+    var n = copyYesterdayEntries(state, target);
+    if (!n){ toast("Nothing was logged on " + addDays(target, -1) + " to copy."); return; }
+    saveState(state); renderNutrition(); renderDashboard();
+    toast("Copied " + n + " item" + (n === 1 ? "" : "s") + " from " + addDays(target, -1) + " — tap ✕ on anything you didn't have.");
+  });
+  /* Quantity quick-add chips (v2.4.0): one delegated listener fills the
+     paired quantity input — the user still taps Add to log. */
+  document.addEventListener("click", function(e){
+    var b = (e && e.target && e.target.closest) ? e.target.closest("[data-chip-for]") : null;
+    if (!b) return;
+    var f = $(b.getAttribute("data-chip-for")); if (f) f.value = b.getAttribute("data-chip-val");
+  });
   if ($("btnVoiceFood")) $("btnVoiceFood").addEventListener("click", function(){ startVoiceDictation("food"); });
   if ($("btnVoiceDash")) $("btnVoiceDash").addEventListener("click", function(){ startVoiceDictation("dashboard"); });
   if ($("btnVoiceExercise")) $("btnVoiceExercise").addEventListener("click", function(){ startVoiceDictation("exercise"); });
@@ -5867,7 +6639,15 @@ function init(){
     toast("Custom food saved — search for it above."); renderNutrition();
   });
   $("btnFoodPanelClose").addEventListener("click", closeFoodPanel);
-  $("devicePlatform").addEventListener("change", function(){ state.devicePlatform = this.value; saveState(state); renderDeviceSteps(); });
+  $("devicePlatform").addEventListener("change", function(){ state.devicePlatform = this.value; saveState(state); renderDeviceSteps(); setWizardStep(wizardStep); });
+  if ($("btnWizardNext1")) $("btnWizardNext1").addEventListener("click", function(){
+    if (!$("devicePlatform").value){ toast("Pick your device or app first, then tap Next."); return; }
+    state.devicePlatform = $("devicePlatform").value; saveState(state); setWizardStep(2);
+  });
+  if ($("btnWizardBack2")) $("btnWizardBack2").addEventListener("click", function(){ setWizardStep(1); });
+  if ($("btnWizardNext2")) $("btnWizardNext2").addEventListener("click", function(){ setWizardStep(3); });
+  if ($("btnWizardBack3")) $("btnWizardBack3").addEventListener("click", function(){ setWizardStep(2); });
+  syncHelpEmail();
   $("fileAuto").addEventListener("change", function(){ handleAutoFiles(this); });
   $("btnSkipDeviceSetup").addEventListener("click", function(){
     state.deviceSetupComplete = true; saveState(state);
@@ -5939,8 +6719,8 @@ function init(){
     if (!Object.keys(m).some(function(k){ return k !== "date" && m[k] > 0; })){ toast("Enter at least one measurement."); return; }
     state.measurements.push(m); saveState(state); renderProgress(); toast("Measurements saved.");
   });
-  $("btnExportJSON").addEventListener("click", function(){ download("forgefit-backup-" + todayStr() + ".json", JSON.stringify(state, null, 2), "application/json"); toast("Backup downloaded — keep it somewhere safe."); });
-  $("btnExportCSV").addEventListener("click", function(){ download("forgefit-logs-" + todayStr() + ".csv", exportCSV(), "text/csv"); toast("Logs exported as CSV."); });
+  $("btnExportJSON").addEventListener("click", function(){ download("logeasy-backup-" + todayStr() + ".json", JSON.stringify(state, null, 2), "application/json"); toast("Backup downloaded — keep it somewhere safe."); });
+  $("btnExportCSV").addEventListener("click", function(){ download("logeasy-logs-" + todayStr() + ".csv", exportCSV(), "text/csv"); toast("Logs exported as CSV."); });
   $("btnPrint").addEventListener("click", function(){ buildPrintReport(); window.print(); });
   $("fileRestore").addEventListener("change", function(){
     readFile(this, function(text){
@@ -5950,7 +6730,7 @@ function init(){
         state = normalizeState(s); session = null; saveState(state); fillProfileForm();
         $("backupMsg").innerHTML = '<div class="okb">✅ Backup restored.</div>';
         renderAll();
-      } catch(e){ $("backupMsg").innerHTML = '<div class="err">⚠️ That file isn\'t a ForgeFit backup. Nothing was changed.</div>'; }
+      } catch(e){ $("backupMsg").innerHTML = '<div class="err">⚠️ That file isn\'t a LogEasy backup. Nothing was changed.</div>'; }
     });
   });
   $("btnSaveProfile").addEventListener("click", saveProfileFromForm);
@@ -6012,8 +6792,10 @@ var FF_API = {
   trainerAnswer: trainerAnswer, trainerChips: trainerChips, TRAINER_TOPICS: TRAINER_TOPICS,
   introNeedsShow: introNeedsShow, INTRO_SLIDES: INTRO_SLIDES, voiceServingsFor: voiceServingsFor,
   voiceFoodMatches: voiceFoodMatches, renderVoiceFoodMatches: renderVoiceFoodMatches, defaultMealForNow: defaultMealForNow,
+  weightTrendPoints: weightTrendPoints, adaptiveSuggestion: adaptiveSuggestion, nextActionFor: nextActionFor, glanceData: glanceData, lastSleep: lastSleep,
+  quickFoodRows: quickFoodRows, foodFromLogEntry: foodFromLogEntry, copyYesterdayEntries: copyYesterdayEntries, resolveFoodByName: resolveFoodByName,
   extractSpokenDate: extractSpokenDate, comboNumberOf: comboNumberOf, comboFoodFor: comboFoodFor,
-  EXTRA_FOODS: EXTRA_FOODS, CHAIN_VARIANTS: CHAIN_VARIANTS, detectChain: detectChain, stripChainMentions: stripChainMentions, bestTokenMatch: bestTokenMatch,
+  EXTRA_FOODS: EXTRA_FOODS, CHAIN_VARIANTS: CHAIN_VARIANTS, INGREDIENTS: INGREDIENTS, STANDARD_BUILDS: STANDARD_BUILDS, decomposeFoodPhrase: decomposeFoodPhrase, detectChain: detectChain, stripChainMentions: stripChainMentions, bestTokenMatch: bestTokenMatch,
   parseVoiceWorkout: parseVoiceWorkout, parsePlanAdjustment: parsePlanAdjustment, applyPlanAdjustment: applyPlanAdjustment, planAdjustNoteHtml: planAdjustNoteHtml, logVoiceWorkout: logVoiceWorkout, renderVoiceWorkout: renderVoiceWorkout, addFoodEntry: addFoodEntry,
   cancelVoiceDictation: cancelVoiceDictation, startVoiceDictation: startVoiceDictation, handleVoiceTranscript: handleVoiceTranscript,
   encouragementMode: encouragementMode, greetingForHour: greetingForHour, encouragementCandidates: encouragementCandidates,
