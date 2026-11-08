@@ -241,6 +241,8 @@ button.favStar{min-width:44px;min-height:44px;font-size:17px}
     <button class="btn sec sm" id="btnClearDemo" type="button">Reset all data</button>
   </div>
 </header>
+<div style="text-align:center;padding:12px 16px;background:#fff8e6;border-bottom:2px solid #e8a13a;"><a href="https://travisbriggs.gumroad.com/l/ihiubch" target="_blank" rel="noopener" style="display:inline-block;background:#e8a13a;color:#1d2b2e;font-weight:800;font-size:17px;padding:10px 22px;border-radius:8px;text-decoration:none;">Get the full version — $79</a></div>
+
 
 <main>
 <!-- ============ DASHBOARD ============ -->
@@ -347,7 +349,6 @@ button.favStar{min-width:44px;min-height:44px;font-size:17px}
     <div class="flexb">
       <h3 style="margin:0">Your weekly plan</h3>
       <div class="row" style="flex:0 1 auto">
-        <button class="btn sm" id="btnGenPlan" type="button">Generate / refresh plan</button>
         <button class="btn sec sm" id="btnDeload" type="button">Start deload week</button>
       </div>
     </div>
@@ -613,11 +614,7 @@ button.favStar{min-width:44px;min-height:44px;font-size:17px}
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="4.5" y="4.5" width="15" height="15" rx="3.5"/><path d="M12 15.8v-3.4l2.1-2.1"/></svg></span>Weight trend</h3>
     <canvas class="chart" id="weightChart" width="1000" height="220"></canvas>
     <div class="small mut mt" id="weightNote"></div>
-    <div class="row mt">
-      <div class="field"><label>Date</label><input id="wDate" type="date"></div>
-      <div class="field"><label>Weight (lb)</label><input id="wVal" type="number" min="0" step="0.1" inputmode="decimal"><button type="button" class="micbtn" data-mic-for="wVal" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
-      <div class="field" style="align-self:end"><button class="btn sm" id="btnAddWeight" type="button">Add weigh-in</button></div>
-    </div>
+    <p class="small mut mt">Weigh-ins are logged on the <b>Today</b> tab (Quick log — today) or the <b>Devices</b> tab (Manual daily entry, for past dates). This chart and the list below read those same records.</p>
     <div id="weightList"></div>
   </div>
   <details class="card"><summary><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="9" width="18" height="6.5" rx="1"/><path d="M7 9v3M11 9v3.8M15 9v3M19 9v3.8"/></svg></span>Body measurements</summary>
@@ -726,7 +723,7 @@ button.favStar{min-width:44px;min-height:44px;font-size:17px}
       <div class="field"><label>Target weight (lb, optional)</label><input id="pTargetWeight" type="number" min="0" step="0.1" inputmode="decimal"><button type="button" class="micbtn" data-mic-for="pTargetWeight" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
     </div>
     <div class="field"><label>Allergies / foods to avoid (comma separated — the coach will flag these)</label><input id="pAvoid" type="text" placeholder="e.g. peanuts, shellfish, dairy"><button type="button" class="micbtn" data-mic-for="pAvoid" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
-    <button class="btn" id="btnSaveProfile" type="button">Save profile &amp; update my plan</button>
+    <button class="btn" id="btnSaveProfile" type="button">Save profile</button>
     <div id="profileMsg" class="mt"></div>
   </div>
   <details class="card" id="helpSection"><summary>Help &amp; support</summary>
@@ -756,7 +753,7 @@ button.favStar{min-width:44px;min-height:44px;font-size:17px}
       <p class="small">Go to the <b>Progress</b> tab, open <b>Backup &amp; reports</b>, and tap <b>Export backup (JSON)</b> to save a backup file. Keep that file somewhere safe. To restore it later — on this device or a new one — open the same place, choose the backup file under <b>Restore a backup</b>, and your logs come back.</p>
     </details>
     <p class="small mt">All of your LogEasy data lives only on this device, in this browser/app — nothing is uploaded anywhere. Back it up with <b>Progress → Backup &amp; reports → Export backup (JSON)</b> before you switch phones or browsers, and keep the backup file somewhere safe.</p>
-    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.4.1&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
+    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.4.5&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
     <p class="small mut">Email opens your own email app, addressed to us, with the app version already in the subject line.</p>
   </details>
   <details class="card" id="profileMore"><summary>More settings — encouragement, appearance, legal &amp; about</summary>
@@ -790,7 +787,7 @@ button.favStar{min-width:44px;min-height:44px;font-size:17px}
     <button class="btn sec" id="btnShowIntro" type="button">See the intro again</button>
   </div>
   <details class="card"><summary>ℹ️ About LogEasy</summary>
-    <p class="small mut mt">LogEasy <b>version 2.4.1</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
+    <p class="small mut mt">LogEasy <b>version 2.4.5</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
   </details>
   </details>
 </section>
@@ -831,7 +828,7 @@ button.favStar{min-width:44px;min-height:44px;font-size:17px}
     <div class="legalBody" id="legalHealthBody"></div>
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="5.5" y="10.5" width="13" height="10" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg></span>Privacy</h3>
     <div class="legalBody"><p>LogEasy collects <b>no data</b>. There are no accounts and no sign-in. Everything you enter or import is stored only in this browser, on this device — nothing is uploaded, tracked, or shared, and we never see it. Backups and reports exist only when you export them, and where you keep those files is up to you. (Connected features, if they ever ship, will ask for separate consent before anything leaves your device — accepting these Terms is not that consent.)</p></div>
-    <p class="small mut mt">Sold by White Wolf Tree Service LLC (White Wolf Digital) — whitewolfoklahoma@gmail.com.</p>
+    <p class="small mut mt">Sold by White Wolf Apps — whitewolfbackoffice@gmail.com.</p>
     <button class="btn sec mt" id="btnLegalClose2" type="button" style="min-height:48px">✕ Close</button>
   </div>
 </div>
@@ -1447,7 +1444,7 @@ function allFoods(state){ return FOODS.map(foodObj).concat(EXTRA_FOODS).concat((
 "use strict";
 /* ---------- state ---------- */
 var FF_KEY = "forgefit_v1";
-var FF_VERSION = "2.4.1";
+var FF_VERSION = "2.4.5";
 /* Terms of Use version bundled with this build (legal pack v1.0). Bump this
    ONE constant when the terms text changes and users are re-asked once. */
 var FF_TERMS_VERSION = "1.0";
@@ -1580,7 +1577,7 @@ function saveState(s){ try { FFStore.set(FF_KEY, JSON.stringify(s)); } catch(e){
    Texts from workspace legal pack (terms-of-use.md + health-disclaimer.md),
    converted to HTML and bundled in-file — the app stays fully offline.
    Pattern: legal/in-app-legal-pattern.md. */
-var FF_TERMS_HTML = "<p><b>Version 1.0</b> <b>Seller: White Wolf Tree Service LLC, selling digital products under the name \"White Wolf Digital\"</b> <b>Contact: whitewolfoklahoma@gmail.com</b></p>\n<h4>1. What you're buying</h4>\n<p>Our apps (including LogEasy, ForgeKitchen, TreeBid Pro, SnowBid, WashPrice Pro, RoofSquares, JobProfit Tracker, PastureLedger, and the other titles sold under White Wolf Digital) are single-file software tools. When you buy one, you are buying a <b>license to use the file</b>, not ownership of the software itself.</p>\n<h4>2. Your license</h4>\n<ul>\n<li>You may use the app for your own personal or business work.</li>\n<li>You may open it on your own devices (phone, tablet, computer) and move your own data between them using the app's built-in backup/export tools.</li>\n<li>You may <b>not</b> resell, redistribute, give away, upload, or share the app file (or a copy of it) with anyone else — including posting it online, bundling it with other products, or selling access to it.</li>\n<li>You may <b>not</b> claim the app as your own work, remove its branding or notices, or use it to build a competing product for resale.</li>\n<li>One purchase = one buyer. A business purchase covers the buyer and their own employees using it for that business's work; it does not cover other businesses.</li>\n</ul>\n<h4>3. Your data stays yours — and stays on your device</h4>\n<ul>\n<li>The current versions of our apps run <b>entirely on your device</b>. They have no accounts, no sign-in, no analytics, and they collect, transmit, and store <b>none</b> of your information on any server. We never see your data.</li>\n<li>Your records are stored in your browser/app storage on your device. <b>You are responsible for backing them up</b> using the app's export tools. If you clear your browser data, lose your device, or uninstall the app, your records may be permanently lost, and we cannot recover them — we never had a copy.</li>\n<li>Files you export (backups, quotes, PDFs) are under your control. Where you store or send them is up to you.</li>\n</ul>\n<h4>4. Estimates are tools, not guarantees</h4>\n<p>Every number our apps produce — bids, prices, costs, calorie targets, projections, schedules, totals — is an <b>estimate generated from the information you enter and the settings you choose</b>. Outputs are aids for your own judgment, not guarantees of price, profit, outcome, or result. You are responsible for checking any output before relying on it (see also the disclaimer that applies to your app: Health Disclaimer for fitness/nutrition apps, Estimator Disclaimer for contractor tools). If an input is wrong, the output will be wrong.</p>\n<h4>5. Acceptable use</h4>\n<p>Don't use the apps to break the law, infringe anyone's rights, or misrepresent quotes, invoices, or records to your own customers. For the fitness apps, the guardrails in the app (healthy-rate limits, calorie floor) are part of the product — don't treat the app as a way around them.</p>\n<h4>6. Provided \"as is\"</h4>\n<p>The apps are provided <b>\"as is\" and \"as available,\" without warranties of any kind</b>, express or implied — including merchantability, fitness for a particular purpose, accuracy of calculations, and uninterrupted or error-free operation — to the maximum extent allowed by law. Software has bugs; browsers change; we work to fix problems but do not promise any app is error-free or will work on every device or browser forever.</p>\n<h4>7. Limitation of liability</h4>\n<p>To the maximum extent allowed by law:</p>\n<ul>\n<li>We are <b>not liable for indirect, incidental, special, or consequential damages</b> — including lost profits, lost or mispriced jobs, lost data, or business interruption — arising from use of the apps.</li>\n<li>Our total liability for any claim connected to an app is limited to the <b>amount you paid for that app</b>.</li>\n<li>Nothing in these terms limits liability that cannot legally be limited.</li>\n</ul>\n<h4>8. Refunds</h4>\n<p>Refunds are handled <b>by the storefront you bought from, under that storefront's policy</b> — Gumroad's refund policy for Gumroad purchases, and Google Play's refund policy for Play purchases. These terms do not add to, replace, or override the storefront's refund rules. If a file is defective and won't open, contact us at whitewolfoklahoma@gmail.com and we'll fix or replace the file.</p>\n<h4>9. Updates and changes to these terms</h4>\n<ul>\n<li>We may release updated versions of an app. Updates may add, change, or remove features.</li>\n<li>We may update these terms. The version you agreed to is recorded in the app (version number and date) at first-run acceptance. If terms change, the app may ask you to accept the new version once on next open. Updated terms apply going forward, not retroactively.</li>\n<li>If you don't agree to an updated version of the terms, stop using the app.</li>\n</ul>\n<h4>10. Governing law</h4>\n<p>These terms are governed by the laws of the <b>State of Oklahoma</b>, USA.</p>\n<h4>11. Contact</h4>\n<p>White Wolf Tree Service LLC (White Wolf Digital) — whitewolfoklahoma@gmail.com.</p>\n<h4>CONNECTED FEATURES — takes effect only when these features ship</h4>\n<p><i>The sections below apply only to future connected features (device sync via Health Connect, AI voice logging, and the AI Goal Preview in LogEasy). They do not apply to the current offline versions, which never transmit data.</i></p>\n<ul>\n<li><b>Opt-in only.</b> Connected features are off by default. Each one asks for your separate, explicit consent — on its own consent screen, in plain language — before anything leaves your device. Declining never disables the app's offline features.</li>\n<li><b>What gets sent.</b> Only what the consent screen names, only when you use the feature: for example, a meal description (text, or audio only if cloud transcription is on) for AI voice logging, or the single photo you choose for an AI Goal Preview.</li>\n<li><b>No retention by us.</b> Our relay service passes your request to the named AI provider and keeps nothing — no copies of your photos, audio, transcripts, or entries are stored on our servers. Provider handling is described on the consent screen and in the Privacy Policy.</li>\n<li><b>Health data stays on the device.</b> Device sync (Health Connect) reads your health data on your phone and stores it in the app on your phone. It is not uploaded to us.</li>\n<li><b>Allowances.</b> Some connected features run on third-party AI services we pay for per use, so they may include a monthly allowance described in the app (for example, a set number of AI previews or voice entries per month), with optional additional credits. Allowances and pricing will be shown in the app before you use the feature; they are not a subscription unless the app says so in plain words.</li>\n<li><b>Permissions.</b> Connected features may request device permissions (such as Health Connect access or the microphone) at the moment you first use them. You can revoke permissions any time in your device settings; the related feature will simply stop working.</li>\n</ul>";
+var FF_TERMS_HTML = "<p><b>Version 1.0</b> <b>Seller: White Wolf Apps</b> <b>Contact: whitewolfbackoffice@gmail.com</b></p>\n<h4>1. What you're buying</h4>\n<p>Our apps (including LogEasy, ForgeKitchen, BranchMath, SnowBid, GrimeMath, RoofSquares, ProfitFlag, PastureLedger, and the other titles sold under White Wolf Apps) are single-file software tools. When you buy one, you are buying a <b>license to use the file</b>, not ownership of the software itself.</p>\n<h4>2. Your license</h4>\n<ul>\n<li>You may use the app for your own personal or business work.</li>\n<li>You may open it on your own devices (phone, tablet, computer) and move your own data between them using the app's built-in backup/export tools.</li>\n<li>You may <b>not</b> resell, redistribute, give away, upload, or share the app file (or a copy of it) with anyone else — including posting it online, bundling it with other products, or selling access to it.</li>\n<li>You may <b>not</b> claim the app as your own work, remove its branding or notices, or use it to build a competing product for resale.</li>\n<li>One purchase = one buyer. A business purchase covers the buyer and their own employees using it for that business's work; it does not cover other businesses.</li>\n</ul>\n<h4>3. Your data stays yours — and stays on your device</h4>\n<ul>\n<li>The current versions of our apps run <b>entirely on your device</b>. They have no accounts, no sign-in, no analytics, and they collect, transmit, and store <b>none</b> of your information on any server. We never see your data.</li>\n<li>Your records are stored in your browser/app storage on your device. <b>You are responsible for backing them up</b> using the app's export tools. If you clear your browser data, lose your device, or uninstall the app, your records may be permanently lost, and we cannot recover them — we never had a copy.</li>\n<li>Files you export (backups, quotes, PDFs) are under your control. Where you store or send them is up to you.</li>\n</ul>\n<h4>4. Estimates are tools, not guarantees</h4>\n<p>Every number our apps produce — bids, prices, costs, calorie targets, projections, schedules, totals — is an <b>estimate generated from the information you enter and the settings you choose</b>. Outputs are aids for your own judgment, not guarantees of price, profit, outcome, or result. You are responsible for checking any output before relying on it (see also the disclaimer that applies to your app: Health Disclaimer for fitness/nutrition apps, Estimator Disclaimer for contractor tools). If an input is wrong, the output will be wrong.</p>\n<h4>5. Acceptable use</h4>\n<p>Don't use the apps to break the law, infringe anyone's rights, or misrepresent quotes, invoices, or records to your own customers. For the fitness apps, the guardrails in the app (healthy-rate limits, calorie floor) are part of the product — don't treat the app as a way around them.</p>\n<h4>6. Provided \"as is\"</h4>\n<p>The apps are provided <b>\"as is\" and \"as available,\" without warranties of any kind</b>, express or implied — including merchantability, fitness for a particular purpose, accuracy of calculations, and uninterrupted or error-free operation — to the maximum extent allowed by law. Software has bugs; browsers change; we work to fix problems but do not promise any app is error-free or will work on every device or browser forever.</p>\n<h4>7. Limitation of liability</h4>\n<p>To the maximum extent allowed by law:</p>\n<ul>\n<li>We are <b>not liable for indirect, incidental, special, or consequential damages</b> — including lost profits, lost or mispriced jobs, lost data, or business interruption — arising from use of the apps.</li>\n<li>Our total liability for any claim connected to an app is limited to the <b>amount you paid for that app</b>.</li>\n<li>Nothing in these terms limits liability that cannot legally be limited.</li>\n</ul>\n<h4>8. Refunds</h4>\n<p>Refunds are handled <b>by the storefront you bought from, under that storefront's policy</b> — Gumroad's refund policy for Gumroad purchases, and Google Play's refund policy for Play purchases. These terms do not add to, replace, or override the storefront's refund rules. If a file is defective and won't open, contact us at whitewolfbackoffice@gmail.com and we'll fix or replace the file.</p>\n<h4>9. Updates and changes to these terms</h4>\n<ul>\n<li>We may release updated versions of an app. Updates may add, change, or remove features.</li>\n<li>We may update these terms. The version you agreed to is recorded in the app (version number and date) at first-run acceptance. If terms change, the app may ask you to accept the new version once on next open. Updated terms apply going forward, not retroactively.</li>\n<li>If you don't agree to an updated version of the terms, stop using the app.</li>\n</ul>\n<h4>10. Governing law</h4>\n<p>These terms are governed by the laws of the <b>State of Oklahoma</b>, USA.</p>\n<h4>11. Contact</h4>\n<p>White Wolf Apps — whitewolfbackoffice@gmail.com.</p>\n<h4>CONNECTED FEATURES — takes effect only when these features ship</h4>\n<p><i>The sections below apply only to future connected features (device sync via Health Connect, AI voice logging, and the AI Goal Preview in LogEasy). They do not apply to the current offline versions, which never transmit data.</i></p>\n<ul>\n<li><b>Opt-in only.</b> Connected features are off by default. Each one asks for your separate, explicit consent — on its own consent screen, in plain language — before anything leaves your device. Declining never disables the app's offline features.</li>\n<li><b>What gets sent.</b> Only what the consent screen names, only when you use the feature: for example, a meal description (text, or audio only if cloud transcription is on) for AI voice logging, or the single photo you choose for an AI Goal Preview.</li>\n<li><b>No retention by us.</b> Our relay service passes your request to the named AI provider and keeps nothing — no copies of your photos, audio, transcripts, or entries are stored on our servers. Provider handling is described on the consent screen and in the Privacy Policy.</li>\n<li><b>Health data stays on the device.</b> Device sync (Health Connect) reads your health data on your phone and stores it in the app on your phone. It is not uploaded to us.</li>\n<li><b>Allowances.</b> Some connected features run on third-party AI services we pay for per use, so they may include a monthly allowance described in the app (for example, a set number of AI previews or voice entries per month), with optional additional credits. Allowances and pricing will be shown in the app before you use the feature; they are not a subscription unless the app says so in plain words.</li>\n<li><b>Permissions.</b> Connected features may request device permissions (such as Health Connect access or the microphone) at the moment you first use them. You can revoke permissions any time in your device settings; the related feature will simply stop working.</li>\n</ul>";
 var FF_HEALTH_HTML = "<p><b>Applies to: LogEasy, ForgeKitchen, and their add-ons (including the High-Protein Meal-Plan Pack). Short version: these apps are general fitness and nutrition information tools. They are not medical advice and not a medical device.</b></p>\n<h4>Not medical advice</h4>\n<ul>\n<li>LogEasy and ForgeKitchen provide <b>general fitness and nutrition information for healthy adults</b>. Nothing in the apps — workout programs, calorie or macro targets, food data, projections, or AI-generated suggestions — is medical advice, a diagnosis, or a treatment plan.</li>\n<li>The apps are <b>not medical devices</b> and are not intended to diagnose, treat, cure, or prevent any disease or condition.</li>\n<li><b>Talk to a doctor or another qualified professional</b> before starting a workout program or changing how you eat — especially if you are pregnant, nursing, under 18, have a medical condition (including heart, joint, metabolic, or eating-related conditions), take medication affected by diet or exercise, or have been inactive for a long time. A registered dietitian is the right source for a personal nutrition plan.</li>\n</ul>\n<h4>Numbers are approximations</h4>\n<ul>\n<li>Calorie and macro targets are computed from standard formulas (such as Mifflin-St Jeor) and population averages. Your real needs can differ — sometimes by a lot.</li>\n<li>Food nutrition values come from built-in databases, package labels, and standard reference data. Home-cooked and restaurant food varies with ingredients, portions, and preparation, so logged values are <b>approximations, not exact measurements</b>.</li>\n<li><b>AI estimates</b> (connected feature, when shipped): when you describe a meal to the AI, its nutrition values are <b>estimates shown as ranges and labeled \"AI estimate.\"</b> They are educated approximations, not label facts. You can review and correct every AI-created entry.</li>\n<li>The projected end-of-month weight change uses the standard 3,500 kcal ≈ 1 lb approximation. It is a planning estimate, <b>not a prediction or a guarantee</b> — real bodies don't follow arithmetic exactly.</li>\n</ul>\n<h4>Exercise safety</h4>\n<ul>\n<li>Workouts are general programs, not personal coaching. Use weights and intensity appropriate to your own level, and learn proper form before lifting heavy.</li>\n<li><b>Stop exercising and seek help if you feel pain, dizziness, chest pain, or shortness of breath.</b> Warm up, use equipment safely, and don't train through an injury.</li>\n<li>You are responsible for your own health decisions. Using the apps is at your own risk, within the limits of the Terms of Use.</li>\n</ul>\n<h4>Built-in guardrails</h4>\n<p>LogEasy already limits what it will plan: weight loss is never planned faster than 1% of body weight per week, weight gain never faster than 0.5% per week, and no day is planned below a 1,200-calorie floor. If your goal implies a faster rate, the app slows it to the healthy rate and tells you. These guardrails are a safety feature of the software — they are not medical guidance and don't replace a professional's judgment.</p>\n<h4>CONNECTED FEATURES — takes effect only when these features ship</h4>\n<ul>\n<li><b>AI Goal Preview (visualization only):</b> the preview shows an AI-generated <b>visualization of a possible appearance</b> at a target weight. It is <b>not a prediction</b> of how you will look, not a promise of results, and not a medical or health assessment. Previews are only generated for target weights inside healthy ranges — requests outside those ranges are refused. The feature is for users 18 and over.</li>\n<li><b>Device data:</b> steps, calories, sleep, weight, and heart-rate values come from your own devices and the apps that feed them. Consumer devices measure approximately; the app displays what the device reported and does not verify it.</li>\n</ul>";
 function legalSummaryLines(){
   return ["Your data stays on your device.", "Estimates are aids, not guarantees.", "Fitness content isn't medical advice."];
@@ -3184,7 +3181,7 @@ function renderDashboard(){
     statCard("Steps today", act.steps ? act.steps.toLocaleString() : "—", act.steps ? "from " + (act.sources.join(", ") || "manual entry") : "import a device file or quick-log") +
     statCard("Active calories", act.activeCal ? act.activeCal + " kcal" : "—", "exercise minutes: " + (act.exerciseMin || 0)) +
     statCard("Workout streak", streak + (streak === 1 ? " day" : " days"), weekWorkouts + " workout(s) in the last 7 days") +
-    statCard("Current weight", currentWeightLb(state) ? currentWeightLb(state) + " lb" : "—", state.profile && state.profile.targetWeightLb ? "target: " + state.profile.targetWeightLb + " lb" : "add a weigh-in in Progress");
+    statCard("Current weight", currentWeightLb(state) ? currentWeightLb(state) + " lb" : "—", state.profile && state.profile.targetWeightLb ? "target: " + state.profile.targetWeightLb + " lb" : "log it in Quick log below");
   renderGlance(today);
   // calorie ring
   var pct = t.cal ? clamp(eaten.cal / t.cal, 0, 1) : 0;
@@ -3311,7 +3308,7 @@ function nextActionFor(s, today, now){
   if (!num(act.steps)) return { icon: "👟", text: "Add today's steps", sub: "Import a device file in the Devices tab, or quick-log them further down this page.", view: "activity", cta: "Open Devices" };
   var pts = weightTrendPoints(s);
   var lastW = pts.length ? pts[pts.length - 1].date : "";
-  if (!lastW || daysBetween(lastW, today) >= 7) return { icon: "⚖️", text: "Log a weigh-in", sub: lastW ? "Last weigh-in was " + lastW + "." : "No weigh-in logged yet — it powers your weight trend.", view: "progress", cta: "Open Progress" };
+  if (!lastW || daysBetween(lastW, today) >= 7) return { icon: "⚖️", text: "Log a weigh-in", sub: lastW ? "Last weigh-in was " + lastW + "." : "No weigh-in logged yet — it powers your weight trend.", view: "dashboard", cta: "Go to Quick log" };
   return null;
 }
 
@@ -3347,7 +3344,7 @@ function renderGlance(today){
       glanceCardHtml("Calories left today", g.hasProfile ? g.calLeft.toLocaleString() + " kcal" : "—", g.hasProfile ? g.calEaten.toLocaleString() + " of " + g.calTarget.toLocaleString() + " kcal eaten" : "Set up your profile to see targets", "nutrition") +
       glanceCardHtml("Steps today", g.steps ? g.steps.toLocaleString() : "—", g.steps ? "goal " + g.stepGoal.toLocaleString() : "Import a device file or quick-log below", "activity") +
       glanceCardHtml("Last night's sleep", g.sleepH ? (Math.round(g.sleepH * 10) / 10) + " h" : "—", g.sleepH ? (g.sleepDate === today || g.sleepDate === addDays(today, -1) ? "last night" : "on " + g.sleepDate) : "Quick-log sleep below or import it", "activity") +
-      glanceCardHtml("Current weight", g.weightLb ? g.weightLb + " lb" : "—", g.targetWeightLb ? "target " + g.targetWeightLb + " lb" : (g.weightDate ? "weighed " + g.weightDate : "Add a weigh-in in Progress"), "progress");
+      glanceCardHtml("Current weight", g.weightLb ? g.weightLb + " lb" : "—", g.targetWeightLb ? "target " + g.targetWeightLb + " lb" : (g.weightDate ? "weighed " + g.weightDate : "Add a weigh-in in Quick log"), "progress");
     row.querySelectorAll("[data-glance]").forEach(function(b){
       b.addEventListener("click", function(){ switchView(b.getAttribute("data-glance")); });
     });
@@ -3591,7 +3588,7 @@ function renderTrain(){
     return;
   }
   if (!plan){
-    $("planMeta").textContent = "No plan yet — hit “Generate / refresh plan”.";
+    $("planMeta").textContent = "No plan yet — tap “Generate / regenerate my month” in the full-month plan card below; it builds your weekly plan at the same time.";
     $("planDays").innerHTML = "";
     renderMonthPlan();
     return;
@@ -4384,8 +4381,17 @@ function renderFoodResults(){
     b.addEventListener("click", function(){ openFoodPanelForResult(+b.getAttribute("data-panel-food")); });
   });
 }
+var __foodAddGuard = { key: "", at: 0 };
 function addFoodEntry(food, qty, meal, date){
   if (!food) return;
+  /* Fix wave 1A — submit guard (catalog audit Sev-1 L-H1): a rapid double/triple
+     tap on an Add button used to multi-count the same entry. Identical adds
+     inside the lock window are treated as one activation; the button also
+     disables briefly where the caller passes through a click handler. */
+  var gk = food.name + "|" + qty + "|" + meal + "|" + date;
+  var now = Date.now();
+  if (__foodAddGuard.key === gk && now - __foodAddGuard.at < 900) return;
+  __foodAddGuard = { key: gk, at: now };
   state.foodLogs.push({ id: uid(), date: date, meal: meal, name: food.name, serving: food.serving, qty: qty,
     cal: Math.round(num(food.cal)*qty), p: Math.round(num(food.p)*qty), c: Math.round(num(food.c)*qty), fat: Math.round(num(food.fat)*qty),
     m: scaleMicros(food.m, qty), dbFood: !!food.db });
@@ -4664,7 +4670,7 @@ function drawWeightChart(){
   ctx.clearRect(0, 0, W, H);
   var data = mergedWeights();
   ctx.fillStyle = "#93a3bb"; ctx.font = "15px sans-serif";
-  if (data.length < 2){ ctx.fillText(data.length ? "One weigh-in so far — add another to draw your trend line." : "No weight data yet — add a weigh-in below or import a device file.", 18, 40); $("weightNote").textContent = ""; return; }
+  if (data.length < 2){ ctx.fillText(data.length ? "One weigh-in so far — add another to draw your trend line." : "No weight data yet — quick-log your weight on the Today tab or import a device file.", 18, 40); $("weightNote").textContent = ""; return; }
   var min = Math.min.apply(null, data.map(function(d){ return d.lb; })), max = Math.max.apply(null, data.map(function(d){ return d.lb; }));
   if (max - min < 2){ var mid = (max+min)/2; min = mid - 1; max = mid + 1; }
   var padL = 52, padR = 16, padT = 14, padB = 26;
@@ -6442,7 +6448,7 @@ function init(){
   var mus = $("exMuscle");
   muscleGroups().forEach(function(m){ var o = document.createElement("option"); o.value = m; o.textContent = m; mus.appendChild(o); });
   var today = todayStr();
-  $("foodDate").value = today; $("mDate").value = today; $("wDate").value = today; $("msDate").value = today; $("photoDate").value = today; $("monthStart").value = weekStart(today);
+  $("foodDate").value = today; $("mDate").value = today; $("msDate").value = today; $("photoDate").value = today; $("monthStart").value = weekStart(today);
   fillProfileForm();
   document.querySelectorAll("nav.tabs button").forEach(function(b){ b.addEventListener("click", function(){ switchView(b.getAttribute("data-view")); }); });
   /* Swipe navigation (v2.1.1): a clearly horizontal swipe on the content area
@@ -6493,21 +6499,58 @@ function init(){
     if ($("qSteps").value !== "") setManualSteps(cur, int($("qSteps").value));
     if ($("qActiveCal").value !== "") markManualField(cur, "activeCal", Math.max(0, int($("qActiveCal").value)));
     if ($("qSleep").value !== "") markManualField(cur, "sleepH", clamp(num($("qSleep").value), 0, 24));
-    if ($("qWeight").value !== ""){ markManualField(cur, "weightLb", num($("qWeight").value)); syncManualWeight(d, cur.weightLb); }
+    /* v2.4.3: the removed Progress weigh-in form validated 50–1000 lb; the
+       surviving quick-log path restores that exact check so consolidation
+       does not silently accept out-of-range weights (§15 fuzz finding). */
+    if ($("qWeight").value !== ""){
+      var qw = num($("qWeight").value);
+      if (!(qw >= 50 && qw <= 1000)){ toast("Enter a weight between 50 and 1000 lb."); }
+      else { markManualField(cur, "weightLb", qw); syncManualWeight(d, cur.weightLb); }
+    }
     if (cur.sources.indexOf("Manual") < 0) cur.sources.push("Manual");
     state.activity[d] = cur;
     saveState(state);
+    clearQuickDraft();
     $("quickSaved").textContent = "Saved for " + d + ".";
     renderAll();
   });
-  $("btnGenPlan").addEventListener("click", function(){
+  /* v2.4.5 reconciliation fix (Play-A L-H2, S2): quick-log numbers typed but
+     not yet saved used to vanish silently on reload. The in-progress entry is
+     now kept as a draft — its own storage key, so the saved-record state
+     shape under FF_KEY is untouched — and restored into the form on load.
+     The draft is date-stamped: yesterday's unsaved numbers never land in
+     today's form. Saving the entry clears the draft. Dictation also lands
+     here: the mic layer dispatches "input" after filling a field. */
+  var FF_QUICK_DRAFT_KEY = "forgefit_v1_quickdraft";
+  function saveQuickDraft(){
+    try {
+      var vals = { steps: $("qSteps").value, activeCal: $("qActiveCal").value, sleep: $("qSleep").value, weight: $("qWeight").value };
+      if (vals.steps === "" && vals.activeCal === "" && vals.sleep === "" && vals.weight === ""){ FFStore.remove(FF_QUICK_DRAFT_KEY); return; }
+      FFStore.set(FF_QUICK_DRAFT_KEY, JSON.stringify({ date: todayStr(), steps: vals.steps, activeCal: vals.activeCal, sleep: vals.sleep, weight: vals.weight }));
+    } catch(e){}
+  }
+  function clearQuickDraft(){ try { FFStore.remove(FF_QUICK_DRAFT_KEY); } catch(e){} }
+  function restoreQuickDraft(){
+    try {
+      var raw = FFStore.get(FF_QUICK_DRAFT_KEY); if (!raw) return;
+      var dr = JSON.parse(raw);
+      if (!dr || dr.date !== todayStr()){ clearQuickDraft(); return; }
+      if (dr.steps) $("qSteps").value = dr.steps;
+      if (dr.activeCal) $("qActiveCal").value = dr.activeCal;
+      if (dr.sleep) $("qSleep").value = dr.sleep;
+      if (dr.weight) $("qWeight").value = dr.weight;
+    } catch(e){}
+  }
+  ["qSteps","qActiveCal","qSleep","qWeight"].forEach(function(id){ $(id).addEventListener("input", saveQuickDraft); });
+  restoreQuickDraft();
+  /* v2.4.3 consolidation: ONE plan generator. This button builds the weekly
+     plan AND the 28-day month plan together (the same pair Profile save
+     builds), so the removed "Generate / refresh plan" button has no
+     capability left behind it. */
+  $("btnGenMonth").addEventListener("click", function(){
     if (!state.profile){ toast("Set up your profile first (Profile tab)."); return; }
     if (!state.planStartDate) state.planStartDate = todayStr();
     state.plan = generatePlan(state);
-    saveState(state); renderTrain(); renderDashboard(); toast("Fresh plan generated for this week.");
-  });
-  $("btnGenMonth").addEventListener("click", function(){
-    if (!state.profile){ toast("Set up your profile first (Profile tab)."); return; }
     var requested = $("monthStart").value || weekStart(todayStr());
     state.monthPlan = generateMonthPlan(state, requested);
     $("monthStart").value = state.monthPlan.startDate;
@@ -6699,20 +6742,29 @@ function init(){
     if ($("mWorkouts").value !== "") markManualField(cur, "workouts", Math.max(0, int($("mWorkouts").value)));
     if ($("mDistance").value !== "") markManualField(cur, "distanceMi", Math.max(0, num($("mDistance").value)));
     if ($("mSleep").value !== "") markManualField(cur, "sleepH", clamp(num($("mSleep").value), 0, 24));
-    if ($("mWeight").value !== ""){ markManualField(cur, "weightLb", num($("mWeight").value)); syncManualWeight(d, cur.weightLb); }
+    var weightRefused = false;
+    if ($("mWeight").value !== ""){
+      var mw = num($("mWeight").value);
+      if (!(mw >= 50 && mw <= 1000)){ weightRefused = true; }
+      else { markManualField(cur, "weightLb", mw); syncManualWeight(d, cur.weightLb); }
+    }
     if ($("mRHR").value !== "") markManualField(cur, "restingHR", Math.max(0, int($("mRHR").value)));
     if (cur.sources.indexOf("Manual") < 0) cur.sources.push("Manual");
     state.activity[d] = cur;
-    saveState(state); toast("Entry saved for " + d + "."); renderAll();
+    /* v2.4.5 reconciliation fix (verifier V-D1, S3): when the weight was
+       refused, the old unconditional "Entry saved" toast fired after the
+       range toast and overwrote it, so the user never saw why the weight
+       didn't save. The final message now carries the refusal explicitly. */
+    saveState(state);
+    if (weightRefused) toast("Saved the rest for " + d + " — weight not saved: enter a weight between 50 and 1000 lb.");
+    else toast("Entry saved for " + d + ".");
+    renderAll();
   });
   $("btnAddPhoto").addEventListener("click", addPhotoFromFile);
-  $("btnAddWeight").addEventListener("click", function(){
-    var d = $("wDate").value || todayStr(), v = num($("wVal").value);
-    if (!(v >= 50 && v <= 1000)){ toast("Enter a weight between 50 and 1000 lb."); return; }
-    var ex = state.weights.filter(function(w){ return w.date === d; })[0];
-    if (ex) ex.lb = v; else state.weights.push({ date: d, lb: v });
-    saveState(state); $("wVal").value = ""; renderProgress(); renderDashboard(); toast("Weigh-in saved.");
-  });
+  /* v2.4.3 consolidation: the Progress "Add weigh-in" form was removed — it
+     wrote the same state.weights record the Today quick-log (and Devices
+     manual entry) already writes via syncManualWeight. Progress keeps the
+     chart + history read views of that one record. */
   $("btnAddMeasure").addEventListener("click", function(){
     var m = { date: $("msDate").value || todayStr(), waist: num($("msWaist").value), chest: num($("msChest").value), hips: num($("msHips").value),
       armL: num($("msArmL").value), armR: num($("msArmR").value), thighL: num($("msThighL").value), thighR: num($("msThighR").value), neck: num($("msNeck").value) };
