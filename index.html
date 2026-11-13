@@ -227,6 +227,25 @@ button.glanceCard .gVal{font-size:27px;font-weight:800;line-height:1.15;margin:3
 .chips button:hover{border-color:var(--acc)}
 button.favStar{min-width:44px;min-height:44px;font-size:17px}
 .quickRow{padding:7px 0;border-bottom:1px solid var(--line)}
+
+/* ===== LogEasy v2.5.0: modern app-look redesign (BirdTally pattern, LogEasy palette) ===== */
+:root{--radius:16px;--bar-h:64px}
+header{background:linear-gradient(120deg,#0d1117 0%,#101725 55%,#16302a 100%);box-shadow:0 2px 12px rgba(0,0,0,.35)}
+nav.tabs{background:rgba(16,23,37,.97);box-shadow:0 -3px 16px rgba(0,0,0,.4);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));gap:2px}
+nav.tabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:56px;padding:4px 2px 5px;font-size:11.5px;border-top:none;border-radius:14px}
+nav.tabs button .ic{display:flex;align-items:center;justify-content:center;padding:3px 14px;border-radius:999px;transition:background .15s}
+nav.tabs button.active{color:var(--acc)}
+nav.tabs button.active .ic{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#08130c;box-shadow:0 2px 6px rgba(74,222,128,.45)}
+.view.active{display:block;animation:tabIn .28s ease both}
+@keyframes tabIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+button.btn,a.btn{border-radius:999px;min-height:48px}
+input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
+.card{box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 12px 30px rgba(0,0,0,.32)}
+.legalGate .gwicon{width:76px;height:76px;border-radius:22px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 8px 22px rgba(0,0,0,.35);margin:8px auto 10px}
+.legalGate .gname{text-align:center;font-size:27px;font-weight:800;margin:0 0 2px;letter-spacing:.2px}
+.legalGate .gwelcome{text-align:center;color:var(--mut);font-size:15px;line-height:1.55;margin:0 auto 16px;max-width:520px}
+#btnLegalAgree{border-radius:999px}
+.toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 </style>
 </head>
 <body>
@@ -753,7 +772,7 @@ button.favStar{min-width:44px;min-height:44px;font-size:17px}
       <p class="small">Go to the <b>Progress</b> tab, open <b>Backup &amp; reports</b>, and tap <b>Export backup (JSON)</b> to save a backup file. Keep that file somewhere safe. To restore it later — on this device or a new one — open the same place, choose the backup file under <b>Restore a backup</b>, and your logs come back.</p>
     </details>
     <p class="small mt">All of your LogEasy data lives only on this device, in this browser/app — nothing is uploaded anywhere. Back it up with <b>Progress → Backup &amp; reports → Export backup (JSON)</b> before you switch phones or browsers, and keep the backup file somewhere safe.</p>
-    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.4.5&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
+    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.5.0&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
     <p class="small mut">Email opens your own email app, addressed to us, with the app version already in the subject line.</p>
   </details>
   <details class="card" id="profileMore"><summary>More settings — encouragement, appearance, legal &amp; about</summary>
@@ -787,7 +806,7 @@ button.favStar{min-width:44px;min-height:44px;font-size:17px}
     <button class="btn sec" id="btnShowIntro" type="button">See the intro again</button>
   </div>
   <details class="card"><summary>ℹ️ About LogEasy</summary>
-    <p class="small mut mt">LogEasy <b>version 2.4.5</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
+    <p class="small mut mt">LogEasy <b>version 2.5.0</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
   </details>
   </details>
 </section>
@@ -799,6 +818,9 @@ button.favStar{min-width:44px;min-height:44px;font-size:17px}
 <div class="legalGate" id="legalGate" role="dialog" aria-modal="true" aria-labelledby="legalGateTitle">
   <div class="sheet">
     <div class="gateScroll">
+      <div class="gwicon">🔥</div>
+      <div class="gname">LogEasy</div>
+      <p class="gwelcome">Welcome! Your trainer and nutrition coach — your plan, your food log and your progress, all right here on this device. Before you start, here are the short terms:</p>
       <h2 id="legalGateTitle" style="margin-top:0">LogEasy — Terms of Use</h2>
       <p class="warn" id="legalGateUpdate" style="display:none"></p>
       <p class="sumline">Your data stays on your device.</p>
@@ -1444,7 +1466,7 @@ function allFoods(state){ return FOODS.map(foodObj).concat(EXTRA_FOODS).concat((
 "use strict";
 /* ---------- state ---------- */
 var FF_KEY = "forgefit_v1";
-var FF_VERSION = "2.4.5";
+var FF_VERSION = "2.5.0";
 /* Terms of Use version bundled with this build (legal pack v1.0). Bump this
    ONE constant when the terms text changes and users are re-asked once. */
 var FF_TERMS_VERSION = "1.0";
