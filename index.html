@@ -246,6 +246,148 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
 .legalGate .gwelcome{text-align:center;color:var(--mut);font-size:15px;line-height:1.55;margin:0 auto 16px;max-width:520px}
 #btnLegalAgree{border-radius:999px}
 .toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+
+/* ===== LogEasy v2.6.0: one-touch home, trainer setup wizard, compact Train =====
+   Travis's direction (2026-11-25): the front door is ONE big button — tap,
+   talk, it files food or training in the right place; first run is a
+   trainer-led tap-through, not a form; Train fits one phone screen; and the
+   whole app should read as a mobile app, not a web page. */
+:root{--radius:20px}
+.card{border-radius:20px;padding:18px}
+details.card>summary{min-height:48px;display:flex;align-items:center;list-style:none}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary::after{content:"›";margin-left:auto;font-size:22px;color:var(--mut);transform:rotate(90deg)}
+h2{font-size:22px;font-weight:800}
+input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:14px;min-height:48px}
+.chipBtn{min-height:48px}
+/* one-touch universal log button */
+.oneTouchCard{padding:16px;background:linear-gradient(160deg,#1d1836,#151b26 70%);border-color:#3d3663}
+button.btn.oneTouch{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:104px;border-radius:26px;font-size:21px;font-weight:800;line-height:1.25;background:linear-gradient(135deg,#a78bfa,#818cf8);color:#171233;box-shadow:0 10px 28px rgba(167,139,250,.4),0 1px 0 rgba(255,255,255,.25) inset;padding:16px}
+button.btn.oneTouch .otMic{font-size:34px;line-height:1}
+button.btn.oneTouch.listening{animation:otPulse 1.1s ease-in-out infinite}
+@keyframes otPulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.22)}}
+.oneTouchHint{text-align:center;margin-top:10px}
+/* trainer setup wizard — full-screen tap-through, same chrome family as the intro */
+#wizOverlay{display:none;position:fixed;inset:0;z-index:119;background:var(--bg);flex-direction:column}
+.wizWrap{flex:1;display:flex;flex-direction:column;width:100%;max-width:720px;margin:0 auto;padding:14px 16px calc(12px + env(safe-area-inset-bottom,0px));min-height:0}
+.wizHead{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:48px}
+.wizCard{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:8px 2px;overflow-y:auto;min-height:0}
+.wizCard h2{font-size:25px;margin:2px 0 0}
+.wizCard p{font-size:15.5px;line-height:1.55;margin:0}
+.wizOpts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+button.wizOpt{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:12px 16px;border-radius:18px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:16.5px;font-weight:700;text-align:left;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+button.wizOpt .woSub{display:block;font-size:13px;font-weight:500;color:var(--mut);margin-top:2px}
+button.wizOpt.on{background:linear-gradient(135deg,var(--acc),#2dd4bf);color:#08130c;border-color:transparent}
+button.wizOpt.on .woSub{color:#0d2c1c}
+.wizDays{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.wizDays button{flex:1 1 0;min-width:44px;min-height:56px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--txt);font-size:14px;font-weight:700;cursor:pointer}
+.wizDays button.on{background:linear-gradient(135deg,var(--acc),#2dd4bf);color:#08130c;border-color:transparent}
+.wizFoot{display:flex;gap:10px;padding-top:10px}
+.wizFoot .btn{flex:1;min-height:56px;font-size:16px}
+.wizStats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.wizStats .field{margin-bottom:0}
+/* compact Train: today hero + week strip, everything else folds away */
+.todayHero{background:linear-gradient(135deg,#1a3a24,#14251b 55%,#12242e);border:1px solid #2e6b41;border-radius:20px;padding:16px 18px;margin-bottom:14px;box-shadow:0 12px 30px rgba(0,0,0,.32)}
+.todayHero .thName{font-size:19px;font-weight:800;line-height:1.3}
+.todayHero .btn{min-height:56px;font-size:16px;width:100%;margin-top:10px}
+.weekStrip{display:flex;gap:6px;margin-top:10px}
+.weekChip{flex:1 1 0;min-width:0;min-height:60px;border-radius:14px;border:1px solid var(--line);background:var(--bg2);color:var(--txt);padding:6px 2px;font-size:11.5px;font-weight:700;text-align:center;cursor:pointer;line-height:1.3}
+.weekChip .wcDay{display:block;font-size:12.5px}
+.weekChip .wcIco{display:block;font-size:15px;margin-top:2px}
+.weekChip.today{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.weekChip.done{border-color:var(--acc);background:#14251b}
+.weekChip.rest{opacity:.62;cursor:default}
+.trainActions{display:flex;gap:10px}
+.trainActions .btn{flex:1;min-height:52px}
+/* v2.6.0 — no-scroll pass: compact glance strip, compact stats, nutrition viz */
+.glanceGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
+.glanceCard{padding:10px 6px;min-height:0;border-radius:16px;text-align:center}
+.glanceCard .gVal{font-size:16px;margin:2px 0}
+.glanceCard .small{font-size:10px;line-height:1.3}
+.stat{padding:10px 12px;border-radius:16px}
+.stat .v{font-size:20px}
+#progStats{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#progStats .stat .v{font-size:17px}
+#progStats .stat .small{font-size:10px;line-height:1.3}
+.macroViz{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin:12px 0}
+.calRingWrap{flex:0 0 auto;text-align:center}
+.calRingWrap .ringNum{font-size:19px;font-weight:800;line-height:1.1}
+.calRingWrap .ringSub{font-size:10px;color:var(--mut)}
+.macroBars{flex:1 1 auto;display:flex;flex-direction:column;gap:9px;min-width:0}
+.mBarRow{display:flex;align-items:center;gap:8px;font-size:12px}
+.mBarRow .mLab{flex:0 0 52px;color:var(--mut)}
+.mBarTrack{flex:1 1 auto;height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.mBarFill{height:100%;border-radius:99px;background:var(--acc)}
+.mBarFill.over{background:#f87171}
+.mBarRow .mNums{flex:0 0 auto;font-weight:700;white-space:nowrap}
+.view h2{margin:2px 0 10px}
+button.btn.trainerBtn{width:100%;margin-top:10px;background:linear-gradient(135deg,#38bdf8,#818cf8);color:#08111f}
+#view-dashboard.active{display:flex;flex-direction:column}
+#dashNoProfile{order:-2}
+#voiceHero{order:-1}
+#view-train.active{display:flex;flex-direction:column}
+#view-train>h2{order:0}
+#trainMsgs{order:1}
+#trainToday{order:2}
+#postWorkoutMsg{order:3}
+#playerCard{order:4}
+#view-train>*{order:5}
+/* v2.6.0 compaction pass 2 — shared chrome + strips shrink so tabs fit one screen */
+.tagline{display:none}
+header{padding:8px 16px}
+.micNote:empty{display:none}
+button.glanceCard{min-height:0;padding:10px 6px;text-align:center;min-width:0;overflow:hidden}
+.glanceCard .small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.field{margin-bottom:8px}
+.card{padding:14px 16px}
+details.card{padding:12px 16px}
+.statStrip{display:flex;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 8px;margin:12px 0}
+.statStrip .ssCell{flex:1 1 0;text-align:center;min-width:0}
+.statStrip .ssVal{font-size:19px;font-weight:800}
+.statStrip .ssLab{font-size:10.5px;color:var(--mut);line-height:1.3;margin-top:2px}
+.nextAct .small.mut{display:none}
+.fkCard p{font-size:12.5px;line-height:1.45}
+#nutriStats .macroViz{padding:10px 12px;margin:8px 0}
+#wizardHonesty{font-size:13.5px;line-height:1.5}
+/* v2.6.0 compaction pass 3 */
+canvas.chart{height:150px}
+.glanceCard .gVal{font-size:14.5px;white-space:nowrap}
+.glanceGrid{margin:8px 0}
+.naText{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#trainMsgs .msg{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#planMeta{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.weekChip{min-height:52px}
+details.card{padding:8px 14px}
+label{margin-bottom:3px}
+/* v2.6.0 compaction pass 4 — header on one row; last trims */
+header{flex-wrap:nowrap}
+header .btn{min-height:38px;padding:6px 10px;font-size:13px}
+button.btn.oneTouch{min-height:94px}
+.oneTouchHint{margin-top:6px;font-size:12.5px}
+#nutriMsgs .msg{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.macroBars .small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fkCard p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#view-nutrition .card .field label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* v2.6.0 compaction pass 5 — final fit trims */
+main{padding:12px 12px 30px}
+button.btn.oneTouch{min-height:88px}
+.glanceCard{padding:8px 4px}
+.glanceCard .small{font-size:9.5px}
+#nutriStats .macroViz{padding:8px 10px}
+/* v2.6.0 compaction pass 6 */
+header .row{flex-wrap:nowrap}
+header .btn.sm{min-height:38px;white-space:nowrap}
+#nutriMsgs .msg{-webkit-line-clamp:1}
+#view-nutrition>.card{padding:12px 14px}
+.calRingWrap svg{width:60px;height:60px}
+.macroBars{gap:7px}
+#view-dashboard .card{margin-bottom:10px}
+/* v2.6.0 compaction pass 7 — nutrition final trims */
+#view-nutrition>.card{padding:10px 12px}
+#view-nutrition h2{margin-bottom:4px}
+#nutriMsgs .msg{padding:8px 13px}
+#nutriStats .macroViz{margin:4px 0}
+#btnVoiceFood{min-height:44px}
 </style>
 </head>
 <body>
@@ -268,37 +410,28 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
 <section class="view active" id="view-dashboard">
   <div id="dashNoProfile"></div>
   <div class="glanceGrid" id="glanceRow" aria-label="Today at a glance"></div>
-  <div id="nextActionCard"></div>
   <div id="adaptiveCard"></div>
-  <div class="card" id="voiceHero">
-    <h3 style="margin-top:0">🎙️ Log by voice</h3>
-    <p class="small mut">On-device voice entry — speak, check the match, then confirm. Nothing is saved until you do, and estimates are labelled. Typing works everywhere too.</p>
-    <button class="btn heroVoice" id="btnVoiceDash" type="button">🎤 Tell me what you ate</button>
-    <div class="mt"><span class="small mut" id="voiceDashStatus" aria-live="polite"></span></div>
+  <div class="card oneTouchCard" id="voiceHero">
+    <button class="btn voice oneTouch" id="btnOneTouch" type="button"><span class="otMic">🎤</span><span>Tap &amp; tell me anything</span></button>
+    <p class="small mut oneTouchHint">One tap, then just talk — food, workouts, sleep, steps. It sends itself when you pause; check the match, then confirm.</p>
+    <div class="mt" style="text-align:center"><span class="small mut" id="oneTouchStatus" aria-live="polite"></span></div>
+    <div><span class="small mut" id="voiceDashStatus" aria-live="polite"></span></div>
     <div id="voiceDashMatches"></div>
-    <details class="typedAlt"><summary class="small">No mic? Type what you ate instead</summary>
-      <div class="row mt"><div class="field" style="flex:1"><label>What you ate</label><input id="heroFoodText" type="text" placeholder="e.g. two double cheeseburgers from Braum's"><button type="button" class="micbtn" data-mic-for="heroFoodText" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
-      <div class="field" style="align-self:end"><button class="btn sec" id="btnHeroFoodType" type="button">Review matches</button></div></div>
-    </details>
-    <button class="btn heroVoice alt" id="btnVoiceWorkout" type="button">🎤 Tell me what you trained</button>
-    <div class="mt"><span class="small mut" id="voiceWorkoutStatus" aria-live="polite"></span></div>
+    <div><span class="small mut" id="voiceWorkoutStatus" aria-live="polite"></span></div>
     <div id="voiceTrainMatches"></div>
-    <details class="typedAlt"><summary class="small">No mic? Type what you trained instead</summary>
-      <div class="row mt"><div class="field" style="flex:1"><label>What you trained</label><input id="heroWorkoutText" type="text" placeholder="e.g. bench press 3 sets of 10 at 135 — or: go lighter Thursday"><button type="button" class="micbtn" data-mic-for="heroWorkoutText" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
-      <div class="field" style="align-self:end"><button class="btn sec" id="btnHeroWorkoutType" type="button">Review workout</button></div></div>
+    <details class="typedAlt"><summary class="small">No mic? Type it instead — food or workout, one box</summary>
+      <div class="row mt"><div class="field" style="flex:1"><label>Say it in plain words</label><input id="oneTouchText" type="text" placeholder="e.g. two eggs and toast — or: bench press 3 sets of 10 at 135"></div>
+      <div class="field" style="align-self:end"><button class="btn sec" id="btnOneTouchType" type="button">Log it</button></div></div>
     </details>
+    <button class="btn trainerBtn" id="btnTrainerHome" type="button">🧑‍🏫 Talk to your trainer — today’s food, workout &amp; sleep</button>
   </div>
   <div class="card">
     <div class="flexb"><h3 style="margin:0"><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="4.5" width="12" height="17" rx="2"/><path d="M9.3 4.7a2.7 2.7 0 0 1 5.4 0"/><path d="M9.5 11h5M9.5 15h5"/></svg></span>Today's brief</h3><span id="avatarDash"></span></div>
     <div id="dashToday"></div>
     <p class="small" id="dashBriefFood" style="margin-top:6px"></p>
-    <div class="row mt">
-      <button class="btn" id="dashActWorkout" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6.7 6.7v10.6"/><path d="M3.8 9v6"/><path d="M17.3 6.7v10.6"/><path d="M20.2 9v6"/><path d="M6.7 12h10.6"/></svg></span>Today's workout</button>
-      <button class="btn sec" id="dashActFood" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 7.2c.8-2 2.8-3.4 5-3.2-.1 2.1-1.1 3.9-2.9 4.8-1 .5-2.1.2-2.1-.6"/><path d="M12 8.2c-1.3-1.3-3.3-1.7-5-.7C4.7 8.9 4.2 12 5.5 15.2c1.1 2.8 2.9 5 4.5 5 1 0 1.3-.4 2-.4s1 .4 2 .4c1.6 0 3.4-2.2 4.5-5C19.8 12 19.3 8.9 17 7.5c-1.7-1-3.7-.6-5 .7Z"/></svg></span>Log food</button>
-      <button class="btn sec" id="dashActWeight" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="4.5" y="4.5" width="15" height="15" rx="3.5"/><path d="M12 15.8v-3.4l2.1-2.1"/></svg></span>Log weight</button>
-    </div>
   </div>
-  <details class="card" id="dashMore"><summary>See more — trainer, rings, stats, tips, water &amp; your week</summary>
+  <details class="card" id="dashMore"><summary>See more — trainer, stats, tips &amp; your week</summary>
+  <div id="nextActionCard"></div>
   <div id="encourageCard"></div>
   <div class="card">
     <h3 style="margin-top:0"><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.3 7.5L3.5 20l1.1-4.5a8.5 8.5 0 1 1 15.9-4Z"/><path d="M8.2 10.8h7.6M8.2 14h4.6"/></svg></span>Ask your trainer</h3>
@@ -360,10 +493,8 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
 <!-- ============ TRAINER ============ -->
 <section class="view" id="view-train">
   <h2><span class="hIco"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6.7 6.7v10.6"/><path d="M3.8 9v6"/><path d="M17.3 6.7v10.6"/><path d="M20.2 9v6"/><path d="M6.7 12h10.6"/></svg></span>AI Personal Trainer</h2>
-  <div class="card">
-    <div class="flexb"><span><b>Questions about your plan?</b> <span class="small mut">Your offline trainer answers from your own data — workouts, calories, swaps, plateaus.</span></span><button class="btn sm" id="btnOpenTrainer2" type="button">Ask your trainer</button></div>
-  </div>
   <div id="trainMsgs"></div>
+  <div id="trainToday"></div>
   <div class="card">
     <div class="flexb">
       <h3 style="margin:0">Your weekly plan</h3>
@@ -372,8 +503,15 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
       </div>
     </div>
     <div class="small mut mt" id="planMeta"></div>
-    <div id="planDays" class="mt"></div>
+    <div class="weekStrip" id="weekStrip"></div>
+    <details class="mt"><summary>See each day’s exercises</summary><div id="planDays" class="mt"></div></details>
+    <div class="trainActions" style="margin-top:12px">
+      <button class="btn" id="btnFreeWorkout" type="button">＋ Log a workout</button>
+      <button class="btn sec" id="btnBuildWorkout" type="button">Build your own</button>
+    </div>
+    <div id="templateList" class="mt"></div>
   </div>
+  <details class="card" id="trainMoreFold"><summary>More — month plan, exercise library &amp; history</summary>
   <details class="card" id="monthCardFold"><summary>Full-month plan &amp; calorie budget</summary>
   <div class="card" id="monthCard">
     <div class="flexb">
@@ -391,13 +529,25 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
     <div id="monthWeeks" class="mt"></div>
   </div>
   </details>
+  <details class="card" id="libraryFold"><summary>Exercise library — 74 exercises, search &amp; voice filter</summary>
   <div class="card">
-    <div class="flexb"><span><b>Just want to log a workout?</b> <span class="small mut">Start an empty session and add exercises as you go — same set-by-set logging as a planned workout.</span></span><button class="btn" id="btnFreeWorkout" type="button">Log workout</button></div>
+    <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5Z"/><path d="M5 19.5V4.5"/><path d="M19 18H6.5"/></svg></span>Exercise library</h3>
+    <div class="row">
+      <div class="field"><label>Search</label><input id="exSearch" type="text" placeholder="e.g. squat"><button type="button" class="micbtn" data-mic-for="exSearch" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
+      <div class="field"><label>Muscle group</label><select id="exMuscle"><option value="">All</option></select></div>
+      <div class="field"><label>Equipment</label><select id="exEquip"><option value="">All</option><option value="none">No equipment</option><option value="dumbbells">Dumbbells</option><option value="gym">Full gym</option></select></div>
+    </div>
+    <div class="flexb">
+      <button class="btn voice sm" id="btnVoiceExercise" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3.5"/></svg></span>Tell me what you trained</button>
+      <span class="small mut" id="voiceExerciseStatus"></span>
+    </div>
+    <div id="exLibrary"></div>
   </div>
-  <div class="card">
-    <div class="flexb"><span><b>Build your own workout</b> <span class="small mut">Pick the muscles you want to train, add exercises, watch the muscle split, and save it as a template you can run any time — it logs through the same workout player as everything else.</span></span><button class="btn" id="btnBuildWorkout" type="button">＋ Build a workout</button></div>
-    <div id="templateList" class="mt"></div>
-  </div>
+  </details>
+  <details class="card"><summary><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>Workout history</summary>
+    <div id="workoutHistory" class="mt"></div>
+  </details>
+  </details>
   <div class="card" id="builderCard" style="display:none">
     <div class="flexb"><h3 style="margin:0" id="builderTitle">Build a workout</h3><span class="pill">split updates as you build</span></div>
     <div class="field mt"><label>Workout name</label><input id="tplName" type="text" placeholder="e.g. Push day — chest &amp; triceps" autocomplete="off"><button type="button" class="micbtn" data-mic-for="tplName" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
@@ -429,34 +579,13 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
       <button class="btn sec" id="btnCancelWorkout" type="button">Cancel</button>
     </div>
   </div>
-  <details class="card" id="libraryFold"><summary>Exercise library — 74 exercises, search &amp; voice filter</summary>
-  <div class="card">
-    <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5Z"/><path d="M5 19.5V4.5"/><path d="M19 18H6.5"/></svg></span>Exercise library</h3>
-    <div class="row">
-      <div class="field"><label>Search</label><input id="exSearch" type="text" placeholder="e.g. squat"><button type="button" class="micbtn" data-mic-for="exSearch" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
-      <div class="field"><label>Muscle group</label><select id="exMuscle"><option value="">All</option></select></div>
-      <div class="field"><label>Equipment</label><select id="exEquip"><option value="">All</option><option value="none">No equipment</option><option value="dumbbells">Dumbbells</option><option value="gym">Full gym</option></select></div>
-    </div>
-    <div class="flexb">
-      <button class="btn voice sm" id="btnVoiceExercise" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3.5"/></svg></span>Tell me what you trained</button>
-      <span class="small mut" id="voiceExerciseStatus"></span>
-    </div>
-    <div id="exLibrary"></div>
-  </div>
-  </details>
-  <details class="card"><summary><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>Workout history</summary>
-    <div id="workoutHistory" class="mt"></div>
-  </details>
 </section>
 
 <!-- ============ NUTRITION ============ -->
 <section class="view" id="view-nutrition">
   <h2><span class="hIco"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 7.2c.8-2 2.8-3.4 5-3.2-.1 2.1-1.1 3.9-2.9 4.8-1 .5-2.1.2-2.1-.6"/><path d="M12 8.2c-1.3-1.3-3.3-1.7-5-.7C4.7 8.9 4.2 12 5.5 15.2c1.1 2.8 2.9 5 4.5 5 1 0 1.3-.4 2-.4s1 .4 2 .4c1.6 0 3.4-2.2 4.5-5C19.8 12 19.3 8.9 17 7.5c-1.7-1-3.7-.6-5 .7Z"/></svg></span>AI Nutrition Coach</h2>
   <div id="nutriMsgs"></div>
-  <div class="grid2" id="nutriStats"></div>
-  <details class="card"><summary><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></span>How your daily targets are set</summary>
-    <div id="targetExplain" class="small mt"></div>
-  </details>
+  <div id="nutriStats"></div>
   <div class="card">
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 5v14M5 12h14"/></svg></span>Add food</h3>
     <div class="row">
@@ -468,6 +597,7 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
       <span class="small mut" id="voiceFoodStatus"></span>
     </div>
     <div id="voiceFoodMatches" class="mt"></div>
+    <details class="mt" id="foodBrowseFold"><summary>Browse foods, favorites &amp; restaurant chains</summary>
     <p class="small mut mt">Eating out? LogEasy carries published nutrition for 29 restaurant chains — say or search the chain (Braum's, McDonald's, Whataburger, Taco Bell…). Restaurant values are the chains' published figures and vary by location; you can edit any number on the confirm screen before adding.</p>
     <div id="foodQuick"></div>
     <div id="foodResults"></div>
@@ -505,24 +635,25 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
       </details>
       <button class="btn sm" id="btnCustomFood" type="button">Save custom food</button>
     </details>
+    </details>
   </div>
-  <details class="card" id="suggestFold"><summary>Coach suggestions — hit your remaining macros</summary>
-  <div class="card">
-    <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M9.5 18h5"/><path d="M10.5 21h3"/><path d="M12 3.5a6 6 0 0 1 3.5 10.9c-.7.5-1 1-1 1.9h-5c0-.9-.3-1.4-1-1.9A6 6 0 0 1 12 3.5Z"/></svg></span>Coach suggestions — hit your remaining macros</h3>
-    <div id="mealSuggest"></div>
-  </div>
-  </details>
-  <div class="card">
-    <div class="flexb"><h3 style="margin:0">Today’s food log</h3>
+  <details class="card" id="foodLogFold"><summary>Today’s food log — what you’ve eaten</summary>
+    <div class="flexb mt">
       <div class="field" style="margin:0;flex:0 1 170px"><label style="margin:0">Date</label><input id="foodDate" type="date"></div>
       <button class="btn sec sm" id="btnCopyYesterday" type="button" style="min-height:44px">Copy yesterday → this day</button>
     </div>
     <div id="foodLogList" class="mt"></div>
-  </div>
-  <details class="card" id="fullNutritionCard"><summary>Full nutrition — fiber, vitamins &amp; minerals for the day</summary>
-    <div id="fullNutrition" class="mt"></div>
+  <details class="mt"><summary><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></span>How your daily targets are set</summary>
+    <div id="targetExplain" class="small mt"></div>
   </details>
-  <div id="fkPromo"></div>
+    <details class="mt" id="suggestFold"><summary>Coach suggestions — hit your remaining macros</summary>
+      <div id="mealSuggest" class="mt"></div>
+    </details>
+    <details class="mt" id="fullNutritionCard"><summary>Full nutrition — fiber, vitamins &amp; minerals for the day</summary>
+      <div id="fullNutrition" class="mt"></div>
+    </details>
+    <div id="fkPromo"></div>
+  </details>
 </section>
 
 <!-- ============ ACTIVITY HUB ============ -->
@@ -545,7 +676,6 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
           <option value="none">None — I'll enter data manually</option>
         </select>
       </div>
-      <p class="small mut">Pick one, then tap Next. Going back never loses the device you picked.</p>
       <button class="btn blue mt" id="btnWizardNext1" type="button" style="min-height:48px">Next</button>
     </div>
     <div id="wizardStep2" style="display:none">
@@ -568,6 +698,7 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
     </div>
   </div>
   <div id="importMsg"></div>
+  <details class="card" id="activityMoreFold"><summary>More device tools — importers, manual entry &amp; records</summary>
   <details class="card"><summary><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M14.5 6.5a4.2 4.2 0 0 1 5.6-4L17.8 4.8l1.4 1.4 2.3-2.3a4.2 4.2 0 0 1-5.4 5.6L8 17.6a2 2 0 0 1-2.8-2.8Z"/></svg></span>Advanced: individual importers, fallback &amp; connected sources</summary>
     <p class="small mut mt">Use these if Auto Import cannot identify a file. An unusual CSV opens the column-mapping fallback. ForgeKitchen and High-Protein Pack meal JSON also work through Auto Import or the meal importer below.</p>
   <div class="grid mt">
@@ -599,9 +730,8 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
     <div id="sourcesPanel"></div>
   </div>
   </details>
-  <div class="card">
-    <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="4.5" width="12" height="17" rx="2"/><path d="M9.3 4.7a2.7 2.7 0 0 1 5.4 0"/><path d="M9.5 11h5M9.5 15h5"/></svg></span>Manual daily entry</h3>
-    <div class="row">
+  <details class="card"><summary>Manual daily entry — type in a day</summary>
+    <div class="row mt">
       <div class="field"><label>Date</label><input id="mDate" type="date"></div>
       <div class="field"><label>Steps</label><input id="mSteps" type="number" min="0" inputmode="numeric"><button type="button" class="micbtn" data-mic-for="mSteps" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
       <div class="field"><label>Active calories</label><input id="mActiveCal" type="number" min="0" inputmode="numeric"><button type="button" class="micbtn" data-mic-for="mActiveCal" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
@@ -616,26 +746,28 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
       <div class="field"><label>Resting HR (bpm)</label><input id="mRHR" type="number" min="0" inputmode="numeric"><button type="button" class="micbtn" data-mic-for="mRHR" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
     </div>
     <button class="btn sm" id="btnManualSave" type="button">Save entry</button>
-  </div>
+  </details>
   <details class="card" id="recordsFold"><summary>Daily activity records</summary>
   <div class="card">
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span>Daily activity records</h3>
     <div id="activityTable"></div>
   </div>
   </details>
+  </details>
 </section>
 
 <!-- ============ PROGRESS ============ -->
 <section class="view" id="view-progress">
   <h2><span class="hIco"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 4v15.5h16"/><path d="M7.5 15.5v-4"/><path d="M12 15.5V8"/><path d="M16.5 15.5V9"/></svg></span>Progress</h2>
-  <div class="grid2" id="progStats"></div>
+  <div class="statStrip" id="progStats"></div>
   <div class="card">
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="4.5" y="4.5" width="15" height="15" rx="3.5"/><path d="M12 15.8v-3.4l2.1-2.1"/></svg></span>Weight trend</h3>
-    <canvas class="chart" id="weightChart" width="1000" height="220"></canvas>
+    <canvas class="chart" id="weightChart" width="1000" height="170"></canvas>
     <div class="small mut mt" id="weightNote"></div>
-    <p class="small mut mt">Weigh-ins are logged on the <b>Today</b> tab (Quick log — today) or the <b>Devices</b> tab (Manual daily entry, for past dates). This chart and the list below read those same records.</p>
-    <div id="weightList"></div>
+    <p class="small mut mt">Weigh-ins are logged on the <b>Today</b> tab (Quick log) or the <b>Devices</b> tab. This chart reads those same records.</p>
+    <details class="mt"><summary>Weigh-in history</summary><div id="weightList"></div></details>
   </div>
+  <details class="card" id="progressMoreFold"><summary>More — measurements, photos, milestones &amp; backup</summary>
   <details class="card"><summary><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="9" width="18" height="6.5" rx="1"/><path d="M7 9v3M11 9v3.8M15 9v3M19 9v3.8"/></svg></span>Body measurements</summary>
     <div class="row mt">
       <div class="field"><label>Date</label><input id="msDate" type="date"></div>
@@ -669,10 +801,9 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
     <div id="photoGallery" class="photogrid mt"></div>
   </div>
   </details>
-  <div class="card">
-    <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M8 5.5H4.5a3.5 3.5 0 0 0 3.6 3.5"/><path d="M16 5.5h3.5a3.5 3.5 0 0 1-3.6 3.5"/><path d="M12 13v3"/><path d="M8.5 20h7"/><path d="M10 16h4l.6 4H9.4Z"/></svg></span>Milestones</h3>
-    <div id="milestones"></div>
-  </div>
+  <details class="card"><summary>Milestones</summary>
+    <div id="milestones" class="mt"></div>
+  </details>
   <details class="card" id="backupFold"><summary>Backup &amp; reports</summary>
   <div class="card">
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 4v10.5"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4.5 20h15"/></svg></span>Backup &amp; reports</h3>
@@ -684,6 +815,7 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
     <div class="field mt"><label>Restore a backup (JSON)</label><input type="file" id="fileRestore" accept=".json"></div>
     <div id="backupMsg"></div>
   </div>
+  </details>
   </details>
 </section>
 
@@ -772,7 +904,7 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
       <p class="small">Go to the <b>Progress</b> tab, open <b>Backup &amp; reports</b>, and tap <b>Export backup (JSON)</b> to save a backup file. Keep that file somewhere safe. To restore it later — on this device or a new one — open the same place, choose the backup file under <b>Restore a backup</b>, and your logs come back.</p>
     </details>
     <p class="small mt">All of your LogEasy data lives only on this device, in this browser/app — nothing is uploaded anywhere. Back it up with <b>Progress → Backup &amp; reports → Export backup (JSON)</b> before you switch phones or browsers, and keep the backup file somewhere safe.</p>
-    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.5.0&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
+    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.6.0&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
     <p class="small mut">Email opens your own email app, addressed to us, with the app version already in the subject line.</p>
   </details>
   <details class="card" id="profileMore"><summary>More settings — encouragement, appearance, legal &amp; about</summary>
@@ -806,7 +938,7 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
     <button class="btn sec" id="btnShowIntro" type="button">See the intro again</button>
   </div>
   <details class="card"><summary>ℹ️ About LogEasy</summary>
-    <p class="small mut mt">LogEasy <b>version 2.5.0</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
+    <p class="small mut mt">LogEasy <b>version 2.6.0</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
   </details>
   </details>
 </section>
@@ -863,6 +995,16 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:12px}
     <div class="trainerInputRow" style="padding-top:10px">
       <button class="btn sec" id="btnIntroBack" type="button" style="flex:0 1 110px">Back</button>
       <button class="btn" id="btnIntroNext" type="button" style="flex:1">Next</button>
+    </div>
+  </div>
+</div>
+<div id="wizOverlay" role="dialog" aria-modal="true" aria-labelledby="wizTitle" style="display:none">
+  <div class="wizWrap">
+    <div class="wizHead"><span class="small mut" id="wizStepLabel">Meet your trainer</span><button class="btn sec sm" id="btnWizSkip" type="button">Skip — use the form</button></div>
+    <div class="wizCard" id="wizCard"></div>
+    <div class="wizFoot">
+      <button class="btn sec" id="btnWizBack" type="button" style="flex:0 1 110px">Back</button>
+      <button class="btn" id="btnWizNext" type="button" style="flex:1">Next</button>
     </div>
   </div>
 </div>
@@ -1466,7 +1608,7 @@ function allFoods(state){ return FOODS.map(foodObj).concat(EXTRA_FOODS).concat((
 "use strict";
 /* ---------- state ---------- */
 var FF_KEY = "forgefit_v1";
-var FF_VERSION = "2.5.0";
+var FF_VERSION = "2.6.0";
 /* Terms of Use version bundled with this build (legal pack v1.0). Bump this
    ONE constant when the terms text changes and users are re-asked once. */
 var FF_TERMS_VERSION = "1.0";
@@ -3173,7 +3315,8 @@ function renderStepHeadline(){
 function renderDashboard(){
   var today = todayStr();
   $("dashNoProfile").innerHTML = state.profile ? "" :
-    '<div class="err" style="background:#12222e;border-color:#1e4258;color:var(--txt)">👋 <b>Start here:</b> set up your profile in the <b>Profile</b> tab (bottom right). LogEasy will build your workout plan and calorie targets from it. Or tap <b>Load demo</b> at the top to explore with sample data first.</div>';
+    '<div class="err" style="background:#12222e;border-color:#1e4258;color:var(--txt)">👋 <b>Start here:</b> your trainer asks a few quick questions — tap your answers, no long form — and builds your workout plan and calorie targets for you.<button class="btn" id="btnStartWizard" type="button" style="width:100%;margin-top:10px;min-height:56px">🧑‍🏫 Set up with your trainer — about a minute</button><p class="small mut" style="margin:8px 0 0">Prefer the full form? The full form lives in the <b>Profile</b> tab. Or tap <b>Load demo</b> at the top to explore with sample data first.</p></div>';
+  var bw = $("btnStartWizard"); if (bw) bw.addEventListener("click", function(){ startWizard(); });
   renderEncouragement();
   // today's brief: the one calm summary — today's workout + the big actions
   var tp = null;
@@ -3187,7 +3330,7 @@ function renderDashboard(){
       : tp
         ? (tp.rest
           ? '<p>😴 <b>Today is a planned rest day.</b> Growth happens between sessions — a walk, some stretching and good food are today\'s training.</p>'
-          : '<p>🏋️ <b>Today\'s workout: ' + esc(tp.name || "Training") + '</b> — ' + (tp.exercises ? tp.exercises.length : 0) + ' exercises' + (tp.deload ? ' · deload week, lighter on purpose' : '') + '. Tap <b>Today\'s workout</b> below to begin.</p>')
+          : '<p>🏋️ <b>Today\'s workout: ' + esc(tp.name || "Training") + '</b> — ' + (tp.exercises ? tp.exercises.length : 0) + ' exercises' + (tp.deload ? ' · deload week, lighter on purpose' : '') + '. Open the <b>Train</b> tab below to begin.</p>')
         : '<p class="small mut">No plan covers today yet — generate one in the Train tab and this brief fills in.</p>';
   renderDevicePrompt();
   renderStepHeadline();
@@ -3592,7 +3735,7 @@ function startMonthWorkout(date){
 }
 function renderTrain(){
   renderTemplates();
-  $("trainMsgs").innerHTML = msgsHtml(coachMessages(state).filter(function(m){ return /overload|deload|streak|session|rest day|personal record/i.test(m.text); }));
+  $("trainMsgs").innerHTML = msgsHtml(coachMessages(state).filter(function(m){ return /overload|deload|streak|session|rest day|personal record/i.test(m.text); }).slice(0, 1));
   renderLibrary();
   // history
   var logs = (state.workoutLogs||[]).slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; });
@@ -3606,17 +3749,21 @@ function renderTrain(){
   if (!state.profile){
     $("planMeta").textContent = "Set up your profile first — your plan is generated from your experience level and equipment.";
     $("planDays").innerHTML = "";
+    if ($("weekStrip")) $("weekStrip").innerHTML = "";
+    if ($("trainToday")) $("trainToday").innerHTML = "";
     renderMonthPlan();
     return;
   }
   if (!plan){
     $("planMeta").textContent = "No plan yet — tap “Generate / regenerate my month” in the full-month plan card below; it builds your weekly plan at the same time.";
     $("planDays").innerHTML = "";
+    if ($("weekStrip")) $("weekStrip").innerHTML = "";
+    if ($("trainToday")) $("trainToday").innerHTML = "";
     renderMonthPlan();
     return;
   }
   $("planMeta").innerHTML = "Split: <b>" + esc(state.profile.experience) + "</b> · Equipment: <b>" + esc(state.profile.equip) + "</b> · Week of " + plan.startDate + (plan.deload ? ' · <span class="warn">DELOAD WEEK ACTIVE</span>' : "") +
-    "<br>Tip: finish every set at the top of the rep range twice in a row and your coach will tell you when to add weight.";
+    "";
   $("btnDeload").textContent = plan.deload ? "End deload week" : "Start deload week";
   var today = todayStr();
   $("planDays").innerHTML = plan.days.map(function(d, idx){
@@ -3631,6 +3778,28 @@ function renderTrain(){
       '<button class="btn sm" data-start="' + idx + '" type="button">' + (d.date === today ? "Start today's workout" : "Start workout") + '</button></span></div>' +
       planAdjustNoteHtml(d.date) + '<table class="mt"><tr><th>Exercise</th><th>Sets × Reps</th><th>Muscle</th></tr>' + rows + '</table></div>';
   }).join("");
+  // v2.6.0: compact week strip + today hero — the day-by-day detail lives in the fold below
+  var tIdx = -1;
+  plan.days.forEach(function(d, i){ if (d.date === today) tIdx = i; });
+  $("weekStrip").innerHTML = plan.days.map(function(d, idx){
+    var done = (state.workoutLogs||[]).some(function(l){ return l.date === d.date; });
+    var cls = "weekChip" + (d.date === today ? " today" : "") + (done ? " done" : "") + (d.rest ? " rest" : "");
+    var inner = '<span class="wcDay">' + esc(d.weekday.slice(0, 3)) + '</span><span class="wcIco">' + (d.rest ? "😴" : (done ? "✅" : "🏋️")) + "</span>";
+    return d.rest
+      ? '<div class="' + cls + '">' + inner + "</div>"
+      : '<button type="button" class="' + cls + '" data-start="' + idx + '" aria-label="Start ' + esc(d.weekday) + ' workout">' + inner + "</button>";
+  }).join("");
+  var hero = "";
+  if (session){
+    hero = '<div class="todayHero"><div class="thName">🏋️ Workout in progress</div><p class="small" style="margin:6px 0 0">' + esc(session.dayName || "Session") + ' — your player is right below. Finish strong.</p></div>';
+  } else if (tIdx >= 0){
+    var td = plan.days[tIdx];
+    var doneT = (state.workoutLogs||[]).some(function(l){ return l.date === today; });
+    if (doneT) hero = '<div class="todayHero"><div class="thName">✅ Workout done — nice work.</div><p class="small" style="margin:6px 0 0">Recovery mode now: eat to target, hydrate, sleep well.</p></div>';
+    else if (td.rest) hero = '<div class="todayHero"><div class="thName">😴 Today is a rest day</div><p class="small" style="margin:6px 0 0">Growth happens between sessions — a walk, some stretching and good food are today\'s training.</p></div>';
+    else hero = '<div class="todayHero"><div class="small mut">TODAY · ' + esc(td.weekday) + '</div><div class="thName">🏋️ ' + esc(td.name || "Training") + '</div><p class="small" style="margin:6px 0 0">' + (td.exercises ? td.exercises.length : 0) + ' exercises — tap start and LogEasy walks you through every set.</p><button class="btn" type="button" data-start="' + tIdx + '">Start today\'s workout</button></div>';
+  }
+  $("trainToday").innerHTML = hero;
   document.querySelectorAll("[data-start]").forEach(function(b){
     b.addEventListener("click", function(){ startWorkout(+b.getAttribute("data-start")); });
   });
@@ -4330,12 +4499,17 @@ function renderNutrition(){
   var t = dailyTargets(state.profile);
   var eaten = foodDayTotals(state, date);
   $("foodCount").textContent = allFoods(state).length;
-  $("nutriMsgs").innerHTML = msgsHtml(nutritionMessages(state));
+  $("nutriMsgs").innerHTML = msgsHtml(nutritionMessages(state).slice(0, 1));
+  var calPct = t.cal ? Math.min(100, Math.round(eaten.cal / t.cal * 100)) : 0;
+  var calCirc = 2 * Math.PI * 34;
+  function mBar(label, val, target){
+    var p = target ? Math.min(100, Math.round(val / target * 100)) : 0;
+    return '<div class="mBarRow"><span class="mLab">' + label + '</span><span class="mBarTrack"><span class="mBarFill' + (target && val > target ? " over" : "") + '" style="display:block;width:' + p + '%"></span></span><span class="mNums">' + Math.round(val) + " / " + Math.round(target) + " g</span></div>";
+  }
   $("nutriStats").innerHTML =
-    statCard("Calories", eaten.cal + " / " + t.cal, "kcal eaten today") +
-    statCard("Protein", eaten.p + " / " + t.p + " g", Math.max(0, t.p - eaten.p) + " g to go") +
-    statCard("Carbs", eaten.c + " / " + t.c + " g", "fuel for training") +
-    statCard("Fat", eaten.fat + " / " + t.fat + " g", "hormones & satiety");
+    '<div class="macroViz"><div class="calRingWrap"><svg width="70" height="70" viewBox="0 0 84 84" role="img" aria-label="Calories eaten versus target"><circle cx="42" cy="42" r="34" fill="none" stroke="var(--line)" stroke-width="9"/><circle cx="42" cy="42" r="34" fill="none" stroke="' + (t.cal && eaten.cal > t.cal ? "#f87171" : "var(--acc)") + '" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + (calCirc * calPct / 100).toFixed(1) + " " + calCirc.toFixed(1) + '" transform="rotate(-90 42 42)"/></svg><div class="ringNum">' + Math.max(0, Math.round(t.cal - eaten.cal)).toLocaleString() + '</div><div class="ringSub">kcal left of ' + Math.round(t.cal).toLocaleString() + '</div></div>' +
+    '<div class="macroBars">' + mBar("Protein", eaten.p, t.p) + mBar("Carbs", eaten.c, t.c) + mBar("Fat", eaten.fat, t.fat) +
+    '<div class="small mut">Eaten ' + Math.round(eaten.cal).toLocaleString() + " of " + Math.round(t.cal).toLocaleString() + ' kcal today — the “How your daily targets are set” fold below shows the math.</div></div></div>';
   $("targetExplain").innerHTML = state.profile
     ? "How your coach sets targets: resting burn (BMR) <b>" + t.bmr + " kcal</b> via the Mifflin-St Jeor equation for a " + esc(state.profile.sex) + ", " + state.profile.age + ", " + state.profile.weightLb + " lb. Maintenance (TDEE) = BMR × activity " + state.profile.activity + " = <b>" + t.tdee + " kcal</b>. Healthy-rate goal adjustment (" + esc(state.profile.goal) + "): <b>" + (t.adj > 0 ? "+" : "") + t.adj + " kcal</b> for <b>" + t.rateLbPerWeek + " lb/week</b>" + (t.rateCapped ? " — clamped to the healthy cap of " + t.rateCapLbPerWeek + " lb/week" : "") + " → target <b>" + t.cal + " kcal</b>, never below the 1,200-kcal floor. The Train tab lays the same math out as weekly and monthly budgets. Protein is set by bodyweight (" + (state.profile.goal === "lose" ? "2.2" : state.profile.goal === "maintain" ? "1.8" : "2.0") + " g/kg), fat at 25% of calories, carbs fill the rest."
     : "Set up your profile to see how targets are calculated.";
@@ -4775,10 +4949,10 @@ function renderProgress(){
   var ws = mergedWeights();
   var change = ws.length >= 2 ? Math.round((ws[ws.length-1].lb - ws[0].lb)*10)/10 : 0;
   $("progStats").innerHTML =
-    statCard("Total workouts", (state.workoutLogs||[]).length, "all time") +
-    statCard("Current streak", workoutStreak(state) + " day(s)", "keep it alive") +
-    statCard("Weight change", (change > 0 ? "+" : "") + change + " lb", ws.length ? "since " + ws[0].date : "no data yet") +
-    statCard("Days with data", Object.keys(state.activity).length, "activity records stored");
+    '<div class="ssCell"><div class="ssVal">' + (state.workoutLogs||[]).length + '</div><div class="ssLab">workouts all time</div></div>' +
+    '<div class="ssCell"><div class="ssVal">' + workoutStreak(state) + '</div><div class="ssLab">day streak</div></div>' +
+    '<div class="ssCell"><div class="ssVal">' + (change > 0 ? "+" : "") + change + ' lb</div><div class="ssLab">weight change</div></div>' +
+    '<div class="ssCell"><div class="ssVal">' + Object.keys(state.activity).length + '</div><div class="ssLab">days with data</div></div>';
   drawWeightChart();
   var wlist = (state.weights||[]).slice().sort(function(a,b){ return a.date < b.date ? 1 : -1; });
   $("weightList").innerHTML = wlist.length ? '<table class="mt"><tr><th>Date</th><th>Weight</th><th></th></tr>' + wlist.slice(0, 10).map(function(w){
@@ -4938,6 +5112,7 @@ function agreeLegal(){
   renderLegal();
   toast("Thanks — Terms v" + FF_TERMS_VERSION + " accepted.");
   if (introNeedsShow(state)) showIntro();   // order: terms gate first, then the once-per-version welcome intro, then setup
+  else if (!state.profile) startWizard();   // terms already current and no profile yet: straight to trainer setup
   return true;
 }
 /* ---------- inline SVG icon set (v2.1.2 visual refresh) ----------
@@ -5068,13 +5243,202 @@ function showIntro(){
 function closeIntro(getStarted){
   var o = $("introOverlay"); if (o) o.style.display = "none";
   if (state.introSeenFor !== FF_VERSION){ state.introSeenFor = FF_VERSION; saveState(state); }
-  if (getStarted) switchView("profile");
+  if (getStarted){ if (!state.profile) startWizard(); else switchView("profile"); }
 }
 function introNext(){
   if (introIdx < INTRO_SLIDES.length - 1){ introIdx++; renderIntro(); }
   else closeIntro(true);
 }
 function introBack(){ if (introIdx > 0){ introIdx--; renderIntro(); } }
+/* ---------- trainer-led first-run setup (v2.6.0) ----------
+   One question per screen, big tap targets, no long form. Collects
+   exactly the fields the Profile form collects and finishes by building
+   the profile the same way saveProfileFromForm does — same profile
+   shape, same plan generators, same storage keys. The form stays
+   available (Profile tab, and this wizard's Skip button). */
+var WIZ_STEP_NAMES = ["goal", "experience", "equipment", "days", "stats", "activity", "extras", "done"];
+var wiz = null;
+var wizSessionDone = false;
+function startWizard(){
+  if (state.profile){ switchView("profile"); return; }
+  wiz = { step: 0, data: { name: "", sex: "male", goal: "lose", experience: "beginner", equip: "none", days: [], ft: "", inch: "", age: "", weight: "", activity: "1.375", diet: "", targetWeight: "", msg: "" } };
+  var o = $("wizOverlay"); if (o) o.style.display = "flex";
+  renderWizard();
+}
+function maybeStartWizard(){
+  if (wizSessionDone || state.profile || wiz) return;
+  wizSessionDone = true;
+  startWizard();
+}
+function closeWizard(){
+  var o = $("wizOverlay"); if (o) o.style.display = "none";
+  wiz = null;
+}
+function wizOptBtn(group, value, label, sub){
+  var on = String(wiz.data[group]) === String(value);
+  return '<button type="button" class="wizOpt' + (on ? " on" : "") + '" data-wiz-opt="' + group + '" data-wiz-val="' + value + '"><span>' + label + (sub ? '<span class="woSub">' + sub + "</span>" : "") + "</span></button>";
+}
+function renderWizard(){
+  if (!wiz) return;
+  var card = $("wizCard"); if (!card) return;
+  var step = WIZ_STEP_NAMES[wiz.step];
+  var lbl = $("wizStepLabel");
+  if (lbl) lbl.textContent = step === "done" ? "You're set" : "Meet your trainer — step " + (wiz.step + 1) + " of " + (WIZ_STEP_NAMES.length - 1);
+  var back = $("btnWizBack"); if (back) back.style.visibility = (wiz.step === 0 || step === "done") ? "hidden" : "visible";
+  var next = $("btnWizNext");
+  if (next) next.textContent = step === "extras" ? "Build my plan 🏋️" : step === "done" ? "Go to Today" : "Next";
+  var d = wiz.data, h = "";
+  var msg = d.msg ? '<div class="err">' + esc(d.msg) + "</div>" : "";
+  if (step === "goal"){
+    h = "<h2>👋 I'm your trainer. What's your main goal?</h2><p>Tap one — I'll build your workouts and your food targets around it.</p>" + msg +
+      '<div class="wizOpts">' +
+      wizOptBtn("goal", "lose", "🔥 Lose weight", "Steady, healthy pace — never crash-diet math") +
+      wizOptBtn("goal", "maintain", "⚖️ Stay fit &amp; maintain", "Hold your weight, get stronger and fitter") +
+      wizOptBtn("goal", "gain", "💪 Build muscle", "A small surplus and progressive training") +
+      wizOptBtn("goal", "performance", "🏃 Get stronger &amp; perform", "Performance first — strength and work capacity") +
+      "</div>";
+  } else if (step === "experience"){
+    h = "<h2>How much training experience do you have?</h2><p>Be honest — the plan matches your level, and it progresses as you do.</p>" + msg +
+      '<div class="wizOpts">' +
+      wizOptBtn("experience", "beginner", "🌱 Beginner", "New to training, or back after a long break") +
+      wizOptBtn("experience", "intermediate", "🏋️ Intermediate", "Training consistently for 1–3 years") +
+      wizOptBtn("experience", "advanced", "🔥 Advanced", "3+ years of structured training") +
+      "</div>";
+  } else if (step === "equipment"){
+    h = "<h2>What equipment do you have?</h2><p>Every exercise in your plan will match this — no gym required.</p>" + msg +
+      '<div class="wizOpts">' +
+      wizOptBtn("equip", "none", "🧍 No equipment", "Bodyweight only — train anywhere") +
+      wizOptBtn("equip", "dumbbells", "🏠 Dumbbells at home", "A set of dumbbells is plenty") +
+      wizOptBtn("equip", "gym", "🏢 Full gym", "Barbells, racks, machines, cables") +
+      "</div>";
+  } else if (step === "days"){
+    h = "<h2>Which days can you train?</h2><p>Tap the days that fit your life. Leave them all off and I'll suggest a starter week.</p>" + msg +
+      '<div class="wizDays">' + ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(function(nm, i){
+        return '<button type="button" data-wiz-day="' + i + '" class="' + (d.days.indexOf(i) >= 0 ? "on" : "") + '">' + nm + "</button>";
+      }).join("") + "</div>";
+  } else if (step === "stats"){
+    h = "<h2>A few quick numbers</h2><p>These set your calorie targets — the same Mifflin-St Jeor math the app explains on the Nutrition tab. Everything stays on your device.</p>" + msg +
+      '<div class="field"><label>Your name (optional)</label><input id="wizName" type="text" placeholder="First name" value="' + esc(d.name) + '"></div>' +
+      '<div class="field"><label>Sex (for calorie math)</label><div class="wizDays">' +
+      '<button type="button" data-wiz-sex="male" class="' + (d.sex === "male" ? "on" : "") + '">Male</button>' +
+      '<button type="button" data-wiz-sex="female" class="' + (d.sex === "female" ? "on" : "") + '">Female</button></div></div>' +
+      '<div class="wizStats">' +
+      '<div class="field"><label>Age</label><input id="wizAge" type="number" min="10" max="100" inputmode="numeric" value="' + esc(d.age) + '"></div>' +
+      '<div class="field"><label>Weight (lb)</label><input id="wizWeight" type="number" min="0" step="0.1" inputmode="decimal" value="' + esc(d.weight) + '"></div>' +
+      '<div class="field"><label>Height — feet</label><input id="wizFt" type="number" min="3" max="8" inputmode="numeric" value="' + esc(d.ft) + '"></div>' +
+      '<div class="field"><label>Height — inches</label><input id="wizIn" type="number" min="0" max="11.9" step="0.1" inputmode="decimal" value="' + esc(d.inch) + '"></div>' +
+      "</div>";
+  } else if (step === "activity"){
+    h = "<h2>How active is your day, outside workouts?</h2><p>This scales your calorie target to your real life.</p>" + msg +
+      '<div class="wizOpts">' +
+      wizOptBtn("activity", "1.2", "🪑 Sedentary", "Desk job, little movement") +
+      wizOptBtn("activity", "1.375", "🚶 Lightly active", "On my feet some of the day") +
+      wizOptBtn("activity", "1.55", "🔨 Moderately active", "Physical job or lots of walking") +
+      wizOptBtn("activity", "1.725", "🏗️ Very active", "Hard physical labor / training daily") +
+      wizOptBtn("activity", "1.9", "🏆 Athlete", "Twice-a-day training") +
+      "</div>";
+  } else if (step === "extras"){
+    h = "<h2>Almost done — two optional extras</h2><p>Skip either one; you can change both later in your profile.</p>" + msg +
+      '<div class="field"><label>Target weight (lb) — optional</label><input id="wizTarget" type="number" min="0" step="0.1" inputmode="decimal" value="' + esc(d.targetWeight) + '"></div>' +
+      "<p>How do you like to eat? (optional — tunes your meal suggestions)</p>" +
+      '<div class="wizOpts">' +
+      wizOptBtn("diet", "", "🍽️ No preference", "A bit of everything") +
+      wizOptBtn("diet", "high-protein", "🥩 High-protein", "Protein-forward meals") +
+      wizOptBtn("diet", "vegetarian", "🥦 Vegetarian", "No meat") +
+      wizOptBtn("diet", "vegan", "🌱 Vegan", "Fully plant-based") +
+      wizOptBtn("diet", "low-carb", "🥓 Low-carb", "Fewer carbs, more fat and protein") +
+      wizOptBtn("diet", "mediterranean", "🫒 Mediterranean", "Fish, olive oil, grains, vegetables") +
+      "</div>";
+  } else if (step === "done"){
+    var t = dailyTargets(state.profile);
+    var tDays = trainingDaysFor(state.profile);
+    h = "<h2>🎉 Your plan is built" + (state.profile.name ? ", " + esc(state.profile.name) : "") + ".</h2>" +
+      "<p><b>Your daily targets:</b> " + t.cal.toLocaleString() + " kcal · protein " + t.p + " g · carbs " + t.c + " g · fat " + t.fat + " g.</p>" +
+      "<p><b>Your training week:</b> " + tDays.map(function(x){ return WEEKDAYS[x]; }).join(", ") + " — plus a full 28-day month plan with a planned deload week, already generated.</p>" +
+      "<p>From here it's one tap: the big button on the Today tab logs food, workouts and sleep by voice. Everything else lives in the tabs below.</p>";
+  }
+  card.innerHTML = h;
+  card.querySelectorAll("[data-wiz-opt]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var g = b.getAttribute("data-wiz-opt");
+      wiz.data[g] = b.getAttribute("data-wiz-val");
+      wiz.data.msg = "";
+      if (g === "diet"){ renderWizard(); return; }
+      wizAdvance();
+    });
+  });
+  card.querySelectorAll("[data-wiz-day]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var i = +b.getAttribute("data-wiz-day");
+      var k = wiz.data.days.indexOf(i);
+      if (k >= 0) wiz.data.days.splice(k, 1); else wiz.data.days.push(i);
+      renderWizard();
+    });
+  });
+  card.querySelectorAll("[data-wiz-sex]").forEach(function(b){
+    b.addEventListener("click", function(){
+      wizCollectInputs();
+      wiz.data.sex = b.getAttribute("data-wiz-sex");
+      renderWizard();
+    });
+  });
+}
+function wizCollectInputs(){
+  if (!wiz) return;
+  var step = WIZ_STEP_NAMES[wiz.step];
+  if (step === "stats"){
+    if ($("wizName")) wiz.data.name = $("wizName").value.trim();
+    if ($("wizAge")) wiz.data.age = $("wizAge").value;
+    if ($("wizWeight")) wiz.data.weight = $("wizWeight").value;
+    if ($("wizFt")) wiz.data.ft = $("wizFt").value;
+    if ($("wizIn")) wiz.data.inch = $("wizIn").value;
+  }
+  if (step === "extras" && $("wizTarget")) wiz.data.targetWeight = $("wizTarget").value;
+}
+function wizAdvance(){
+  if (!wiz) return;
+  wizCollectInputs();
+  var step = WIZ_STEP_NAMES[wiz.step];
+  if (step === "stats"){
+    var heightIn = (num(wiz.data.ft) * 12) + num(wiz.data.inch);
+    if (!(heightIn >= 36 && heightIn <= 96)){ wiz.data.msg = "⚠️ Please enter a realistic height (feet and inches)."; renderWizard(); return; }
+    if (!(num(wiz.data.weight) >= 50 && num(wiz.data.weight) <= 1000)){ wiz.data.msg = "⚠️ Please enter your weight in pounds (50–1000)."; renderWizard(); return; }
+    if (!(num(wiz.data.age) >= 10 && num(wiz.data.age) <= 100)){ wiz.data.msg = "⚠️ Please enter an age between 10 and 100 — the calorie math needs it."; renderWizard(); return; }
+  }
+  wiz.data.msg = "";
+  if (step === "extras"){ finishWizard(); return; }
+  if (step === "done"){ closeWizard(); switchView("dashboard"); return; }
+  wiz.step = Math.min(wiz.step + 1, WIZ_STEP_NAMES.length - 1);
+  renderWizard();
+}
+function wizBack(){
+  if (!wiz) return;
+  wizCollectInputs();
+  wiz.data.msg = "";
+  wiz.step = Math.max(wiz.step - 1, 0);
+  renderWizard();
+}
+function finishWizard(){
+  var d = wiz.data;
+  var heightIn = (num(d.ft) * 12) + num(d.inch);
+  var days = d.days.slice().sort(function(a, b){ return a - b; });
+  state.profile = {
+    name: d.name || "", sex: d.sex, age: Math.round(num(d.age)), heightIn: heightIn,
+    weightLb: num(d.weight), activity: num(d.activity, 1.375), goal: d.goal,
+    equip: d.equip, experience: d.experience, trainingDays: days.length ? days : undefined,
+    diet: d.diet || "", avoid: "", targetWeightLb: num(d.targetWeight) || 0
+  };
+  if (!state.planStartDate) state.planStartDate = todayStr();
+  state.plan = generatePlan(state);
+  state.monthPlan = generateMonthPlan(state, weekStart(todayStr()));
+  state.deviceSetupComplete = false;
+  saveState(state);
+  fillProfileForm();
+  renderAll();
+  wiz.step = WIZ_STEP_NAMES.length - 1;
+  renderWizard();
+  toast("Your plan is built — welcome to LogEasy.");
+}
 /* ---------- ForgeKitchen companion card (v2.1.2 cross-sell) ----------
    Permanent, compact and below the day's log by design (owner's direction, 2026-10-28:
    the pairing card stays up — it is never dismissible). The Devices →
@@ -5149,6 +5513,11 @@ function voiceCtor(){
 function voiceAvailable(){ return !!voiceCtor(); }
 var micNoteEl = null;
 function voiceStatus(target, msg){
+  if (target === "onetouch"){
+    var os = $("oneTouchStatus"); if (os) os.textContent = msg;
+    var ob = $("btnOneTouch"); if (ob) ob.classList.toggle("listening", /^Listening/.test(msg || ""));
+    return;
+  }
   if (target === "field"){ if (micNoteEl){ micNoteEl.textContent = msg; return; } var ds = $("voiceDashStatus"); if (ds) ds.textContent = msg; return; }
   var id = target === "exercise" ? "voiceExerciseStatus" : target === "dashboard" ? "voiceDashStatus" : target === "workout" ? "voiceWorkoutStatus" : "voiceFoodStatus";
   var s = $(id);
@@ -5885,10 +6254,127 @@ function renderVoiceFoodMatches(txt, surface){
   voiceStatus(dashboard ? "dashboard" : "food", matched + " of " + matches.length + " item(s) matched — review below and tap Add to log.");
 }
 
+/* ---------- one-touch universal log (v2.6.0) ----------
+   The home screen's ONE big button. One tap starts the existing one-press
+   dictation (auto-sends on pause — no send tap); the transcript lands here
+   and is routed to the app's EXISTING engines: sleep/steps/weight write
+   through the same manual-entry helpers the Devices tab uses, workouts go
+   to the workout voice parser, food goes to the food voice matcher. Food
+   and workout matches still render their confirm-first cards — nothing is
+   saved until the user taps Add / Log, exactly like every other voice
+   flow in the app. Sleep, steps and weight are single numbers the user
+   just stated, so they save immediately (same as typing them in Quick
+   log) and the status line says precisely what was saved. */
+function otDay(){
+  var t = todayStr();
+  if (!state.activity[t]) state.activity[t] = blankDay();
+  return state.activity[t];
+}
+function routeOneTouchTranscript(raw){
+  var txt = String(raw || "").trim();
+  var ob = $("btnOneTouch"); if (ob) ob.classList.remove("listening");
+  if (!txt) return;
+  var low = " " + txt.toLowerCase().replace(/\s+/g, " ") + " ";
+  // 1) sleep — "slept 7 hours", "7 hours of sleep", "slept six and a half hours"
+  if (/\b(slept|sleep|snooz\w*|nap)\b/.test(low)){
+    var words = { one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12 };
+    var norm = low.replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b/g, function(w){ return " " + words[w] + " "; });
+    var hm = norm.match(/(\d+(?:\.\d+)?)\s*(?:hours?|hrs?|h)\b/);
+    var mm = norm.match(/(\d+)\s*(?:minutes?|mins?)\b/);
+    var sleepH = null;
+    if (hm) sleepH = parseFloat(hm[1]);
+    if (mm) sleepH = (sleepH || 0) + parseInt(mm[1], 10) / 60;
+    if (sleepH !== null && hm && /\bhalf\b/.test(low)) sleepH += 0.5;
+    if (sleepH !== null && sleepH > 0 && sleepH <= 24){
+      var curS = otDay(); markManualField(curS, "sleepH", Math.round(sleepH * 10) / 10);
+      saveState(state); renderAll();
+      voiceStatus("onetouch", "🌙 Logged " + (Math.round(sleepH * 10) / 10) + " hours of sleep. Anything else — tap and talk.");
+      return;
+    }
+  }
+  // 2) steps — "walked 8,000 steps today"
+  var sm = low.match(/([\d,]{3,})\s*steps?\b/);
+  if (sm && /\b(walk\w*|step|got|did|ran|hiked)\b/.test(low)){
+    var steps = parseInt(sm[1].replace(/,/g, ""), 10);
+    if (steps > 0){
+      var curP = otDay(); setManualSteps(curP, steps);
+      saveState(state); renderAll();
+      voiceStatus("onetouch", "👟 Logged " + steps.toLocaleString() + " steps for today.");
+      return;
+    }
+  }
+  // 3) weight — "I weigh 182", "weight 182 pounds"
+  if (/\b(weigh|weight|weighed)\b/.test(low)){
+    var wm = low.match(/(\d{2,3}(?:\.\d)?)\s*(?:lb|lbs|pounds?)\b/) || low.match(/\bweigh\w*\s+(?:in\s+)?(?:at\s+)?(\d{2,3}(?:\.\d)?)\b/);
+    var wv = wm ? parseFloat(wm[1]) : 0;
+    if (wv >= 50 && wv <= 1000){
+      var curW = otDay(); markManualField(curW, "weightLb", wv); syncManualWeight(todayStr(), wv);
+      saveState(state); renderAll();
+      voiceStatus("onetouch", "⚖️ Logged your weight: " + wv + " lb.");
+      return;
+    }
+  }
+  // 4) about to train — "I'm about to do squats", "start today's workout"
+  var wp = parseVoiceWorkout(txt);
+  var hasStructure = /\bsets?\b|\breps?\b|\bat\s+\d|\b\d+\s*(?:lb|lbs|kg|pounds?)\b/.test(low);
+  var startIntent = /\b(about to|gonna|going to|starting|start|begin|let's|lets)\b/.test(low) && !hasStructure &&
+    !wp.entries.some(function(e){ return !e.defaulted; });
+  if (startIntent && (wp.entries.length || /\b(workout|training|session|train)\b/.test(low))){
+    var tIdx = planDayIndexForToken("today");
+    if (tIdx >= 0 && state.plan && state.plan.days[tIdx] && !state.plan.days[tIdx].rest){
+      voiceStatus("onetouch", "🏋️ Starting today's workout — " + (state.plan.days[tIdx].name || "Training") + ".");
+      startWorkout(tIdx);
+    } else {
+      voiceStatus("onetouch", tIdx >= 0
+        ? "😴 Today is a planned rest day — opening Train; your week is there if you want to train anyway."
+        : "No plan covers today yet — opening Train so you can pick a day.");
+      switchView("train");
+    }
+    return;
+  }
+  // 5) a workout already done beats food when it carries sets/reps/weight,
+  //    or when no food matched at all
+  var fm = voiceFoodMatches(txt);
+  if (wp.entries.length && (hasStructure || !fm.length || (wp.adjustments && wp.adjustments.length))){ renderVoiceWorkout(txt); return; }
+  if (fm.length){ renderVoiceFoodMatches(txt, "dashboard"); return; }
+  if (wp.entries.length || (wp.adjustments && wp.adjustments.length)){ renderVoiceWorkout(txt); return; }
+  // 6) neither matched — hand it to the renderer that can explain best
+  if (matchVoiceExercise(txt) || /\b(workout|trained|lifted|gym|exercise)\b/.test(low)) renderVoiceWorkout(txt);
+  else renderVoiceFoodMatches(txt, "dashboard");
+}
+/* Caddy-style trainer brief (v2.6.0): one tap on "Talk to your trainer"
+   answers with today's workout, today's food targets and sleep guidance,
+   composed from the same data functions the rest of the app uses. The
+   full offline Q&A (trainerAnswer) stays one tap away in the same panel. */
+function trainerDailyBrief(){
+  if (!state.profile) return ["Set up your profile first — tap the trainer setup button on the Today tab and I'll build your plan and targets. Then this brief fills in with your real numbers."];
+  var today = todayStr();
+  var t = dailyTargets(state.profile);
+  var eaten = foodDayTotals(state, today);
+  var td = trainerTodayDay(state);
+  var g = glanceData(state, today);
+  var lines = [];
+  lines.push(td
+    ? (td.rest
+      ? "😴 Today is a planned rest day — recovery is training too: a walk, some stretching and good food."
+      : "🏋️ Today's workout: " + (td.name || "Training") + " — " + (td.exercises ? td.exercises.length : 0) + " exercises. It's waiting on the Train tab.")
+    : "No plan covers today yet — open the Train tab and I'll lay out your week.");
+  lines.push("🍽️ Food today: aim for " + t.cal.toLocaleString() + " kcal — protein " + t.p + " g, carbs " + t.c + " g, fat " + t.fat + " g. You've logged " + Math.round(eaten.cal).toLocaleString() + " kcal so far, so " + Math.max(0, Math.round(t.cal - eaten.cal)).toLocaleString() + " kcal left.");
+  lines.push(g.sleepH
+    ? "🌙 Sleep: you logged " + (Math.round(g.sleepH * 10) / 10) + " h. " + (g.sleepH >= 7 ? "That's in the 7–9 h zone where training adapts best — keep the same wind-down tonight." : "That's under the 7 h floor — tonight, screens off 30 minutes earlier and a steady lights-out will do more than any supplement.")
+    : "🌙 Sleep: nothing logged yet. Aim for 7–9 h tonight — that's when today's training turns into strength. Say “slept 7 hours” to the big button on Today and I'll log it.");
+  if (g.steps) lines.push("👟 Steps so far: " + g.steps.toLocaleString() + " of your " + g.stepGoal.toLocaleString() + " goal.");
+  lines.push("Ask me anything below — swaps, soreness, calories left, deloads — or tap a quick question.");
+  return lines;
+}
 function handleVoiceTranscript(target, txt){
   if (target === "field"){
     var f = micFieldEl;
     if (f){ f.value = txt; try { f.dispatchEvent(new Event("input", { bubbles: true })); f.dispatchEvent(new Event("change", { bubbles: true })); } catch(e){}
+      /* The two dashboard hero fields have their own action buttons — run
+         them automatically so dictation there is also one-press, no send tap. */
+      if (f.id === "heroFoodText" && $("btnHeroFoodType")){ $("btnHeroFoodType").click(); return; }
+      if (f.id === "heroWorkoutText" && $("btnHeroWorkoutType")){ $("btnHeroWorkoutType").click(); return; }
       voiceStatus("field", "Heard: “" + txt + "” — it's in the field now. Check it; typing edits it any time."); }
     return;
   }
@@ -5899,6 +6385,7 @@ function handleVoiceTranscript(target, txt){
     voiceStatus("exercise", "Heard: “" + txt + "” — the library below is filtered to matches. Tap an exercise to open it; nothing was started or saved.");
     return;
   }
+  if (target === "onetouch"){ routeOneTouchTranscript(txt); return; }
   if (target === "dashboard"){ renderVoiceFoodMatches(txt, "dashboard"); return; }
   renderVoiceFoodMatches(txt);
 }
@@ -6158,7 +6645,7 @@ var voiceRec = null;
 var voiceStartGeneration = 0;
 var voiceStartInFlight = false;
 function voiceViewForTarget(target){
-  if (target === "dashboard" || target === "workout") return "dashboard";
+  if (target === "dashboard" || target === "workout" || target === "onetouch") return "dashboard";
   if (target === "exercise") return "train";
   if (target === "field") return currentViewName();
   return "nutrition";
@@ -6218,28 +6705,60 @@ function beginVoiceRecognition(target, Ctor, generation){
   var sessionGeneration = generation === undefined ? voiceStartGeneration : generation;
   voiceRec = rec;
   voiceStartInFlight = false;
-  rec.lang = "en-US"; rec.interimResults = false; rec.maxAlternatives = 1;
-  rec.onresult = function(ev){
-    if (voiceRec !== rec || sessionGeneration !== voiceStartGeneration) return;
-    var txt = "";
-    if (ev && ev.results) for (var i = 0; i < ev.results.length; i++){ var r = ev.results[i]; if (r && r.isFinal && r[0]) txt += r[0].transcript; }
-    txt = txt.trim();
+  /* One-press voice (Travis's ask, 2026-11-24): tap the mic once, talk, and
+     the app finishes on its own — continuous recognition with live interim
+     results, a ~1.6s silence timer stops the session, and the accumulated
+     transcript auto-submits through handleVoiceTranscript. No send button.
+     Tapping the mic again while listening also finishes and submits. */
+  rec.lang = "en-US"; rec.interimResults = true; rec.continuous = true; rec.maxAlternatives = 1;
+  var finalTxt = "";
+  var silenceTimer = null;
+  var submitted = false;
+  function submitVoiceOnce(){
+    if (submitted) return; submitted = true;
+    if (silenceTimer){ clearTimeout(silenceTimer); silenceTimer = null; }
+    var txt = finalTxt.trim();
     if (txt) handleVoiceTranscript(target, txt);
     else voiceStatus(target, "Didn't catch that — try again or type it.");
+  }
+  function armSilenceTimer(){
+    if (silenceTimer) clearTimeout(silenceTimer);
+    silenceTimer = setTimeout(function(){
+      if (voiceRec === rec){ try { rec.stop(); } catch(e){} }
+    }, 1600);
+  }
+  rec.onresult = function(ev){
+    if (voiceRec !== rec || sessionGeneration !== voiceStartGeneration) return;
+    var finals = "", interim = "";
+    if (ev && ev.results) for (var i = ev.resultIndex || 0; i < ev.results.length; i++){
+      var r = ev.results[i]; if (!r || !r[0]) continue;
+      if (r.isFinal) finals += r[0].transcript; else interim += r[0].transcript;
+    }
+    if (finals) finalTxt += (finalTxt && !/\s$/.test(finalTxt) ? " " : "") + finals.trim();
+    if (finals || interim){
+      armSilenceTimer();
+      var heard = (finalTxt + " " + interim).trim();
+      if (heard) voiceStatus(target, "Listening… “" + heard + "” — I'll send it when you pause.");
+    }
   };
   rec.onerror = function(ev){
     if (voiceRec !== rec || sessionGeneration !== voiceStartGeneration) return;
+    if ((ev && ev.error) === "no-speech" && finalTxt.trim()) return;   // onend submits what was heard
     voiceStatus(target, voiceErrorMessage(ev && ev.error));
   };
-  rec.onend = function(){ if (voiceRec === rec) voiceRec = null; };
+  rec.onend = function(){
+    if (voiceRec === rec) voiceRec = null;
+    if (sessionGeneration === voiceStartGeneration) submitVoiceOnce();
+  };
   try { rec.start(); } catch(e){ if (voiceRec === rec) voiceRec = null; voiceStatus(target, "Voice couldn't start in this browser — typing still works."); return false; }
-  voiceStatus(target, "Listening… speak now. You'll confirm the matches before anything is saved.");
+  voiceStatus(target, "Listening… speak now. I'll send it when you pause — no send button needed. You'll still confirm matches before anything is saved.");
   return true;
 }
 function startVoiceDictation(target){
   var Ctor = voiceCtor();
   if (!Ctor){ voiceStatus(target, "Voice dictation isn't available in this browser — typing still works."); return false; }
-  if (voiceRec || voiceStartInFlight){ cancelVoiceDictation(); voiceStatus(target, "Voice stopped — tap the mic to try again."); return false; }
+  if (voiceRec){ var activeRec = voiceRec; voiceStatus(target, "Got it — processing what you said…"); try { activeRec.stop(); } catch(e){} return false; }
+  if (voiceStartInFlight){ cancelVoiceDictation(); voiceStatus(target, "Voice stopped — tap the mic to try again."); return false; }
   var generation = ++voiceStartGeneration;
   voiceStartInFlight = true;
   var probe = micProbe();
@@ -6595,6 +7114,7 @@ function init(){
   $("btnCancelWorkout").addEventListener("click", cancelWorkout);
   ["exSearch","exMuscle","exEquip"].forEach(function(id){ $(id).addEventListener("input", renderLibrary); $(id).addEventListener("change", renderLibrary); });
   $("foodSearch").addEventListener("input", renderFoodResults);
+  $("foodSearch").addEventListener("input", function(){ var f = $("foodBrowseFold"); if (f) f.open = true; });
   /* Copy yesterday (v2.4.0): copies the previous day's entries onto the
      day shown in the food log; the toast says how many and reminds the
      user items can be deleted individually. */
@@ -6616,6 +7136,17 @@ function init(){
   if ($("btnVoiceDash")) $("btnVoiceDash").addEventListener("click", function(){ startVoiceDictation("dashboard"); });
   if ($("btnVoiceExercise")) $("btnVoiceExercise").addEventListener("click", function(){ startVoiceDictation("exercise"); });
   if ($("btnVoiceWorkout")) $("btnVoiceWorkout").addEventListener("click", function(){ startVoiceDictation("workout"); });
+  if ($("btnOneTouch")) $("btnOneTouch").addEventListener("click", function(){ startVoiceDictation("onetouch"); });
+  if ($("btnOneTouchType")) $("btnOneTouchType").addEventListener("click", function(){ var v = ($("oneTouchText").value || "").trim(); if (v) routeOneTouchTranscript(v); });
+  if ($("oneTouchText")) $("oneTouchText").addEventListener("keydown", function(ev){ if (ev.key === "Enter" || ev.keyCode === 13){ ev.preventDefault(); var v = ($("oneTouchText").value || "").trim(); if (v) routeOneTouchTranscript(v); } });
+  if ($("btnTrainerHome")) $("btnTrainerHome").addEventListener("click", function(){
+    openTrainerPanel();
+    trainerBubble("What's my plan for today?", true);
+    trainerDailyBrief().forEach(function(line){ trainerBubble(line, false); });
+  });
+  if ($("btnWizNext")) $("btnWizNext").addEventListener("click", wizAdvance);
+  if ($("btnWizBack")) $("btnWizBack").addEventListener("click", wizBack);
+  if ($("btnWizSkip")) $("btnWizSkip").addEventListener("click", function(){ closeWizard(); switchView("profile"); });
   if ($("btnHeroFoodType")) $("btnHeroFoodType").addEventListener("click", function(){ var v = ($("heroFoodText").value || "").trim(); if (v) renderVoiceFoodMatches(v, "dashboard"); });
   if ($("btnHeroWorkoutType")) $("btnHeroWorkoutType").addEventListener("click", function(){ var v = ($("heroWorkoutText").value || "").trim(); if (v) renderVoiceWorkout(v); });
   /* Per-field mics (v2.2.3) — one delegated listener covers static and
@@ -6634,6 +7165,7 @@ function init(){
     voiceStatus("dashboard", "Voice isn't available in this browser — use the typed option under each button; typing works everywhere.");
     voiceStatus("workout", "Voice isn't available in this browser — use the typed option under the button; typing works everywhere.");
     voiceStatus("exercise", "Voice dictation isn't available in this browser — typing still works.");
+    voiceStatus("onetouch", "Voice isn't available in this browser — use the typed box right under the big button; typing works everywhere.");
     document.querySelectorAll("[data-mic-for]").forEach(function(b){ b.style.display = "none"; });
     document.querySelectorAll(".micNote").forEach(function(n){ n.textContent = "Voice isn't available in this browser — typing works."; });
   }
@@ -6669,6 +7201,7 @@ function init(){
   renderLegal();
   if (legalNeedsAcceptance(state)) showLegalGate();
   else if (introNeedsShow(state)) showIntro();   // upgraders who already accepted: intro once on first open of the new version
+  if (!state.profile && !legalNeedsAcceptance(state) && !introNeedsShow(state)) maybeStartWizard();
   if ($("btnIntroSkip")) $("btnIntroSkip").addEventListener("click", function(){ closeIntro(false); });
   if ($("btnIntroNext")) $("btnIntroNext").addEventListener("click", introNext);
   if ($("btnIntroBack")) $("btnIntroBack").addEventListener("click", introBack);
@@ -6858,6 +7391,8 @@ var FF_API = {
   openBuilder: openBuilder, closeBuilder: closeBuilder, saveTemplate: saveTemplate, startTemplate: startTemplate,
   renderTemplates: renderTemplates, renderBuilder: renderBuilder, builderFilteredExercises: builderFilteredExercises,
   getBuilder: function(){ return builder; }, getSession: function(){ return session; }, finishWorkout: finishWorkout,
+  routeOneTouchTranscript: routeOneTouchTranscript, startWizard: startWizard, trainerDailyBrief: trainerDailyBrief,
+  parseVoiceWorkout: parseVoiceWorkout, voiceFoodMatches: voiceFoodMatches,
   tabOrder: FF_TABS, currentViewName: currentViewName, swipeTargetView: swipeTargetView,
   swipeStartBlocked: swipeStartBlocked, swipeFlowBlocked: swipeFlowBlocked,
   isConnectFlowOpen: function(){ return ffConnectFlowOpen; },
