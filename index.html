@@ -426,6 +426,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
     </details>
     <button class="btn trainerBtn" id="btnTrainerHome" type="button">🧑‍🏫 Trainer's instructions</button>
   </div>
+  <div id="homeScreenCardToday"></div>
   <div class="card">
     <div class="flexb"><h3 style="margin:0"><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="4.5" width="12" height="17" rx="2"/><path d="M9.3 4.7a2.7 2.7 0 0 1 5.4 0"/><path d="M9.5 11h5M9.5 15h5"/></svg></span>Today's brief</h3><span id="avatarDash"></span></div>
     <div id="dashToday"></div>
@@ -895,6 +896,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
   </div>
   <details class="card" id="helpSection"><summary>Help &amp; support</summary>
     <p class="small mt">Short, plain how-tos for the jobs LogEasy is used for every day. Tap a topic to open it.</p>
+    <div id="homeScreenCardHelp"></div>
     <details><summary>Log food by voice</summary>
       <p class="small">On the Today page (or in the Nutrition tab), tap <b>“Tell trainer what you ate”</b> and say what you had, like “two eggs and toast”. LogEasy shows you the matches it found — check them, change a quantity if you need to, then tap <b>Add</b> for each one. Nothing is saved until you tap Add. If your browser can't use the microphone, typing works just as well (see the next topic).</p>
     </details>
@@ -920,7 +922,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
       <p class="small">Go to the <b>Progress</b> tab, open <b>Backup &amp; reports</b>, and tap <b>Export backup (JSON)</b> to save a backup file. Keep that file somewhere safe. To restore it later — on this device or a new one — open the same place, choose the backup file under <b>Restore a backup</b>, and your logs come back.</p>
     </details>
     <p class="small mt">All of your LogEasy data lives only on this device, in this browser/app — nothing is uploaded anywhere. Back it up with <b>Progress → Backup &amp; reports → Export backup (JSON)</b> before you switch phones or browsers, and keep the backup file somewhere safe.</p>
-    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.8.1&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
+    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.8.2&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
     <p class="small mut">Email opens your own email app, addressed to us, with the app version already in the subject line.</p>
   </details>
   <details class="card" id="profileMore"><summary>More settings — encouragement, appearance, legal &amp; about</summary>
@@ -954,7 +956,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
     <button class="btn sec" id="btnShowIntro" type="button">See the intro again</button>
   </div>
   <details class="card"><summary>ℹ️ About LogEasy</summary>
-    <p class="small mut mt">LogEasy <b>version 2.8.1</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
+    <p class="small mut mt">LogEasy <b>version 2.8.2</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
   </details>
   </details>
 </section>
@@ -1630,7 +1632,7 @@ function allFoods(state){ return FOODS.map(foodObj).concat(EXTRA_FOODS).concat((
 "use strict";
 /* ---------- state ---------- */
 var FF_KEY = "forgefit_v1";
-var FF_VERSION = "2.8.1";
+var FF_VERSION = "2.8.2";
 /* Terms of Use version bundled with this build (legal pack v1.0). Bump this
    ONE constant when the terms text changes and users are re-asked once. */
 var FF_TERMS_VERSION = "1.0";
@@ -1655,6 +1657,7 @@ function blankState(){
     devicePlatform: "",          // chosen in the connect flow
     devicePromptDismissed: false,
     fkCardDismissed: false,      // ForgeKitchen companion card in Nutrition (v2.1.2)
+    homeScreenCardDismissed: false, // "Put your trainer on your home screen" card on Today (v2.8.2) — once dismissed it never nags again; the Help copy always stays
     deviceSetupComplete: false,  // fresh v2.1 profiles finish/skip the connect step
     stepGoal: 10000,
     encouragement: "full",       // "full" | "milestones" | "off" (v2.1.1) — supportive messages only
@@ -3352,6 +3355,37 @@ function renderDevicePrompt(){
     '<button class="btn" id="btnOpenConnect" type="button">Connect device data</button></div>';
   $("btnDismissDevicePrompt").addEventListener("click", function(){ state.devicePromptDismissed = true; saveState(state); renderDashboard(); });
   $("btnOpenConnect").addEventListener("click", openConnectFlow);
+}
+/* ---------- home-screen trainer shortcuts card (v2.8.2) ----------
+   Teaches the two deep links (?trainer=1 / ?tell=1) as home-screen
+   shortcuts. The Today copy sits right under the trainer buttons and is
+   dismissible for good (state.homeScreenCardDismissed rides in backups);
+   the Help & support copy is permanent. Both render from the one HTML
+   builder so the steps can never drift apart. */
+var FF_APP_URL = "https://whitewolfoklahoma-rgb.github.io/forgefit-share/";
+function homeScreenCardHtml(dismissible){
+  return '<div class="card">' +
+    '<div class="flexb"><h3 style="margin:0">📱 Put your trainer on your home screen</h3>' +
+    (dismissible ? '<button class="btn sec sm" id="btnDismissHomeCard" type="button" aria-label="Dismiss this card">✕</button>' : '') + '</div>' +
+    '<p class="small mt">Skip opening the app and hunting for the buttons — save a trainer shortcut instead. Open one of these links first, then follow the short steps under them:</p>' +
+    '<p class="mt"><a class="btn blue" href="' + FF_APP_URL + '?trainer=1" target="_blank" rel="noopener" style="text-decoration:none">🧑‍🏫 Trainer\'s instructions — today\'s briefing</a></p>' +
+    '<p class="mt"><a class="btn blue" href="' + FF_APP_URL + '?tell=1" target="_blank" rel="noopener" style="text-decoration:none">🎤 Tap to tell trainer — talk to log</a></p>' +
+    '<p class="small mt"><b>Chrome (Android):</b></p>' +
+    '<ol class="small" style="margin:2px 0 0;padding-left:22px"><li>Open the link above in Chrome.</li><li>Tap <b>⋮</b> (top right) → <b>Add to Home screen</b>.</li><li>Name it <b>Trainer</b> → tap <b>Add</b>.</li></ol>' +
+    '<p class="small">It now sits on your home screen like an app — one tap and you\'re in.</p>' +
+    '<p class="small"><b>Samsung Internet:</b> open the link → tap the <b>☰</b> menu → <b>Add page to</b> → <b>Home screen</b>.</p>' +
+    '<p class="small"><b>iPhone (Safari):</b> open the link → tap <b>Share</b> → <b>Add to Home Screen</b>.</p>' +
+  '</div>';
+}
+function renderHomeScreenCards(){
+  var help = $("homeScreenCardHelp");
+  if (help) help.innerHTML = homeScreenCardHtml(false);
+  var today = $("homeScreenCardToday");
+  if (!today) return;
+  if (state.homeScreenCardDismissed){ today.innerHTML = ""; return; }
+  today.innerHTML = homeScreenCardHtml(true);
+  var d = $("btnDismissHomeCard");
+  if (d) d.addEventListener("click", function(){ state.homeScreenCardDismissed = true; saveState(state); renderHomeScreenCards(); });
 }
 function openConnectFlow(){
   switchView("activity");
@@ -5139,7 +5173,7 @@ function saveProfileFromForm(){
 }
 
 /* ---------- global wiring ---------- */
-function renderAll(){ applyBackground(); renderAvatars(); renderDashboard(); renderTrain(); renderNutrition(); renderActivity(); renderProgress(); refreshFkLinks(); }
+function renderAll(){ applyBackground(); renderAvatars(); renderDashboard(); renderTrain(); renderNutrition(); renderActivity(); renderProgress(); renderHomeScreenCards(); refreshFkLinks(); }
 /* ---------- legal gate + page (v2.1.2) ----------
    The gate is a visual first-run screen only: state is loaded and rendered
    behind it, and nothing is ever blocked, locked, or deleted by it. */
