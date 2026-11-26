@@ -511,6 +511,14 @@ header .btn.sm{min-height:38px;white-space:nowrap}
     </div>
     <div id="templateList" class="mt"></div>
   </div>
+  <div class="card" id="pickerCard" style="display:none">
+    <div class="flexb"><h3 style="margin:0" id="pickerTitle">Add exercise</h3><button class="btn sec sm" id="btnClosePicker" type="button">Done</button></div>
+    <div class="field mt"><label>1 · Pick a body part</label><div class="chipRow" id="pickerGroups" style="padding-top:2px"></div></div>
+    <div class="field"><label>2 · Tap an exercise to add it</label><input id="pickerSearch" type="text" placeholder="Search all exercises — e.g. goblet squat" autocomplete="off"><button type="button" class="micbtn" data-mic-for="pickerSearch" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
+    <label class="small" style="display:flex;align-items:center;gap:8px;margin:0 0 8px"><input type="checkbox" id="pickerMineOnly" checked style="width:20px;height:20px;flex:0 0 auto"> My equipment only <span class="mut" id="pickerEquipNote"></span></label>
+    <div id="pickerList"></div>
+    <div class="small mt" id="pickerMsg" aria-live="polite"></div>
+  </div>
   <details class="card" id="trainMoreFold"><summary>More — month plan, exercise library &amp; history</summary>
   <details class="card" id="monthCardFold"><summary>Full-month plan &amp; calorie budget</summary>
   <div class="card" id="monthCard">
@@ -911,7 +919,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
       <p class="small">Go to the <b>Progress</b> tab, open <b>Backup &amp; reports</b>, and tap <b>Export backup (JSON)</b> to save a backup file. Keep that file somewhere safe. To restore it later — on this device or a new one — open the same place, choose the backup file under <b>Restore a backup</b>, and your logs come back.</p>
     </details>
     <p class="small mt">All of your LogEasy data lives only on this device, in this browser/app — nothing is uploaded anywhere. Back it up with <b>Progress → Backup &amp; reports → Export backup (JSON)</b> before you switch phones or browsers, and keep the backup file somewhere safe.</p>
-    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.7.0&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
+    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.8.0&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
     <p class="small mut">Email opens your own email app, addressed to us, with the app version already in the subject line.</p>
   </details>
   <details class="card" id="profileMore"><summary>More settings — encouragement, appearance, legal &amp; about</summary>
@@ -945,7 +953,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
     <button class="btn sec" id="btnShowIntro" type="button">See the intro again</button>
   </div>
   <details class="card"><summary>ℹ️ About LogEasy</summary>
-    <p class="small mut mt">LogEasy <b>version 2.7.0</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
+    <p class="small mut mt">LogEasy <b>version 2.8.0</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
   </details>
   </details>
 </section>
@@ -1018,11 +1026,11 @@ header .btn.sm{min-height:38px;white-space:nowrap}
 
 <div id="trainerPanel" role="dialog" aria-modal="true" aria-labelledby="trainerPanelTitle">  <div class="trainerWrap">
     <div class="flexb" style="margin-bottom:6px"><h3 id="trainerPanelTitle" style="margin:0">Trainer's instructions</h3><button class="btn sec sm" id="btnTrainerClose" type="button">← Back</button></div>
-    <p class="small mut" style="margin:0 0 6px"><b>Offline trainer</b> — answers from your plan and built-in guidance. The full AI coach arrives with the connected edition.</p>
+    <p class="small mut" style="margin:0 0 6px"><b>Your trainer speaks first</b> — today's workout and food briefing, out loud, every time this opens. Ask a follow-up below and the answer is spoken too. Everything runs offline from your own plan and logs.</p>
     <div class="trainerLog" id="trainerLog"></div>
     <div class="chipRow" id="trainerChips"></div>
     <div class="trainerInputRow">
-      <input type="text" id="trainerInput" placeholder="Ask about your workout, calories, swaps…" autocomplete="off"><button type="button" class="micbtn" data-mic-for="trainerInput" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span>
+      <input type="text" id="trainerInput" placeholder="Ask a follow-up — or tap 🎤 and talk" autocomplete="off"><button type="button" class="micbtn" data-mic-for="trainerInput" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span>
       <button class="btn" id="btnTrainerSend" type="button">Ask</button>
     </div>
   </div>
@@ -1621,7 +1629,7 @@ function allFoods(state){ return FOODS.map(foodObj).concat(EXTRA_FOODS).concat((
 "use strict";
 /* ---------- state ---------- */
 var FF_KEY = "forgefit_v1";
-var FF_VERSION = "2.7.0";
+var FF_VERSION = "2.8.0";
 /* Terms of Use version bundled with this build (legal pack v1.0). Bump this
    ONE constant when the terms text changes and users are re-asked once. */
 var FF_TERMS_VERSION = "1.0";
@@ -3825,14 +3833,14 @@ function renderTrain(){
   var today = todayStr();
   $("planDays").innerHTML = plan.days.map(function(d, idx){
     var doneToday = (state.workoutLogs||[]).some(function(l){ return l.date === d.date; });
-    if (d.rest) return '<div class="excard"><div class="flexb"><b>' + d.weekday + " · " + d.date.slice(5) + '</b><span class="pill">Rest day</span></div><p class="small mut mt">Recovery day — walk, stretch, hydrate. Muscles are built between sessions, not during them.</p></div>';
+    if (d.rest) return '<div class="excard"><div class="flexb"><b>' + d.weekday + " · " + d.date.slice(5) + '</b><span><span class="pill">Rest day</span> <button class="btn sec sm" data-addex="' + idx + '" type="button">＋ Add exercise</button></span></div><p class="small mut mt">Recovery day — walk, stretch, hydrate. Muscles are built between sessions, not during them. Adding an exercise turns this into a workout day.</p></div>';
     var rows = d.exercises.map(function(px){
       var ex = exerciseById(px.id); if (!ex) return "";
       return '<tr><td><b>' + esc(ex.name) + '</b><div class="small mut">' + esc(ex.cues) + '</div></td><td>' + px.sets + " × " + px.repMin + "–" + px.repMax + (ex.unit === "sec" ? " sec" : " reps") + '</td><td class="small mut">' + esc(ex.muscle) + '</td></tr>';
     }).join("");
     return '<div class="excard"><div class="flexb"><b>' + d.weekday + " · " + esc(d.name) + '</b><span>' +
       (doneToday ? '<span class="pill">✅ Done</span> ' : "") +
-      '<button class="btn sm" data-start="' + idx + '" type="button">' + (d.date === today ? "Start today's workout" : "Start workout") + '</button></span></div>' +
+      '<button class="btn sm" data-start="' + idx + '" type="button">' + (d.date === today ? "Start today's workout" : "Start workout") + '</button> <button class="btn sec sm" data-addex="' + idx + '" type="button">＋ Add exercise</button></span></div>' +
       planAdjustNoteHtml(d.date) + '<table class="mt"><tr><th>Exercise</th><th>Sets × Reps</th><th>Muscle</th></tr>' + rows + '</table></div>';
   }).join("");
   // v2.6.0: compact week strip + today hero — the day-by-day detail lives in the fold below
@@ -3859,6 +3867,9 @@ function renderTrain(){
   $("trainToday").innerHTML = hero;
   document.querySelectorAll("[data-start]").forEach(function(b){
     b.addEventListener("click", function(){ startWorkout(+b.getAttribute("data-start")); });
+  });
+  document.querySelectorAll("[data-addex]").forEach(function(b){
+    b.addEventListener("click", function(){ openExercisePicker(+b.getAttribute("data-addex")); });
   });
   // library
   renderLibrary();
@@ -5254,61 +5265,121 @@ function trainerAsk(text){
   trainerBubble(q, true);
   var a = trainerAnswer(state, q);
   trainerBubble(a.text, false);
+  speakTrainerText(a.text);   // the trainer answers out loud, not just in text
   var inp = $("trainerInput"); if (inp) inp.value = "";
 }
-/* ---------- Trainer's instructions (v2.7.0) ----------
-   The "Trainer's instructions" button is an OUTPUT button: one tap and
-   the trainer tells you today's workout (exercises with sets/reps) and
-   today's needs (food targets, sleep), as readable text in the panel
-   AND spoken aloud through the browser's built-in text-to-speech where
-   the device offers it. It never listens — voice input lives only on
-   the "Tap to tell trainer" button. The Q&A below stays available for
-   follow-up questions. */
-var lastInstructionsText = "";
-function trainerInstructionsLines(){
-  var lines = trainerDailyBrief();
+/* ---------- Trainer's instructions (v2.8.0) ----------
+   OUTPUT FIRST, on every open: the moment this panel opens, the
+   trainer delivers today's briefing — the workout (session name,
+   every exercise with sets x reps, and a plain what-to-expect line)
+   and the nutrition (today's calorie/protein targets, what's logged
+   vs. what's left, and the eating expectation) — as text bubbles AND
+   spoken aloud. speak() runs inside the opening button's own tap
+   handler call stack, which is what mobile browsers require before
+   they'll talk. Nothing asks the user for input first: the chat row
+   sits BELOW the briefing for follow-ups, and follow-up answers are
+   spoken aloud too. Reopening re-briefs from current state, so food
+   logged since the last open shows up in the numbers. All figures
+   come from the app's real plan, targets and food logs — none are
+   invented. */
+function trainerBriefingDay(){
   var td = trainerTodayDay(state);
-  if (td && !td.rest && td.exercises && td.exercises.length){
-    var detail = td.exercises.map(function(px){
+  if (td) return { day: td, fromMonth: true };
+  if (state.plan && state.plan.days){
+    var t = todayStr();
+    for (var i = 0; i < state.plan.days.length; i++) if (state.plan.days[i].date === t) return { day: state.plan.days[i], fromMonth: false };
+  }
+  return { day: null, fromMonth: false };
+}
+function trainerBriefingLines(){
+  if (!state.profile) return ["First, let's get you set up: tap the trainer setup on the Today tab, tell me your goals and your equipment, and I'll build your plan. After that, this button gives you the full briefing for the day — workout and food — out loud, every time you tap it."];
+  var today = todayStr();
+  var info = trainerBriefingDay();
+  var td = info.day;
+  var lines = [];
+  if (!td){
+    lines.push("🏋️ No plan covers today yet — open the Train tab and generate your month, and I'll have a session waiting for you here.");
+  } else if (td.rest){
+    lines.push("😴 Today is a planned rest day — no lifting on the plan. Recovery is training too: a walk, some stretching and good food are today's work. What to expect: yesterday's session should feel like it's fading, not building — if you're still very sore tomorrow, ask me about deloads below.");
+  } else {
+    var exs = td.exercises || [];
+    var totalSets = exs.reduce(function(a, px){ return a + num(px.sets); }, 0);
+    lines.push("🏋️ Today's workout: " + (td.name || td.focus || "Training") + " — " + exs.length + " exercises, " + totalSets + " working sets.");
+    var detail = exs.map(function(px){
       var ex = exerciseById(px.id); if (!ex) return "";
       return ex.name + " — " + px.sets + " sets of " + px.repMin + (px.repMax !== px.repMin ? "–" + px.repMax : "") + (ex.unit === "sec" ? " seconds" : " reps");
     }).filter(Boolean);
-    if (detail.length) lines.splice(1, 0, "🏋️ Here's the workout, exercise by exercise: " + detail.join("; ") + ".");
+    if (detail.length) lines.push("Here's the session, in order: " + detail.join("; ") + ".");
+    var firstEx = exs.length ? exerciseById(exs[0].id) : null;
+    var expect = "";
+    if (td.deload || (info.fromMonth && td.week === 4)){
+      expect = "What to expect: this is a deload — lighter loads and fewer sets on purpose. You should finish feeling like you could do more; that's the point, it's where the last three weeks turn into strength.";
+    } else if (info.fromMonth && td.week === 3){
+      expect = "What to expect: it's peak build week, the heaviest week of the block, so the top sets should feel genuinely hard. Start with " + (firstEx ? firstEx.name : "the first lift") + " while you're fresh, then work straight down the list in order.";
+    } else if (exs.length){
+      expect = "What to expect: start with " + (firstEx ? firstEx.name : "the first exercise") + " — your main lift, while you're fresh — then work straight down the list in order" + (info.fromMonth && exs[0].restSec ? ", resting about " + exs[0].restSec + " seconds between sets on the big lifts" : "") + ". Leave 1–3 good reps in the tank on the last set of each exercise.";
+    }
+    if (expect) lines.push(expect);
   }
+  // Nutrition: today's real targets (the month plan's per-day numbers
+  // when they cover today, else the profile's daily targets) against
+  // what's actually logged so far.
+  var t = dailyTargets(state.profile);
+  var calT = t.cal, pT = t.p, cT = t.c, fT = t.fat;
+  if (td && num(td.targetCal) > 0){
+    calT = Math.round(num(td.targetCal));
+    if (num(td.protein) > 0) pT = Math.round(num(td.protein));
+    if (num(td.carbs) > 0) cT = Math.round(num(td.carbs));
+    if (num(td.fat) > 0) fT = Math.round(num(td.fat));
+  }
+  var eaten = foodDayTotals(state, today);
+  var calLeft = Math.max(0, Math.round(calT - eaten.cal));
+  var pLeft = Math.max(0, Math.round(pT - eaten.p));
+  if (eaten.items > 0){
+    lines.push("🍽️ Nutrition today: target " + calT.toLocaleString() + " kcal and " + pT + " g protein. So far you've logged " + Math.round(eaten.cal).toLocaleString() + " kcal and " + Math.round(eaten.p) + " g protein — that leaves " + calLeft.toLocaleString() + " kcal and " + pLeft + " g protein to go.");
+  } else {
+    lines.push("🍽️ Nutrition today: target " + calT.toLocaleString() + " kcal — protein " + pT + " g, carbs " + cT + " g, fat " + fT + " g. Nothing logged yet, so the full target is in front of you.");
+  }
+  var diet = String(state.profile.diet || "").trim();
+  lines.push("The eating expectation for today: anchor each meal on protein first" + (diet ? " — your diet is set to " + diet + ", so keep the meals in that lane" : "") + ", spread the protein across the day instead of saving it all for dinner, and don't try to earn food with extra exercise — the target already accounts for your training.");
+  var g = glanceData(state, today);
+  lines.push(g.sleepH
+    ? "🌙 Sleep: you logged " + (Math.round(g.sleepH * 10) / 10) + " h. " + (g.sleepH >= 7 ? "That's in the 7–9 h zone where training adapts best — keep the same wind-down tonight." : "That's under the 7 h floor — tonight's wind-down will do more than any supplement.")
+    : "🌙 Sleep: nothing logged yet — aim for 7–9 h tonight; that's when today's training turns into strength.");
+  if (g.steps) lines.push("👟 Steps so far: " + g.steps.toLocaleString() + " of your " + g.stepGoal.toLocaleString() + " goal.");
+  lines.push("That's your day. Questions — swaps, soreness, calories, anything — ask me below, by voice or typing, and I'll answer out loud.");
   return lines;
 }
-function speakTrainerInstructions(){
+function trainerInstructionsLines(){ return trainerBriefingLines(); }
+function speakTrainerText(text){
   try {
     if (typeof window === "undefined" || !("speechSynthesis" in window) || !window.speechSynthesis) return false;
+    var clean = String(text || "").replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "").replace(/[^\x00-\x7F]/g, "").replace(/\s+/g, " ").trim();
+    if (!clean) return false;
     window.speechSynthesis.cancel();
-    var text = trainerInstructionsLines().join(" ").replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "").replace(/[^\x00-\x7F]/g, "").replace(/\s+/g, " ").trim();
-    if (!text) return false;
-    var u = new SpeechSynthesisUtterance(text);
+    var u = new SpeechSynthesisUtterance(clean);
     u.rate = 1.02;
     window.speechSynthesis.speak(u);
     return true;
   } catch(e){ return false; }
 }
+function speakTrainerInstructions(){ return speakTrainerText(trainerBriefingLines().join(" ")); }
 function stopTrainerSpeech(){
   try { if (typeof window !== "undefined" && "speechSynthesis" in window && window.speechSynthesis) window.speechSynthesis.cancel(); } catch(e){}
+}
+function deliverTrainerBriefing(){
+  var lines = trainerBriefingLines();
+  trainerBubble("📋 Here's your day, from your trainer:", false);
+  lines.forEach(function(l){ trainerBubble(l, false); });
+  speakTrainerText(lines.join(" "));
 }
 function openTrainerPanel(){
   var p = $("trainerPanel"); if (!p) return;
   p.style.display = "flex";
   renderTrainerChips();
-  if (!trainerGreeted){
-    trainerGreeted = true;
-    trainerBubble("Hi — I'm your offline trainer. I answer from your own plan and logs: today's workout, calories left, your pace, streaks, exercise swaps, and the basics like protein, soreness and deloads. Tap a quick question or type your own. For pain, injuries or anything medical, I'll point you to a professional instead — that's deliberate.");
-  }
-  // The button's main job: deliver today's instructions, on screen and out loud.
-  var lines = trainerInstructionsLines();
-  var joined = lines.join("\n");
-  if (joined !== lastInstructionsText){
-    lastInstructionsText = joined;
-    trainerBubble("📋 Your instructions for today:", false);
-    lines.forEach(function(l){ trainerBubble(l, false); });
-  }
-  speakTrainerInstructions();
+  // The button's one job: brief first, fresh from current state, on
+  // screen and out loud — every open, never an empty "ask me" state.
+  deliverTrainerBriefing();
 }
 function closeTrainerPanel(){
   stopTrainerSpeech();
@@ -6781,6 +6852,118 @@ function applyPlanAdjustment(adj){
   try { renderTrain(); renderDashboard(); } catch(e){}
   return true;
 }
+/* ---------- Hevy-style exercise picker (v2.8.0) ----------
+   Build-your-own-workout picker for a plan day: step 1 pick a body
+   part, step 2 tap an exercise from the FULL library list for that
+   part to add it. A search box filters by name across every body
+   part. Adds go through the exact same mutation as voice edits
+   (applyPlanAdjustment "exadd"), so the weekly plan and the
+   same-date month-plan day change together, with the same default
+   sets/reps — picker and voice never disagree about the plan.
+   Equipment honesty: every row carries its equipment tag, and
+   "My equipment only" (default ON) hides anything above the user's
+   tier so he isn't offered exercises he can't do; with it off,
+   above-tier rows stay listed but are labelled with what they need. */
+var PICKER_GROUP_ORDER = ["Chest", "Back", "Legs", "Shoulders", "Biceps", "Triceps", "Glutes", "Calves", "Core", "Traps", "Full Body", "Cardio"];
+var pickerState = { dayIdx: -1, muscle: "", q: "", mineOnly: true };
+function pickerGroups(){
+  var present = muscleGroups();
+  return PICKER_GROUP_ORDER.filter(function(g){ return present.indexOf(g) >= 0; });
+}
+function pickerRank(){
+  if (!state.profile) return 3;
+  var r = EQUIP_RANK[state.profile.equip];
+  return r != null ? r : 1;
+}
+function openExercisePicker(dayIdx){
+  if (!state.plan || !state.plan.days || !state.plan.days[dayIdx]){ toast("Generate a plan first — then you can add exercises to any day."); return; }
+  pickerState.dayIdx = dayIdx;
+  pickerState.muscle = "";
+  pickerState.q = "";
+  pickerState.mineOnly = true;
+  var card = $("pickerCard"); if (!card) return;
+  var s = $("pickerSearch"); if (s) s.value = "";
+  var t = $("pickerMineOnly"); if (t) t.checked = true;
+  var m = $("pickerMsg"); if (m) m.innerHTML = "";
+  card.style.display = "";
+  renderExercisePicker();
+  try { card.scrollIntoView({ behavior: "smooth", block: "start" }); } catch(e){}
+}
+function closeExercisePicker(){
+  var card = $("pickerCard"); if (card) card.style.display = "none";
+  pickerState.dayIdx = -1;
+}
+function renderExercisePicker(){
+  var card = $("pickerCard"); if (!card) return;
+  var day = state.plan && state.plan.days ? state.plan.days[pickerState.dayIdx] : null;
+  if (!day){ card.style.display = "none"; return; }
+  $("pickerTitle").textContent = "Add exercise — " + day.weekday + " · " + (day.rest ? "Rest day" : day.name);
+  var note = $("pickerEquipNote");
+  if (note) note.textContent = state.profile ? "(" + equipLabel(state.profile.equip) + ")" : "";
+  // body-part grid
+  $("pickerGroups").innerHTML = pickerGroups().map(function(g){
+    return '<button type="button" class="chipBtn gchip' + (pickerState.muscle === g ? " on" : "") + '" data-pick-group="' + esc(g) + '">' + esc(g) + "</button>";
+  }).join("");
+  $("pickerGroups").querySelectorAll("[data-pick-group]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var g = b.getAttribute("data-pick-group");
+      pickerState.muscle = pickerState.muscle === g ? "" : g;
+      renderExercisePicker();
+    });
+  });
+  // exercise list
+  var rank = pickerRank();
+  var q = pickerState.q.trim().toLowerCase();
+  var pool, hidden = 0;
+  if (q) pool = EXERCISES.filter(function(e){ return e.name.toLowerCase().indexOf(q) >= 0; });
+  else if (pickerState.muscle) pool = EXERCISES.filter(function(e){ return e.muscle === pickerState.muscle; });
+  else pool = [];
+  if (pickerState.mineOnly && pool.length){
+    var kept = pool.filter(function(e){ return EQUIP_RANK[e.equip] <= rank; });
+    hidden = pool.length - kept.length;
+    pool = kept;
+  }
+  var inDay = {};
+  (day.exercises || []).forEach(function(px){ inDay[px.id] = 1; });
+  var head = "";
+  if (q) head = pool.length + " match" + (pool.length === 1 ? "" : "es") + " for “" + esc(pickerState.q.trim()) + "” across all body parts";
+  else if (pickerState.muscle) head = pool.length + " exercise" + (pool.length === 1 ? "" : "s") + " for " + esc(pickerState.muscle);
+  if (hidden > 0) head += " · " + hidden + " hidden by “My equipment only”";
+  var rows = pool.map(function(e){
+    var above = EQUIP_RANK[e.equip] > rank;
+    var meta = esc(e.muscle) + " · " + esc(equipLabel(e.equip)) + " · Level " + e.diff + (above ? ' · <span class="warn">needs ' + esc(equipLabel(e.equip)) + "</span>" : "");
+    var action = inDay[e.id]
+      ? '<span class="pill">✓ In workout</span>'
+      : '<button class="btn sm" type="button" data-pick-add="' + e.id + '">＋ Add</button>';
+    return '<div class="excard"><div class="flexb"><div style="min-width:0"><b>' + esc(e.name) + '</b><div class="small mut">' + meta + "</div></div>" + action + "</div></div>";
+  }).join("");
+  var empty = "";
+  if (!pool.length){
+    empty = q
+      ? '<p class="small mut">No exercise matches that search' + (pickerState.mineOnly && hidden > 0 ? " with your equipment — turn off “My equipment only” to see everything" : "") + ". Nothing was invented for it.</p>"
+      : (pickerState.muscle
+        ? '<p class="small mut">Nothing here with your equipment — turn off “My equipment only” above to see the full list for ' + esc(pickerState.muscle) + ".</p>"
+        : '<p class="small mut">Pick a body part above to see its exercises — or just search for the one you want.</p>');
+  }
+  $("pickerList").innerHTML = (head ? '<p class="small mut mb">' + head + "</p>" : "") + rows + empty;
+  $("pickerList").querySelectorAll("[data-pick-add]").forEach(function(b){
+    b.addEventListener("click", function(){ pickerAddExercise(b.getAttribute("data-pick-add")); });
+  });
+}
+function pickerAddExercise(exId){
+  var day = state.plan && state.plan.days ? state.plan.days[pickerState.dayIdx] : null;
+  var ex = exerciseById(exId);
+  if (!day || !ex) return;
+  var ok = applyPlanAdjustment({ type: "exadd", dayIdx: pickerState.dayIdx, date: day.date, exId: exId, summary: "Add " + ex.name + " to " + day.weekday });
+  var msg = $("pickerMsg");
+  if (ok){
+    if (msg) msg.innerHTML = "✅ Added <b>" + esc(ex.name) + "</b> to " + esc(day.weekday) + " — it's live in this week's plan and the month plan too.";
+    toast("Added " + ex.name + " to " + day.weekday + ".");
+  } else if (msg){
+    msg.textContent = ex.name + " is already in that workout — nothing changed.";
+  }
+  renderExercisePicker();
+}
 function planAdjustNoteHtml(date){
   var adj = (typeof state !== "undefined" && state.planAdjust) ? state.planAdjust[date] : null;
   if (!adj || (adj.load === 1 && adj.vol === 1)) return "";
@@ -7384,6 +7567,9 @@ function init(){
   if ($("btnFinishWorkoutTop")) $("btnFinishWorkoutTop").addEventListener("click", finishWorkout);
   if ($("btnFreeWorkout")) $("btnFreeWorkout").addEventListener("click", startFreeWorkout);
   if ($("btnBuildWorkout")) $("btnBuildWorkout").addEventListener("click", function(){ openBuilder(null); });
+  if ($("btnClosePicker")) $("btnClosePicker").addEventListener("click", closeExercisePicker);
+  if ($("pickerSearch")) $("pickerSearch").addEventListener("input", function(){ pickerState.q = this.value; renderExercisePicker(); });
+  if ($("pickerMineOnly")) $("pickerMineOnly").addEventListener("change", function(){ pickerState.mineOnly = this.checked; renderExercisePicker(); });
   if ($("btnSaveTemplate")) $("btnSaveTemplate").addEventListener("click", saveTemplate);
   if ($("btnCancelBuilder")) $("btnCancelBuilder").addEventListener("click", closeBuilder);
   if ($("builderSearch")) $("builderSearch").addEventListener("input", function(){ if (builder){ builder.search = this.value; renderBuilderLibrary(); } });
@@ -7415,11 +7601,7 @@ function init(){
   if ($("btnOneTouch")) $("btnOneTouch").addEventListener("click", function(){ startVoiceDictation("onetouch"); });
   if ($("btnOneTouchType")) $("btnOneTouchType").addEventListener("click", function(){ var v = ($("oneTouchText").value || "").trim(); if (v) routeOneTouchTranscript(v); });
   if ($("oneTouchText")) $("oneTouchText").addEventListener("keydown", function(ev){ if (ev.key === "Enter" || ev.keyCode === 13){ ev.preventDefault(); var v = ($("oneTouchText").value || "").trim(); if (v) routeOneTouchTranscript(v); } });
-  if ($("btnTrainerHome")) $("btnTrainerHome").addEventListener("click", function(){
-    openTrainerPanel();
-    trainerBubble("What's my plan for today?", true);
-    trainerDailyBrief().forEach(function(line){ trainerBubble(line, false); });
-  });
+  if ($("btnTrainerHome")) $("btnTrainerHome").addEventListener("click", openTrainerPanel);
   if ($("btnWizNext")) $("btnWizNext").addEventListener("click", wizAdvance);
   if ($("btnWizBack")) $("btnWizBack").addEventListener("click", wizBack);
   if ($("btnWizSkip")) $("btnWizSkip").addEventListener("click", function(){ closeWizard(); switchView("profile"); });
@@ -7668,6 +7850,8 @@ var FF_API = {
   renderTemplates: renderTemplates, renderBuilder: renderBuilder, builderFilteredExercises: builderFilteredExercises,
   getBuilder: function(){ return builder; }, getSession: function(){ return session; }, finishWorkout: finishWorkout,
   routeOneTouchTranscript: routeOneTouchTranscript, startWizard: startWizard, trainerDailyBrief: trainerDailyBrief,
+  trainerBriefingLines: trainerBriefingLines, trainerBriefingDay: trainerBriefingDay, speakTrainerText: speakTrainerText, deliverTrainerBriefing: deliverTrainerBriefing,
+  openTrainerPanel: openTrainerPanel, closeTrainerPanel: closeTrainerPanel, trainerAsk: trainerAsk,
   parseVoiceWorkout: parseVoiceWorkout, voiceFoodMatches: voiceFoodMatches,
   tabOrder: FF_TABS, currentViewName: currentViewName, swipeTargetView: swipeTargetView,
   swipeStartBlocked: swipeStartBlocked, swipeFlowBlocked: swipeFlowBlocked,
@@ -7683,6 +7867,8 @@ var FF_API = {
   EXTRA_FOODS: EXTRA_FOODS, CHAIN_VARIANTS: CHAIN_VARIANTS, INGREDIENTS: INGREDIENTS, STANDARD_BUILDS: STANDARD_BUILDS, decomposeFoodPhrase: decomposeFoodPhrase, detectChain: detectChain, stripChainMentions: stripChainMentions, bestTokenMatch: bestTokenMatch,
   parseVoiceWorkout: parseVoiceWorkout, parsePlanAdjustment: parsePlanAdjustment, applyPlanAdjustment: applyPlanAdjustment, planAdjustNoteHtml: planAdjustNoteHtml, logVoiceWorkout: logVoiceWorkout, renderVoiceWorkout: renderVoiceWorkout, addFoodEntry: addFoodEntry,
   parsePlanExerciseEdit: parsePlanExerciseEdit, profileGoals: profileGoals, sanitizeGoals: sanitizeGoals, equipLabel: equipLabel, goalLabels: goalLabels, proteinPerKg: proteinPerKg, buildSessionExercises: buildSessionExercises,
+  openExercisePicker: openExercisePicker, closeExercisePicker: closeExercisePicker, renderExercisePicker: renderExercisePicker, pickerAddExercise: pickerAddExercise,
+  getPickerState: function(){ return pickerState; }, pickerGroups: pickerGroups,
   cancelVoiceDictation: cancelVoiceDictation, startVoiceDictation: startVoiceDictation, handleVoiceTranscript: handleVoiceTranscript,
   encouragementMode: encouragementMode, greetingForHour: greetingForHour, encouragementCandidates: encouragementCandidates,
   dashboardMilestones: dashboardMilestones, pickDashboardEncouragement: pickDashboardEncouragement,
