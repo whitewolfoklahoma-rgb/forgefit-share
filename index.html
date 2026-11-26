@@ -266,6 +266,7 @@ button.btn.oneTouch{display:flex;align-items:center;justify-content:center;gap:1
 button.btn.oneTouch .otMic{font-size:34px;line-height:1}
 button.btn.oneTouch.listening{animation:otPulse 1.1s ease-in-out infinite}
 @keyframes otPulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.22)}}
+button.btn.oneTouch.deepPulse{animation:otPulse 1.1s ease-in-out infinite;box-shadow:0 0 0 5px rgba(167,139,250,.55),0 10px 28px rgba(167,139,250,.4),0 1px 0 rgba(255,255,255,.25) inset}
 .oneTouchHint{text-align:center;margin-top:10px}
 /* trainer setup wizard — full-screen tap-through, same chrome family as the intro */
 #wizOverlay{display:none;position:fixed;inset:0;z-index:119;background:var(--bg);flex-direction:column}
@@ -919,7 +920,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
       <p class="small">Go to the <b>Progress</b> tab, open <b>Backup &amp; reports</b>, and tap <b>Export backup (JSON)</b> to save a backup file. Keep that file somewhere safe. To restore it later — on this device or a new one — open the same place, choose the backup file under <b>Restore a backup</b>, and your logs come back.</p>
     </details>
     <p class="small mt">All of your LogEasy data lives only on this device, in this browser/app — nothing is uploaded anywhere. Back it up with <b>Progress → Backup &amp; reports → Export backup (JSON)</b> before you switch phones or browsers, and keep the backup file somewhere safe.</p>
-    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.8.0&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
+    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.8.1&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
     <p class="small mut">Email opens your own email app, addressed to us, with the app version already in the subject line.</p>
   </details>
   <details class="card" id="profileMore"><summary>More settings — encouragement, appearance, legal &amp; about</summary>
@@ -953,7 +954,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
     <button class="btn sec" id="btnShowIntro" type="button">See the intro again</button>
   </div>
   <details class="card"><summary>ℹ️ About LogEasy</summary>
-    <p class="small mut mt">LogEasy <b>version 2.8.0</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
+    <p class="small mut mt">LogEasy <b>version 2.8.1</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
   </details>
   </details>
 </section>
@@ -1629,7 +1630,7 @@ function allFoods(state){ return FOODS.map(foodObj).concat(EXTRA_FOODS).concat((
 "use strict";
 /* ---------- state ---------- */
 var FF_KEY = "forgefit_v1";
-var FF_VERSION = "2.8.0";
+var FF_VERSION = "2.8.1";
 /* Terms of Use version bundled with this build (legal pack v1.0). Bump this
    ONE constant when the terms text changes and users are re-asked once. */
 var FF_TERMS_VERSION = "1.0";
@@ -7443,6 +7444,66 @@ function switchView(name){
   window.scrollTo(0, 0);
   if (name === "progress") drawWeightChart();
 }
+/* ---------- deep links (v2.8.1) ----------
+   One-tap entry points from outside the app (home-screen shortcuts,
+   chat widgets): ?trainer=1 lands in the Trainer's instructions panel
+   with today's briefing delivered; ?tell=1 lands on Today with the big
+   voice button highlighted, one tap from talking. Both wait out the
+   legal gate / welcome intro, act exactly once, and strip the param
+   so a refresh is a normal open. With no profile yet they stand down
+   entirely — the trainer setup flow owns the screen. */
+function parseDeepLinkParam(){
+  try {
+    var q = new URLSearchParams(window.location.search || "");
+    if (q.get("trainer") === "1") return "trainer";
+    if (q.get("tell") === "1") return "tell";
+  } catch(e){}
+  return null;
+}
+var ffDeepLink = parseDeepLinkParam();
+function stripDeepLinkParam(){
+  try {
+    if (!window.history || !history.replaceState || !window.location) return;
+    var url = new URL(window.location.href);
+    if (!url.searchParams.has("trainer") && !url.searchParams.has("tell")) return;
+    url.searchParams.delete("trainer"); url.searchParams.delete("tell");
+    history.replaceState(null, "", url.toString());
+  } catch(e){}
+}
+function deepLinkBlocked(){
+  var g = $("legalGate"); if (g && g.style.display === "flex") return true;
+  var o = $("introOverlay"); if (o && o.style.display === "flex") return true;
+  return false;
+}
+function applyDeepLink(){
+  var kind = ffDeepLink;
+  ffDeepLink = null;
+  stripDeepLinkParam();
+  if (!kind) return;
+  if (!state || !state.profile) return;   // no profile yet: setup flow owns the screen — nothing to brief, nothing to highlight
+  if (kind === "trainer"){
+    openTrainerPanel();   // posts today's briefing text at once and attempts speech, exactly like the button tap; if speech is blocked the text still stands
+  } else if (kind === "tell"){
+    switchView("dashboard");
+    var btn = $("btnOneTouch");
+    if (btn){
+      try { btn.scrollIntoView({ block: "center", behavior: "smooth" }); } catch(e){ try { btn.scrollIntoView(); } catch(e2){} }
+      btn.classList.add("deepPulse");
+      setTimeout(function(){ try { btn.classList.remove("deepPulse"); } catch(e){} }, 3600);
+    }
+  }
+}
+function maybeApplyDeepLink(){
+  if (!ffDeepLink) return;
+  if (!deepLinkBlocked()){ applyDeepLink(); return; }
+  var tries = 0;
+  var iv = setInterval(function(){
+    tries++;
+    if (!ffDeepLink){ clearInterval(iv); return; }
+    if (!deepLinkBlocked()){ clearInterval(iv); applyDeepLink(); }
+    else if (tries > 1500){ clearInterval(iv); ffDeepLink = null; stripDeepLinkParam(); }   // ~10 min behind a gate: stand down quietly
+  }, 400);
+}
 function init(){
   rollPlanWeek();
   var mus = $("exMuscle");
@@ -7660,6 +7721,7 @@ function init(){
   if (legalNeedsAcceptance(state)) showLegalGate();
   else if (introNeedsShow(state)) showIntro();   // upgraders who already accepted: intro once on first open of the new version
   if (!state.profile && !legalNeedsAcceptance(state) && !introNeedsShow(state)) maybeStartWizard();
+  maybeApplyDeepLink();
   if ($("btnIntroSkip")) $("btnIntroSkip").addEventListener("click", function(){ closeIntro(false); });
   if ($("btnIntroNext")) $("btnIntroNext").addEventListener("click", introNext);
   if ($("btnIntroBack")) $("btnIntroBack").addEventListener("click", introBack);
@@ -7852,6 +7914,7 @@ var FF_API = {
   routeOneTouchTranscript: routeOneTouchTranscript, startWizard: startWizard, trainerDailyBrief: trainerDailyBrief,
   trainerBriefingLines: trainerBriefingLines, trainerBriefingDay: trainerBriefingDay, speakTrainerText: speakTrainerText, deliverTrainerBriefing: deliverTrainerBriefing,
   openTrainerPanel: openTrainerPanel, closeTrainerPanel: closeTrainerPanel, trainerAsk: trainerAsk,
+  parseDeepLinkParam: parseDeepLinkParam, deepLinkPending: function(){ return ffDeepLink; },
   parseVoiceWorkout: parseVoiceWorkout, voiceFoodMatches: voiceFoodMatches,
   tabOrder: FF_TABS, currentViewName: currentViewName, swipeTargetView: swipeTargetView,
   swipeStartBlocked: swipeStartBlocked, swipeFlowBlocked: swipeFlowBlocked,
