@@ -412,7 +412,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
   <div class="glanceGrid" id="glanceRow" aria-label="Today at a glance"></div>
   <div id="adaptiveCard"></div>
   <div class="card oneTouchCard" id="voiceHero">
-    <button class="btn voice oneTouch" id="btnOneTouch" type="button"><span class="otMic">🎤</span><span>Tap &amp; tell me anything</span></button>
+    <button class="btn voice oneTouch" id="btnOneTouch" type="button"><span class="otMic">🎤</span><span>Tap to tell trainer</span></button>
     <p class="small mut oneTouchHint">One tap, then just talk — food, workouts, sleep, steps. It sends itself when you pause; check the match, then confirm.</p>
     <div class="mt" style="text-align:center"><span class="small mut" id="oneTouchStatus" aria-live="polite"></span></div>
     <div><span class="small mut" id="voiceDashStatus" aria-live="polite"></span></div>
@@ -423,7 +423,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
       <div class="row mt"><div class="field" style="flex:1"><label>Say it in plain words</label><input id="oneTouchText" type="text" placeholder="e.g. two eggs and toast — or: bench press 3 sets of 10 at 135"></div>
       <div class="field" style="align-self:end"><button class="btn sec" id="btnOneTouchType" type="button">Log it</button></div></div>
     </details>
-    <button class="btn trainerBtn" id="btnTrainerHome" type="button">🧑‍🏫 Talk to your trainer — today’s food, workout &amp; sleep</button>
+    <button class="btn trainerBtn" id="btnTrainerHome" type="button">🧑‍🏫 Trainer's instructions</button>
   </div>
   <div class="card">
     <div class="flexb"><h3 style="margin:0"><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="6" y="4.5" width="12" height="17" rx="2"/><path d="M9.3 4.7a2.7 2.7 0 0 1 5.4 0"/><path d="M9.5 11h5M9.5 15h5"/></svg></span>Today's brief</h3><span id="avatarDash"></span></div>
@@ -436,7 +436,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
   <div class="card">
     <h3 style="margin-top:0"><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.3 7.5L3.5 20l1.1-4.5a8.5 8.5 0 1 1 15.9-4Z"/><path d="M8.2 10.8h7.6M8.2 14h4.6"/></svg></span>Ask your trainer</h3>
     <p class="small mut mt">Questions about today's workout, calories left, exercise swaps, soreness or plateaus — answered instantly from your own plan and data. Works fully offline.</p>
-    <button class="btn mt" id="btnOpenTrainer" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.3 7.5L3.5 20l1.1-4.5a8.5 8.5 0 1 1 15.9-4Z"/><path d="M8.2 10.8h7.6M8.2 14h4.6"/></svg></span>Talk to your trainer</button>
+    <button class="btn mt" id="btnOpenTrainer" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.3 7.5L3.5 20l1.1-4.5a8.5 8.5 0 1 1 15.9-4Z"/><path d="M8.2 10.8h7.6M8.2 14h4.6"/></svg></span>Trainer's instructions</button>
   </div>
   <div id="devicePrompt"></div>
   <div id="stepHeadline"></div>
@@ -535,10 +535,10 @@ header .btn.sm{min-height:38px;white-space:nowrap}
     <div class="row">
       <div class="field"><label>Search</label><input id="exSearch" type="text" placeholder="e.g. squat"><button type="button" class="micbtn" data-mic-for="exSearch" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
       <div class="field"><label>Muscle group</label><select id="exMuscle"><option value="">All</option></select></div>
-      <div class="field"><label>Equipment</label><select id="exEquip"><option value="">All</option><option value="none">No equipment</option><option value="dumbbells">Dumbbells</option><option value="gym">Full gym</option></select></div>
+      <div class="field"><label>Equipment</label><select id="exEquip"><option value="">All</option><option value="none">No equipment</option><option value="dumbbells">Dumbbells</option><option value="rack">Home gym / squat rack</option><option value="gym">Full gym</option></select></div>
     </div>
     <div class="flexb">
-      <button class="btn voice sm" id="btnVoiceExercise" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3.5"/></svg></span>Tell me what you trained</button>
+      <button class="btn voice sm" id="btnVoiceExercise" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3.5"/></svg></span>Tell trainer what you trained</button>
       <span class="small mut" id="voiceExerciseStatus"></span>
     </div>
     <div id="exLibrary"></div>
@@ -587,13 +587,18 @@ header .btn.sm{min-height:38px;white-space:nowrap}
   <div id="nutriMsgs"></div>
   <div id="nutriStats"></div>
   <div class="card">
+    <h3>🍳 Meals &amp; recipes</h3>
+    <p class="small mut">ForgeKitchen is the matching recipe app — meal ideas and full recipes with per-serving nutrition. Your diet from your profile travels with the link, so ForgeKitchen opens with suggestions matched to it.</p>
+    <p class="mt"><a class="btn blue fkAppLink" href="https://whitewolfoklahoma-rgb.github.io/forgekitchen-share/" target="_blank" rel="noopener" style="text-decoration:none">Meals &amp; recipes — ForgeKitchen</a></p>
+  </div>
+  <div class="card">
     <h3><span class="hIco"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 5v14M5 12h14"/></svg></span>Add food</h3>
     <div class="row">
       <div class="field" style="flex:2 1 220px"><label>Search the food database (<span id="foodCount"></span> foods)</label><input id="foodSearch" type="text" placeholder="e.g. chicken, oats, eggs…"><button type="button" class="micbtn" data-mic-for="foodSearch" aria-label="Dictate into this field">🎤</button><span class="micNote small mut" aria-live="polite"></span></div>
       <div class="field"><label>Meal</label><select id="foodMeal"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></div>
     </div>
     <div class="flexb">
-      <button class="btn voice sm" id="btnVoiceFood" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3.5"/></svg></span>Tell me what you ate</button>
+      <button class="btn voice sm" id="btnVoiceFood" type="button"><span style="display:inline-flex;vertical-align:-2px;margin-right:5px"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3.5"/></svg></span>Tell trainer what you ate</button>
       <span class="small mut" id="voiceFoodStatus"></span>
     </div>
     <div id="voiceFoodMatches" class="mt"></div>
@@ -842,21 +847,23 @@ header .btn.sm{min-height:38px;white-space:nowrap}
           <option value="1.725">Very active — hard physical labor / training daily (×1.725)</option>
           <option value="1.9">Athlete — twice-a-day training (×1.9)</option>
         </select></div>
-      <div class="field"><label>Goal</label>
-        <select id="pGoal">
-          <option value="lose">Lose fat</option>
-          <option value="maintain">Maintain weight</option>
-          <option value="gain">Gain muscle</option>
-          <option value="performance">Athletic performance</option>
-        </select></div>
+      <div class="field"><label>Goals — pick all that apply</label>
+        <div class="row" id="goalChecks">
+          <label><input type="checkbox" data-goal="lose"> Lose fat</label>
+          <label><input type="checkbox" data-goal="maintain"> Maintain weight</label>
+          <label><input type="checkbox" data-goal="gain"> Gain muscle</label>
+          <label><input type="checkbox" data-goal="performance"> Athletic performance</label>
+        </div>
+        <div class="small mut">Your plan blends them: the first goal in this list sets the calorie direction, the others shape the training (heavier main lifts, conditioning finishers, protein target).</div>
+      </div>
     </div>
     <div class="row">
       <div class="field"><label>Equipment available</label>
-        <select id="pEquip"><option value="none">No equipment (bodyweight only)</option><option value="dumbbells">Dumbbells / home setup</option><option value="gym">Full gym</option></select></div>
+        <select id="pEquip"><option value="none">No equipment (bodyweight only)</option><option value="dumbbells">Dumbbells / home setup</option><option value="rack">Home gym / squat rack (barbell + rack, mixes with bodyweight)</option><option value="gym">Full gym</option></select></div>
       <div class="field"><label>Experience level</label>
         <select id="pExp"><option value="beginner">Beginner (under 6 months)</option><option value="intermediate">Intermediate (6 months – 2 years)</option><option value="advanced">Advanced (2+ years)</option></select></div>
     </div>
-    <div class="field"><label>Training days for your full-month plan (optional)</label>
+    <div class="field"><label>Training days for your weekly &amp; full-month plans (optional)</label>
       <div class="row" id="trainingDays">
         <label><input type="checkbox" data-training-day="0"> Mon</label>
         <label><input type="checkbox" data-training-day="1"> Tue</label>
@@ -866,7 +873,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
         <label><input type="checkbox" data-training-day="5"> Sat</label>
         <label><input type="checkbox" data-training-day="6"> Sun</label>
       </div>
-      <div class="small mut">Leave all unchecked and the coach uses sensible defaults for your experience level. Your choice only affects the month plan; it never changes logged workouts.</div>
+      <div class="small mut">Leave all unchecked and the coach uses sensible defaults for your experience level. Your plan gets exactly the days you tick — no more, no fewer. It never changes logged workouts.</div>
     </div>
     <div class="row">
       <div class="field"><label>Dietary preference</label>
@@ -880,7 +887,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
   <details class="card" id="helpSection"><summary>Help &amp; support</summary>
     <p class="small mt">Short, plain how-tos for the jobs LogEasy is used for every day. Tap a topic to open it.</p>
     <details><summary>Log food by voice</summary>
-      <p class="small">On the Today page (or in the Nutrition tab), tap <b>“Tell me what you ate”</b> and say what you had, like “two eggs and toast”. LogEasy shows you the matches it found — check them, change a quantity if you need to, then tap <b>Add</b> for each one. Nothing is saved until you tap Add. If your browser can't use the microphone, typing works just as well (see the next topic).</p>
+      <p class="small">On the Today page (or in the Nutrition tab), tap <b>“Tell trainer what you ate”</b> and say what you had, like “two eggs and toast”. LogEasy shows you the matches it found — check them, change a quantity if you need to, then tap <b>Add</b> for each one. Nothing is saved until you tap Add. If your browser can't use the microphone, typing works just as well (see the next topic).</p>
     </details>
     <details><summary>Log food by typing</summary>
       <p class="small">Go to the <b>Nutrition</b> tab, type the food in the search box, pick the meal, and tap <b>Add</b>. Eating something that isn't listed? Open <b>“Add a custom food”</b> on that same page, fill in the name and the numbers you know, and tap <b>Save custom food</b> — then you can search for it and add it like any other food.</p>
@@ -895,7 +902,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
       <p class="small">Once you have about two weeks of weigh-ins, LogEasy compares your actual weight trend with your goal pace and may show a <b>target suggestion</b> card on the Today page — with the math and the weigh-ins it used printed right on the card. Nothing ever changes on its own: your calorie target only moves if you tap <b>Use … kcal</b>. Tap <b>Not now</b> and it won't ask again for a week. The suggestion is figured on your device from your own weigh-ins; it is an estimate, not medical advice. If you turn a suggestion on, the card tells you it's active and offers a <b>Remove adjustment</b> button.</p>
     </details>
     <details><summary>Log a workout</summary>
-      <p class="small">Go to the <b>Train</b> tab. Start today's planned workout, pick a day from your month plan, or tap <b>Log workout</b> to start an empty session and add exercises as you go. Fill in the weight and reps for each set, tick the sets you did, then tap <b>Finish &amp; save workout</b>. You can also tap <b>“Tell me what you trained”</b> and say it — you still confirm it before anything is saved.</p>
+      <p class="small">Go to the <b>Train</b> tab. Start today's planned workout, pick a day from your month plan, or tap <b>Log workout</b> to start an empty session and add exercises as you go. Fill in the weight and reps for each set, tick the sets you did, then tap <b>Finish &amp; save workout</b>. You can also tap <b>“Tell trainer what you trained”</b> and say it — you still confirm it before anything is saved.</p>
     </details>
     <details><summary>Import device data</summary>
       <p class="small">Go to the <b>Devices</b> tab and follow the three steps in <b>Connect your device data</b>: pick your device or app, save an export file from that app using the steps shown, then pick that file in LogEasy and read the confirmation of what came in. This version imports a file — it does not sync live with your watch or phone app.</p>
@@ -904,7 +911,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
       <p class="small">Go to the <b>Progress</b> tab, open <b>Backup &amp; reports</b>, and tap <b>Export backup (JSON)</b> to save a backup file. Keep that file somewhere safe. To restore it later — on this device or a new one — open the same place, choose the backup file under <b>Restore a backup</b>, and your logs come back.</p>
     </details>
     <p class="small mt">All of your LogEasy data lives only on this device, in this browser/app — nothing is uploaded anywhere. Back it up with <b>Progress → Backup &amp; reports → Export backup (JSON)</b> before you switch phones or browsers, and keep the backup file somewhere safe.</p>
-    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.6.0&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
+    <p class="mt"><a class="btn blue" id="helpEmailBtn" href="mailto:whitewolfbackoffice@gmail.com?subject=LogEasy%20help%20%E2%80%94%20v2.7.0&amp;body=Tell%20us%20what%20you%20were%20trying%20to%20do%20and%20what%20happened%3A%0A%0A" style="min-height:48px">Email us</a></p>
     <p class="small mut">Email opens your own email app, addressed to us, with the app version already in the subject line.</p>
   </details>
   <details class="card" id="profileMore"><summary>More settings — encouragement, appearance, legal &amp; about</summary>
@@ -938,7 +945,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
     <button class="btn sec" id="btnShowIntro" type="button">See the intro again</button>
   </div>
   <details class="card"><summary>ℹ️ About LogEasy</summary>
-    <p class="small mut mt">LogEasy <b>version 2.6.0</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
+    <p class="small mut mt">LogEasy <b>version 2.7.0</b> is an on-device coaching engine: your month plan, targets and feedback are computed from your profile and logs by built-in training and nutrition rules (Mifflin-St Jeor energy math, progressive overload, macro-based meal suggestions). Month plans use conservative healthy-rate limits — fat loss is capped at no more than 1% of body weight per week and gain at no more than 0.5% per week — and targets never go below the app's 1,200-calorie floor. Weight projections use the rough 3,500 kcal ≈ 1 lb approximation; they are estimates, not guarantees or medical claims. No account, no cloud, no subscription — everything is stored only in this browser on this device. Export a backup from the Progress tab before switching browsers or devices. Coaching is general fitness guidance for healthy adults, not medical advice — check with a doctor before starting a new program, especially with any health condition.</p>
   </details>
   </details>
 </section>
@@ -1010,7 +1017,7 @@ header .btn.sm{min-height:38px;white-space:nowrap}
 </div>
 
 <div id="trainerPanel" role="dialog" aria-modal="true" aria-labelledby="trainerPanelTitle">  <div class="trainerWrap">
-    <div class="flexb" style="margin-bottom:6px"><h3 id="trainerPanelTitle" style="margin:0">Talk to Your Trainer</h3><button class="btn sec sm" id="btnTrainerClose" type="button">← Back</button></div>
+    <div class="flexb" style="margin-bottom:6px"><h3 id="trainerPanelTitle" style="margin:0">Trainer's instructions</h3><button class="btn sec sm" id="btnTrainerClose" type="button">← Back</button></div>
     <p class="small mut" style="margin:0 0 6px"><b>Offline trainer</b> — answers from your plan and built-in guidance. The full AI coach arrives with the connected edition.</p>
     <div class="trainerLog" id="trainerLog"></div>
     <div class="chipRow" id="trainerChips"></div>
@@ -1077,9 +1084,15 @@ function kgToLb(kg){ return kg / LB_TO_KG; }
 <script>
 "use strict";
 /* ---------- exercise library ----------
-   equip: "none" = bodyweight, "dumbbells" = dumbbells/home, "gym" = full gym.
+   equip: "none" = bodyweight, "dumbbells" = dumbbells/home,
+   "rack" = home gym / squat rack (barbell + rack; cumulative — a rack
+   setup also uses the dumbbell and bodyweight tiers below it),
+   "gym" = full gym (machines and cables on top of everything below).
    unit: "reps" or "sec" (timed holds/carries use seconds per set). */
-var EQUIP_RANK = { none: 0, dumbbells: 1, gym: 2 };
+var EQUIP_RANK = { none: 0, dumbbells: 1, rack: 2, gym: 3 };
+function equipLabel(equip){
+  return equip === "none" ? "No equipment" : equip === "dumbbells" ? "Dumbbells" : equip === "rack" ? "Home gym / squat rack" : equip === "gym" ? "Full gym" : String(equip || "");
+}
 var EXERCISES = [
 {id:"pushup",name:"Push-Up",muscle:"Chest",equip:"none",diff:1,unit:"reps",cues:"Body in one straight line, chest to a fist's height from the floor, elbows ~45° from your sides."},
 {id:"incline-pushup",name:"Incline Push-Up",muscle:"Chest",equip:"none",diff:1,unit:"reps",cues:"Hands on a chair or step, body straight, lower with control. Easier the higher the surface."},
@@ -1087,8 +1100,8 @@ var EXERCISES = [
 {id:"db-bench",name:"Dumbbell Bench Press",muscle:"Chest",equip:"dumbbells",diff:1,unit:"reps",cues:"Press up and slightly together; lower until upper arms are about parallel to the floor."},
 {id:"db-floor-press",name:"Dumbbell Floor Press",muscle:"Chest",equip:"dumbbells",diff:1,unit:"reps",cues:"Lie on the floor, press until arms are straight; upper arms gently touch the floor each rep."},
 {id:"db-fly",name:"Dumbbell Fly",muscle:"Chest",equip:"dumbbells",diff:2,unit:"reps",cues:"Soft bend in the elbows, open wide like hugging a barrel, squeeze the chest to close."},
-{id:"bb-bench",name:"Barbell Bench Press",muscle:"Chest",equip:"gym",diff:2,unit:"reps",cues:"Bar to mid-chest, feet planted, shoulder blades pinched into the bench."},
-{id:"incline-bb-press",name:"Incline Barbell Press",muscle:"Chest",equip:"gym",diff:2,unit:"reps",cues:"Bench at 30–45°, bar to upper chest, wrists stacked over elbows."},
+{id:"bb-bench",name:"Barbell Bench Press",muscle:"Chest",equip:"rack",diff:2,unit:"reps",cues:"Bar to mid-chest, feet planted, shoulder blades pinched into the bench."},
+{id:"incline-bb-press",name:"Incline Barbell Press",muscle:"Chest",equip:"rack",diff:2,unit:"reps",cues:"Bench at 30–45°, bar to upper chest, wrists stacked over elbows."},
 {id:"cable-fly",name:"Cable Fly",muscle:"Chest",equip:"gym",diff:1,unit:"reps",cues:"Step forward, sweep handles together in a wide arc, pause and squeeze."},
 {id:"dips",name:"Dips",muscle:"Chest",equip:"gym",diff:2,unit:"reps",cues:"Lean slightly forward for chest, stay upright for triceps; lower until shoulders are below elbows only if pain-free."},
 {id:"superman-pull",name:"Superman Pull",muscle:"Back",equip:"none",diff:1,unit:"reps",cues:"Lying face down, lift chest and thighs, pull elbows down to your ribs and squeeze shoulder blades."},
@@ -1099,10 +1112,10 @@ var EXERCISES = [
 {id:"db-row",name:"Dumbbell Bent-Over Row",muscle:"Back",equip:"dumbbells",diff:1,unit:"reps",cues:"Flat back hinged ~45°, row the dumbbells to your hip pockets, no bouncing."},
 {id:"db-one-arm-row",name:"Single-Arm Dumbbell Row",muscle:"Back",equip:"dumbbells",diff:1,unit:"reps",cues:"Other knee and hand on a chair; pull the elbow to the ceiling, torso still."},
 {id:"db-pullover",name:"Dumbbell Pullover",muscle:"Back",equip:"dumbbells",diff:2,unit:"reps",cues:"One dumbbell held over your chest, lower behind your head with soft elbows, stretch the lats."},
-{id:"bb-row",name:"Barbell Row",muscle:"Back",equip:"gym",diff:2,unit:"reps",cues:"Hinge to ~45°, brace hard, row bar to your lower ribs without standing up."},
+{id:"bb-row",name:"Barbell Row",muscle:"Back",equip:"rack",diff:2,unit:"reps",cues:"Hinge to ~45°, brace hard, row bar to your lower ribs without standing up."},
 {id:"lat-pulldown",name:"Lat Pulldown",muscle:"Back",equip:"gym",diff:1,unit:"reps",cues:"Pull the bar to your upper chest, chest tall, control the way up."},
 {id:"seated-cable-row",name:"Seated Cable Row",muscle:"Back",equip:"gym",diff:1,unit:"reps",cues:"Sit tall, pull handle to your navel, squeeze shoulder blades for a full second."},
-{id:"pullup",name:"Pull-Up",muscle:"Back",equip:"gym",diff:3,unit:"reps",cues:"Overhand grip, chin over the bar, full hang at the bottom. Use a band if needed."},
+{id:"pullup",name:"Pull-Up",muscle:"Back",equip:"rack",diff:3,unit:"reps",cues:"Overhand grip, chin over the bar, full hang at the bottom. Use a band if needed."},
 {id:"face-pull",name:"Face Pull",muscle:"Shoulders",equip:"gym",diff:1,unit:"reps",cues:"Rope to forehead height, pull to your face with elbows high, rotate thumbs back."},
 {id:"tbar-row",name:"T-Bar Row",muscle:"Back",equip:"gym",diff:2,unit:"reps",cues:"Chest supported if available; row to your stomach with a flat back."},
 {id:"pike-pushup",name:"Pike Push-Up",muscle:"Shoulders",equip:"none",diff:2,unit:"reps",cues:"Hips high in an upside-down V, lower the top of your head toward the floor."},
@@ -1110,7 +1123,7 @@ var EXERCISES = [
 {id:"db-lateral-raise",name:"Dumbbell Lateral Raise",muscle:"Shoulders",equip:"dumbbells",diff:1,unit:"reps",cues:"Raise to shoulder height with a slight lean forward; lead with elbows, not hands."},
 {id:"db-front-raise",name:"Dumbbell Front Raise",muscle:"Shoulders",equip:"dumbbells",diff:1,unit:"reps",cues:"Raise one or both dumbbells to eye level, thumbs up, no swinging."},
 {id:"db-reverse-fly",name:"Dumbbell Reverse Fly",muscle:"Shoulders",equip:"dumbbells",diff:2,unit:"reps",cues:"Hinged over, open arms wide like wings, squeeze the rear delts."},
-{id:"bb-ohp",name:"Barbell Overhead Press",muscle:"Shoulders",equip:"gym",diff:2,unit:"reps",cues:"Glutes squeezed, bar path straight up, head through at the top."},
+{id:"bb-ohp",name:"Barbell Overhead Press",muscle:"Shoulders",equip:"rack",diff:2,unit:"reps",cues:"Glutes squeezed, bar path straight up, head through at the top."},
 {id:"cable-lateral-raise",name:"Cable Lateral Raise",muscle:"Shoulders",equip:"gym",diff:1,unit:"reps",cues:"Cable at ankle height across your body, raise to shoulder height with constant tension."},
 {id:"doorframe-curl",name:"Doorframe Curl",muscle:"Biceps",equip:"none",diff:1,unit:"reps",cues:"Stand in a doorframe, grip the frame at chest height, lean back with straight arms, then curl your body up by bending only the elbows. Walk your feet closer to make it harder."},
 {id:"db-curl",name:"Dumbbell Bicep Curl",muscle:"Biceps",equip:"dumbbells",diff:1,unit:"reps",cues:"Elbows pinned at your sides, full squeeze at the top, slow negative."},
@@ -1131,8 +1144,8 @@ var EXERCISES = [
 {id:"db-stepup",name:"Dumbbell Step-Up",muscle:"Legs",equip:"dumbbells",diff:2,unit:"reps",cues:"Whole foot on the step, stand up using only the top leg — no push-off."},
 {id:"db-sumo-squat",name:"Dumbbell Sumo Squat",muscle:"Legs",equip:"dumbbells",diff:1,unit:"reps",cues:"Wide stance, toes out, dumbbell hanging between your legs, squeeze glutes at the top."},
 {id:"db-deadlift",name:"Dumbbell Deadlift",muscle:"Back",equip:"dumbbells",diff:1,unit:"reps",cues:"Hinge with a flat back, dumbbells close to your shins, stand tall by driving hips through."},
-{id:"bb-squat",name:"Barbell Back Squat",muscle:"Legs",equip:"gym",diff:2,unit:"reps",cues:"Bar on upper back, brace, sit down between your heels, drive the floor away."},
-{id:"bb-deadlift",name:"Barbell Deadlift",muscle:"Back",equip:"gym",diff:3,unit:"reps",cues:"Bar over mid-foot, flat back, push the floor away and lock out with glutes."},
+{id:"bb-squat",name:"Barbell Back Squat",muscle:"Legs",equip:"rack",diff:2,unit:"reps",cues:"Bar on upper back, brace, sit down between your heels, drive the floor away."},
+{id:"bb-deadlift",name:"Barbell Deadlift",muscle:"Back",equip:"rack",diff:3,unit:"reps",cues:"Bar over mid-foot, flat back, push the floor away and lock out with glutes."},
 {id:"leg-press",name:"Leg Press",muscle:"Legs",equip:"gym",diff:1,unit:"reps",cues:"Feet mid-platform, lower to ~90° knees, don't lock out hard at the top."},
 {id:"leg-curl",name:"Lying Leg Curl",muscle:"Legs",equip:"gym",diff:1,unit:"reps",cues:"Curl to a full squeeze, hips stay glued to the pad."},
 {id:"leg-extension",name:"Leg Extension",muscle:"Legs",equip:"gym",diff:1,unit:"reps",cues:"Extend fully and pause; lower slowly — this one is about control."},
@@ -1140,7 +1153,7 @@ var EXERCISES = [
 {id:"glute-bridge",name:"Glute Bridge",muscle:"Glutes",equip:"none",diff:1,unit:"reps",cues:"Drive through heels, ribs down, squeeze glutes hard for a second at the top."},
 {id:"bw-hip-thrust",name:"Bodyweight Hip Thrust",muscle:"Glutes",equip:"none",diff:1,unit:"reps",cues:"Upper back on a couch edge, chin tucked, thrust until thighs are parallel."},
 {id:"db-hip-thrust",name:"Dumbbell Hip Thrust",muscle:"Glutes",equip:"dumbbells",diff:2,unit:"reps",cues:"Dumbbell across your hips (use a cushion), full lockout with a posterior tilt."},
-{id:"bb-hip-thrust",name:"Barbell Hip Thrust",muscle:"Glutes",equip:"gym",diff:2,unit:"reps",cues:"Pad the bar, drive hard, pause at the top with shins vertical."},
+{id:"bb-hip-thrust",name:"Barbell Hip Thrust",muscle:"Glutes",equip:"rack",diff:2,unit:"reps",cues:"Pad the bar, drive hard, pause at the top with shins vertical."},
 {id:"hip-abductor",name:"Hip Abductor Machine",muscle:"Glutes",equip:"gym",diff:1,unit:"reps",cues:"Push knees out against the pads, lean slightly forward for more glute."},
 {id:"db-shrug",name:"Dumbbell Shrug",muscle:"Traps",equip:"dumbbells",diff:1,unit:"reps",cues:"Shoulders straight up to your ears, pause, lower slowly. No rolling."},
 {id:"farmers-carry",name:"Farmer's Carry",muscle:"Full Body",equip:"dumbbells",diff:1,unit:"sec",cues:"Heavy dumbbells at your sides, tall posture, short quick steps."},
@@ -1608,7 +1621,7 @@ function allFoods(state){ return FOODS.map(foodObj).concat(EXTRA_FOODS).concat((
 "use strict";
 /* ---------- state ---------- */
 var FF_KEY = "forgefit_v1";
-var FF_VERSION = "2.6.0";
+var FF_VERSION = "2.7.0";
 /* Terms of Use version bundled with this build (legal pack v1.0). Bump this
    ONE constant when the terms text changes and users are re-asked once. */
 var FF_TERMS_VERSION = "1.0";
@@ -1697,6 +1710,7 @@ function normalizeState(s){
   if (!s.activity || typeof s.activity !== "object") s.activity = {};
   if (!s.water || typeof s.water !== "object") s.water = {};
   if (s.profile && s.profile.trainingDays !== undefined) s.profile.trainingDays = sanitizeTrainingDays(s.profile.trainingDays);
+  if (s.profile){ s.profile.goals = sanitizeGoals(s.profile.goals, s.profile.goal || "maintain"); if (s.profile.goals.length) s.profile.goal = s.profile.goals[0]; }
   // Profiles created before v2.1 are never forced back through setup.
   if (hadProfile && !hadDeviceSetupField) s.deviceSetupComplete = true;
   if (!(num(s.stepGoal) >= 1000 && num(s.stepGoal) <= 50000)) s.stepGoal = 10000;
@@ -1909,13 +1923,41 @@ function healthyRateInfo(profile){
     note: direction === -1 ? "Fat-loss plans are capped at 1% of body weight per week." : direction === 1 ? "Gain plans are capped at 0.5% of body weight per week." : "Maintenance plans target no deliberate weight change."
   };
 }
+/* ---------- goals (v2.7.0: more than one goal at a time) ----------
+   profile.goal stays the PRIMARY goal (first in GOAL_ORDER among the
+   selected) and keeps driving the calorie direction and healthy-rate
+   math, exactly as before. profile.goals carries every selected goal;
+   the plan generators and protein target read the full set, so a
+   combination (e.g. lose fat + build muscle) shapes the training:
+   strength-biased main lifts when gain/performance is in the set, a
+   conditioning finisher when fat loss is combined with another goal. */
+var GOAL_ORDER = ["lose", "maintain", "gain", "performance"];
+var GOAL_LABELS = { lose: "Lose fat", maintain: "Maintain weight", gain: "Gain muscle", performance: "Athletic performance" };
+function sanitizeGoals(goals, fallbackGoal){
+  var seen = {}, out = [];
+  (Array.isArray(goals) ? goals : []).forEach(function(g){ if (GOAL_ORDER.indexOf(g) >= 0 && !seen[g]){ seen[g] = 1; out.push(g); } });
+  out.sort(function(a, b){ return GOAL_ORDER.indexOf(a) - GOAL_ORDER.indexOf(b); });
+  if (!out.length && GOAL_ORDER.indexOf(fallbackGoal) >= 0) out = [fallbackGoal];
+  return out;
+}
+function profileGoals(profile){
+  if (!profile) return [];
+  return sanitizeGoals(profile.goals, profile.goal || "maintain");
+}
+function goalLabels(profile){
+  return profileGoals(profile).map(function(g){ return GOAL_LABELS[g] || g; }).join(" + ");
+}
+function proteinPerKg(profile){
+  var goals = profileGoals(profile);
+  if (goals.indexOf("lose") >= 0) return 2.2;
+  if (goals.indexOf("gain") >= 0 || goals.indexOf("performance") >= 0) return 2.0;
+  return 1.8;
+}
 function dailyTargets(profile){
   if (!profile) return { cal:0, p:0, c:0, fat:0, bmr:0, tdee:0, adj:0, calAdj:0, rateLbPerWeek:0, rateCapLbPerWeek:0, rateCapped:false };
   var b = bmr(profile), t = Math.round(b * num(profile.activity,1.55));
   var kg = lbToKg(num(profile.weightLb));
-  var rate = healthyRateInfo(profile), adj = rate.dailyDelta, pPerKg = 1.8;
-  if (profile.goal === "lose") pPerKg = 2.2;
-  else if (profile.goal === "gain" || profile.goal === "performance") pPerKg = 2.0;
+  var rate = healthyRateInfo(profile), adj = rate.dailyDelta, pPerKg = proteinPerKg(profile);
   var cal = Math.max(1200, t + adj);
   var p = Math.round(pPerKg * kg);
   var fat = Math.round((cal * 0.25) / 9);
@@ -2038,11 +2080,6 @@ function caloriesBurned(state, date){
 }
 
 /* ---------- workout plan generation ---------- */
-var SPLITS = {
-  beginner:     ["Full Body A","Rest","Full Body B","Rest","Full Body A","Rest","Rest"],
-  intermediate: ["Upper Body","Lower Body","Rest","Upper Body","Lower Body","Rest","Rest"],
-  advanced:     ["Push","Pull","Legs","Upper Body","Lower Body","Rest","Rest"]
-};
 var DAY_SLOTS = {
   "Full Body A": [["Legs",4,6,10],["Chest",3,8,12],["Back",3,8,12],["Core",3,10,15]],
   "Full Body B": [["Legs",3,8,12],["Shoulders",3,8,12],["Back",3,10,15],["Glutes",3,10,15],["Core",2,30,60]],
@@ -2067,21 +2104,46 @@ function pickExercise(state, muscle, usedIds, seed){
   // deterministic rotation by seed so plan refreshes vary but tests are stable
   return pool[Math.abs(seed) % pool.length];
 }
-function generatePlan(state){
-  var exp = (state.profile && state.profile.experience) || "intermediate";
-  var split = SPLITS[exp] || SPLITS.intermediate;
-  var ws = weekStart(todayStr());
-  var days = split.map(function(dayName, i){
-    if (dayName === "Rest") return { name:"Rest", weekday: WEEKDAYS[i], date: addDays(ws, i), rest:true, exercises: [] };
-    var slots = DAY_SLOTS[dayName] || DAY_SLOTS["Full Body A"];
-    var used = []; // no duplicate exercises within a day; repeats across days are intentional (progression needs consistency)
-    var exs = [];
-    slots.forEach(function(slot, j){
-      var ex = pickExercise(state, slot[0], used, i*7 + j*3 + dayName.length);
-      if (ex){ used.push(ex.id); exs.push({ id: ex.id, sets: slot[1], repMin: slot[2], repMax: slot[3] }); }
-    });
-    return { name: dayName, weekday: WEEKDAYS[i], date: addDays(ws, i), rest:false, exercises: exs };
+/* Build one session's exercise list from a focus template (v2.7.0:
+   shared by the weekly plan and the month plan so both honor the same
+   equipment tier and the same goal blend). Goal blend: when gain or
+   performance is among the goals, the day's main lift works heavier
+   (rep range shifted down); when fat loss is combined with another
+   goal, a short conditioning finisher is appended. */
+function buildSessionExercises(state, focus, seedBase){
+  var slots = (DAY_SLOTS[focus] || DAY_SLOTS["Full Body A"]).map(function(s){ return s.slice(); });
+  var goals = profileGoals(state.profile);
+  if (goals.indexOf("gain") >= 0 || goals.indexOf("performance") >= 0){
+    slots[0][2] = Math.max(4, slots[0][2] - 2);
+    slots[0][3] = Math.max(slots[0][2], slots[0][3] - 2);
+  }
+  if (goals.length > 1 && goals.indexOf("lose") >= 0) slots.push(["Cardio", 2, 30, 45]);
+  var used = [], out = []; // no duplicate exercises within a day; repeats across days are intentional (progression needs consistency)
+  slots.forEach(function(slot, j){
+    var ex = pickExercise(state, slot[0], used, seedBase + j * 37);
+    if (ex){ used.push(ex.id); out.push({ id: ex.id, sets: slot[1], repMin: slot[2], repMax: slot[3] }); }
   });
+  return out;
+}
+function sessionSequence(exp){
+  return exp === "beginner" ? ["Full Body A","Full Body B"] : exp === "advanced" ? ["Push","Pull","Legs","Upper Body","Lower Body"] : ["Upper Body","Lower Body"];
+}
+function generatePlan(state){
+  /* v2.7.0 fix: the weekly plan used to come from a fixed per-experience
+     split (SPLITS) and ignored the training days the user picked — a
+     3-day choice could render as a 5-day week. It now places sessions
+     on exactly trainingDaysFor(profile), the same source the month
+     plan uses, cycling the same focus sequence. */
+  var exp = (state.profile && state.profile.experience) || "intermediate";
+  var sequence = sessionSequence(exp);
+  var trainDays = trainingDaysFor(state.profile);
+  var ws = weekStart(todayStr());
+  var days = [], sessionIndex = 0;
+  for (var i = 0; i < 7; i++){
+    if (trainDays.indexOf(i) < 0){ days.push({ name:"Rest", weekday: WEEKDAYS[i], date: addDays(ws, i), rest:true, exercises: [] }); continue; }
+    var focus = sequence[sessionIndex % sequence.length]; sessionIndex++;
+    days.push({ name: focus, weekday: WEEKDAYS[i], date: addDays(ws, i), rest:false, exercises: buildSessionExercises(state, focus, i * 7 + focus.length) });
+  }
   return { created: todayStr(), startDate: ws, days: days, deload: false };
 }
 
@@ -2097,11 +2159,12 @@ function trainingDaysFor(profile){
 }
 function monthPlanSignature(state){
   var p = state.profile || {};
-  return [p.goal || "", p.equip || "", p.experience || "", trainingDaysFor(p).join(","), num(p.weightLb), num(p.activity)].join("|");
+  return [p.goal || "", profileGoals(p).join("+"), p.equip || "", p.experience || "", trainingDaysFor(p).join(","), num(p.weightLb), num(p.activity)].join("|");
 }
 function monthWorkoutBurn(profile){
   var base = profile && profile.experience === "advanced" ? 420 : profile && profile.experience === "beginner" ? 230 : 320;
   if (profile && profile.equip === "none") base -= 25;
+  if (profile && profile.equip === "rack") base += 15;
   if (profile && profile.equip === "gym") base += 25;
   return clamp(base, 180, 550);
 }
@@ -2113,16 +2176,10 @@ function monthRestSeconds(slotIndex, ex, muscle){
   return 75;
 }
 function buildMonthTemplate(state, focus){
-  var slots = DAY_SLOTS[focus] || DAY_SLOTS["Full Body A"];
-  var used = [], out = [];
-  slots.forEach(function(slot, j){
-    var seed = focus.length * 101 + j * 37 + (focus.charCodeAt(0) || 0);
-    var ex = pickExercise(state, slot[0], used, seed);
-    if (!ex) return;
-    if (used.indexOf(ex.id) < 0) used.push(ex.id);
-    out.push({ id: ex.id, sets: slot[1], repMin: slot[2], repMax: slot[3], restSec: monthRestSeconds(j, ex, slot[0]) });
+  return buildSessionExercises(state, focus, focus.length * 101 + (focus.charCodeAt(0) || 0)).map(function(px, j){
+    var ex = exerciseById(px.id);
+    return { id: px.id, sets: px.sets, repMin: px.repMin, repMax: px.repMax, restSec: monthRestSeconds(j, ex, ex ? ex.muscle : "") };
   });
-  return out;
 }
 function applyMonthProgression(baseExercises, week){
   return (baseExercises || []).map(function(base, idx){
@@ -2201,7 +2258,7 @@ function generateMonthPlan(state, startDate){
   var start = parseDate(startDate) ? weekStart(startDate) : weekStart(todayStr());
   var trainDays = trainingDaysFor(state.profile);
   var exp = state.profile.experience || "intermediate";
-  var sequence = exp === "beginner" ? ["Full Body A","Full Body B"] : exp === "advanced" ? ["Push","Pull","Legs","Upper Body","Lower Body"] : ["Upper Body","Lower Body"];
+  var sequence = sessionSequence(exp);
   var templates = {}, days = [], sessionIndex = 0;
   var phases = { 1:"Build 1", 2:"Build 2", 3:"Peak build", 4:"Deload / recovery" };
   for (var i = 0; i < 28; i++){
@@ -3337,7 +3394,7 @@ function renderDashboard(){
   var t = dailyTargets(state.profile);
   var eaten = foodDayTotals(state, today);
   var bfEl = $("dashBriefFood");
-  if (bfEl) bfEl.innerHTML = state.profile ? ("🍽️ <b>Today's food:</b> " + Math.round(eaten.cal) + " of " + t.cal + " kcal · Protein " + Math.round(eaten.p) + "g · Carbs " + Math.round(eaten.c) + "g · Fat " + Math.round(eaten.fat) + "g" + (eaten.items ? "" : " — nothing logged yet; use “Tell me what you ate” above.")) : "";
+  if (bfEl) bfEl.innerHTML = state.profile ? ("🍽️ <b>Today's food:</b> " + Math.round(eaten.cal) + " of " + t.cal + " kcal · Protein " + Math.round(eaten.p) + "g · Carbs " + Math.round(eaten.c) + "g · Fat " + Math.round(eaten.fat) + "g" + (eaten.items ? "" : " — nothing logged yet; use “Tell trainer what you ate” above.")) : "";
   var burn = caloriesBurned(state, today);
   var act = state.activity[today] || blankDay();
   var streak = workoutStreak(state);
@@ -3677,7 +3734,7 @@ function renderMonthPlan(){
   if (document.activeElement !== $("monthStart")) $("monthStart").value = mp.startDate;
   var status = monthPlanStatus(state, mp);
   var trainLabels = mp.trainingDays.map(function(d){ return WEEKDAYS[d]; }).join(", ");
-  meta.innerHTML = '<div class="' + (mp.healthyAdjustment ? "warnb" : "okb") + '"><b>' + esc(mp.startDate) + " → " + esc(mp.endDate) + '</b> · Training days: <b>' + esc(trainLabels) + '</b> · Equipment: <b>' + esc(state.profile.equip) + '</b>' +
+  meta.innerHTML = '<div class="' + (mp.healthyAdjustment ? "warnb" : "okb") + '"><b>' + esc(mp.startDate) + " → " + esc(mp.endDate) + '</b> · Training days: <b>' + esc(trainLabels) + '</b> · Equipment: <b>' + esc(equipLabel(state.profile.equip)) + '</b>' +
     '<br>Healthy rate: <b>' + mp.healthyRate.lbPerWeek + ' lb/week</b> in the ' + (mp.healthyRate.direction < 0 ? "loss" : mp.healthyRate.direction > 0 ? "gain" : "maintenance") + ' direction' + (mp.healthyRate.capped ? ' (capped from ' + mp.healthyRate.requestedLbPerWeek + ' lb/week)' : '') + '. Daily targets never go below the 1,200-calorie floor.' +
     (mp.healthyAdjustment ? '<br>' + esc(mp.healthyAdjustment) : '') +
     '<br><span class="small">General guidance for healthy adults — not a medical claim or medical advice.</span></div>';
@@ -3762,7 +3819,7 @@ function renderTrain(){
     renderMonthPlan();
     return;
   }
-  $("planMeta").innerHTML = "Split: <b>" + esc(state.profile.experience) + "</b> · Equipment: <b>" + esc(state.profile.equip) + "</b> · Week of " + plan.startDate + (plan.deload ? ' · <span class="warn">DELOAD WEEK ACTIVE</span>' : "") +
+  $("planMeta").innerHTML = "Split: <b>" + esc(state.profile.experience) + "</b> · Equipment: <b>" + esc(equipLabel(state.profile.equip)) + "</b> · Week of " + plan.startDate + (plan.deload ? ' · <span class="warn">DELOAD WEEK ACTIVE</span>' : "") +
     "";
   $("btnDeload").textContent = plan.deload ? "End deload week" : "Start deload week";
   var today = todayStr();
@@ -3815,7 +3872,7 @@ function renderLibrary(){
   });
   $("exLibrary").innerHTML = '<p class="small mut mb">' + list.length + " of " + EXERCISES.length + ' exercises</p>' + list.map(function(e){
     var tg = exTags(e);
-    return '<details><summary>' + esc(e.name) + ' <span class="pill">' + esc(e.muscle) + '</span> <span class="pill">' + (e.equip === "none" ? "No equipment" : e.equip === "dumbbells" ? "Dumbbells" : "Full gym") + '</span> <span class="pill">Level ' + e.diff + '</span></summary><p class="small mut" style="padding:4px 0 8px">Primary: <b>' + esc(tg.primary) + '</b>' + (tg.secondary.length ? " · also trains: " + tg.secondary.join(", ") : "") + (tg.sub.length ? " · " + tg.sub.join("/") : "") + '<br>' + esc(e.cues) + '</p></details>';
+    return '<details><summary>' + esc(e.name) + ' <span class="pill">' + esc(e.muscle) + '</span> <span class="pill">' + equipLabel(e.equip) + '</span> <span class="pill">Level ' + e.diff + '</span></summary><p class="small mut" style="padding:4px 0 8px">Primary: <b>' + esc(tg.primary) + '</b>' + (tg.secondary.length ? " · also trains: " + tg.secondary.join(", ") : "") + (tg.sub.length ? " · " + tg.sub.join("/") : "") + '<br>' + esc(e.cues) + '</p></details>';
   }).join("");
 }
 /* ---------- Build your own workout (v2.3.0) ----------
@@ -4051,7 +4108,7 @@ function renderBuilderLibrary(){
   var list = builderFilteredExercises();
   $("builderLibrary").innerHTML = '<p class="small mut mb">' + list.length + " exercise" + (list.length === 1 ? "" : "s") + '</p>' + (list.length ? list.map(function(e){
     var tg = exTags(e);
-    return '<div class="flexb" style="padding:6px 0;border-bottom:1px solid var(--line)"><span><b>' + esc(e.name) + '</b> <span class="small mut">' + esc(tg.primary) + (tg.secondary.length ? " · also " + tg.secondary.join(", ") : "") + (tg.sub.length ? " · " + tg.sub.join("/") : "") + " · " + (e.equip === "none" ? "No equipment" : e.equip === "dumbbells" ? "Dumbbells" : "Full gym") + '</span></span>' +
+    return '<div class="flexb" style="padding:6px 0;border-bottom:1px solid var(--line)"><span><b>' + esc(e.name) + '</b> <span class="small mut">' + esc(tg.primary) + (tg.secondary.length ? " · also " + tg.secondary.join(", ") : "") + (tg.sub.length ? " · " + tg.sub.join("/") : "") + " · " + equipLabel(e.equip) + '</span></span>' +
       (added[e.id] ? '<span class="pill">Added ✓</span>' : '<button class="btn sm" type="button" data-badd="' + e.id + '">Add</button>') + '</div>';
   }).join("") : '<p class="small mut">No exercises match — clear a muscle group or the search.</p>');
   $("builderLibrary").querySelectorAll("[data-badd]").forEach(function(b){
@@ -4511,7 +4568,7 @@ function renderNutrition(){
     '<div class="macroBars">' + mBar("Protein", eaten.p, t.p) + mBar("Carbs", eaten.c, t.c) + mBar("Fat", eaten.fat, t.fat) +
     '<div class="small mut">Eaten ' + Math.round(eaten.cal).toLocaleString() + " of " + Math.round(t.cal).toLocaleString() + ' kcal today — the “How your daily targets are set” fold below shows the math.</div></div></div>';
   $("targetExplain").innerHTML = state.profile
-    ? "How your coach sets targets: resting burn (BMR) <b>" + t.bmr + " kcal</b> via the Mifflin-St Jeor equation for a " + esc(state.profile.sex) + ", " + state.profile.age + ", " + state.profile.weightLb + " lb. Maintenance (TDEE) = BMR × activity " + state.profile.activity + " = <b>" + t.tdee + " kcal</b>. Healthy-rate goal adjustment (" + esc(state.profile.goal) + "): <b>" + (t.adj > 0 ? "+" : "") + t.adj + " kcal</b> for <b>" + t.rateLbPerWeek + " lb/week</b>" + (t.rateCapped ? " — clamped to the healthy cap of " + t.rateCapLbPerWeek + " lb/week" : "") + " → target <b>" + t.cal + " kcal</b>, never below the 1,200-kcal floor. The Train tab lays the same math out as weekly and monthly budgets. Protein is set by bodyweight (" + (state.profile.goal === "lose" ? "2.2" : state.profile.goal === "maintain" ? "1.8" : "2.0") + " g/kg), fat at 25% of calories, carbs fill the rest."
+    ? "How your coach sets targets: resting burn (BMR) <b>" + t.bmr + " kcal</b> via the Mifflin-St Jeor equation for a " + esc(state.profile.sex) + ", " + state.profile.age + ", " + state.profile.weightLb + " lb. Maintenance (TDEE) = BMR × activity " + state.profile.activity + " = <b>" + t.tdee + " kcal</b>. Healthy-rate goal adjustment (" + esc(state.profile.goal) + "): <b>" + (t.adj > 0 ? "+" : "") + t.adj + " kcal</b> for <b>" + t.rateLbPerWeek + " lb/week</b>" + (t.rateCapped ? " — clamped to the healthy cap of " + t.rateCapLbPerWeek + " lb/week" : "") + " → target <b>" + t.cal + " kcal</b>, never below the 1,200-kcal floor. The Train tab lays the same math out as weekly and monthly budgets. Protein is set by bodyweight (" + proteinPerKg(state.profile) + " g/kg for your goal" + (profileGoals(state.profile).length > 1 ? "s: " + esc(goalLabels(state.profile)) : ": " + esc(goalLabels(state.profile))) + "), fat at 25% of calories, carbs fill the rest."
     : "Set up your profile to see how targets are calculated.";
   if (state.profile && t.calAdj) $("targetExplain").innerHTML += ' <b>Adaptive adjustment on:</b> your confirmed suggestion of ' + (t.calAdj > 0 ? "+" : "") + t.calAdj + ' kcal/day' + (state.targetAdjustDate ? " (confirmed " + esc(state.targetAdjustDate) + ")" : "") + ' is included in the target above — manage it from the Target check card on the Today page.';
   renderFoodQuick();
@@ -5029,7 +5086,9 @@ function fillProfileForm(){
   $("pName").value = p.name || ""; $("pSex").value = p.sex || "male"; $("pAge").value = p.age || "";
   $("pFt").value = Math.floor(num(p.heightIn) / 12); $("pIn").value = Math.round((num(p.heightIn) % 12)*10)/10;
   $("pWeight").value = p.weightLb || ""; $("pActivity").value = String(p.activity || 1.55);
-  $("pGoal").value = p.goal || "maintain"; $("pEquip").value = p.equip || "none";
+  var selGoals = profileGoals(p);
+  document.querySelectorAll("[data-goal]").forEach(function(cb){ cb.checked = selGoals.indexOf(cb.getAttribute("data-goal")) >= 0; });
+  $("pEquip").value = p.equip || "none";
   $("pExp").value = p.experience || "beginner"; $("pDiet").value = p.diet || "";
   $("pTargetWeight").value = p.targetWeightLb || ""; $("pAvoid").value = p.avoid || "";
   var selected = sanitizeTrainingDays(p.trainingDays) || [];
@@ -5043,11 +5102,15 @@ function saveProfileFromForm(){
   if (!(heightIn >= 36 && heightIn <= 96)){ $("profileMsg").innerHTML = '<div class="err">⚠️ Please enter a realistic height (feet and inches).</div>'; return false; }
   if (!(weight >= 50 && weight <= 1000)){ $("profileMsg").innerHTML = '<div class="err">⚠️ Please enter your weight in pounds (50–1000).</div>'; return false; }
   if (!(age >= 10 && age <= 100)){ $("profileMsg").innerHTML = '<div class="err">⚠️ Please enter an age between 10 and 100 — the calorie math needs it.</div>'; return false; }
+  var goalSel = [];
+  document.querySelectorAll("[data-goal]").forEach(function(cb){ if (cb.checked) goalSel.push(cb.getAttribute("data-goal")); });
+  var goals = sanitizeGoals(goalSel, "");
+  if (!goals.length){ $("profileMsg").innerHTML = '<div class="err">⚠️ Pick at least one goal.</div>'; return false; }
   var trainingDays = [];
   document.querySelectorAll("[data-training-day]").forEach(function(cb){ if (cb.checked) trainingDays.push(+cb.getAttribute("data-training-day")); });
   state.profile = {
     name: $("pName").value.trim(), sex: $("pSex").value, age: Math.round(age), heightIn: heightIn,
-    weightLb: weight, activity: num($("pActivity").value, 1.55), goal: $("pGoal").value,
+    weightLb: weight, activity: num($("pActivity").value, 1.55), goal: goals[0], goals: goals,
     equip: $("pEquip").value, experience: $("pExp").value, trainingDays: trainingDays.length ? trainingDays : undefined, diet: $("pDiet").value,
     avoid: $("pAvoid").value.trim(), targetWeightLb: num($("pTargetWeight").value) || 0
   };
@@ -5064,7 +5127,7 @@ function saveProfileFromForm(){
 }
 
 /* ---------- global wiring ---------- */
-function renderAll(){ applyBackground(); renderAvatars(); renderDashboard(); renderTrain(); renderNutrition(); renderActivity(); renderProgress(); }
+function renderAll(){ applyBackground(); renderAvatars(); renderDashboard(); renderTrain(); renderNutrition(); renderActivity(); renderProgress(); refreshFkLinks(); }
 /* ---------- legal gate + page (v2.1.2) ----------
    The gate is a visual first-run screen only: state is loaded and rendered
    behind it, and nothing is ever blocked, locked, or deleted by it. */
@@ -5193,6 +5256,42 @@ function trainerAsk(text){
   trainerBubble(a.text, false);
   var inp = $("trainerInput"); if (inp) inp.value = "";
 }
+/* ---------- Trainer's instructions (v2.7.0) ----------
+   The "Trainer's instructions" button is an OUTPUT button: one tap and
+   the trainer tells you today's workout (exercises with sets/reps) and
+   today's needs (food targets, sleep), as readable text in the panel
+   AND spoken aloud through the browser's built-in text-to-speech where
+   the device offers it. It never listens — voice input lives only on
+   the "Tap to tell trainer" button. The Q&A below stays available for
+   follow-up questions. */
+var lastInstructionsText = "";
+function trainerInstructionsLines(){
+  var lines = trainerDailyBrief();
+  var td = trainerTodayDay(state);
+  if (td && !td.rest && td.exercises && td.exercises.length){
+    var detail = td.exercises.map(function(px){
+      var ex = exerciseById(px.id); if (!ex) return "";
+      return ex.name + " — " + px.sets + " sets of " + px.repMin + (px.repMax !== px.repMin ? "–" + px.repMax : "") + (ex.unit === "sec" ? " seconds" : " reps");
+    }).filter(Boolean);
+    if (detail.length) lines.splice(1, 0, "🏋️ Here's the workout, exercise by exercise: " + detail.join("; ") + ".");
+  }
+  return lines;
+}
+function speakTrainerInstructions(){
+  try {
+    if (typeof window === "undefined" || !("speechSynthesis" in window) || !window.speechSynthesis) return false;
+    window.speechSynthesis.cancel();
+    var text = trainerInstructionsLines().join(" ").replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "").replace(/[^\x00-\x7F]/g, "").replace(/\s+/g, " ").trim();
+    if (!text) return false;
+    var u = new SpeechSynthesisUtterance(text);
+    u.rate = 1.02;
+    window.speechSynthesis.speak(u);
+    return true;
+  } catch(e){ return false; }
+}
+function stopTrainerSpeech(){
+  try { if (typeof window !== "undefined" && "speechSynthesis" in window && window.speechSynthesis) window.speechSynthesis.cancel(); } catch(e){}
+}
 function openTrainerPanel(){
   var p = $("trainerPanel"); if (!p) return;
   p.style.display = "flex";
@@ -5201,9 +5300,18 @@ function openTrainerPanel(){
     trainerGreeted = true;
     trainerBubble("Hi — I'm your offline trainer. I answer from your own plan and logs: today's workout, calories left, your pace, streaks, exercise swaps, and the basics like protein, soreness and deloads. Tap a quick question or type your own. For pain, injuries or anything medical, I'll point you to a professional instead — that's deliberate.");
   }
-  var inp = $("trainerInput"); if (inp) setTimeout(function(){ try { inp.focus(); } catch(e){} }, 60);
+  // The button's main job: deliver today's instructions, on screen and out loud.
+  var lines = trainerInstructionsLines();
+  var joined = lines.join("\n");
+  if (joined !== lastInstructionsText){
+    lastInstructionsText = joined;
+    trainerBubble("📋 Your instructions for today:", false);
+    lines.forEach(function(l){ trainerBubble(l, false); });
+  }
+  speakTrainerInstructions();
 }
 function closeTrainerPanel(){
+  stopTrainerSpeech();
   var p = $("trainerPanel"); if (p) p.style.display = "none";
 }
 /* ---------- welcome intro (v2.1.2) ----------
@@ -5214,9 +5322,9 @@ function closeTrainerPanel(){
    dictation bridge (speak -> transcribe -> confirm), never auto-logging. */
 var INTRO_SLIDES = [
   { icon: "mic", grad: "linear-gradient(135deg,#a78bfa,#818cf8)", title: "Talk to log",
-    text: "Tap \u201CTell me what you ate\u201D and just speak — LogEasy transcribes it and lines it up for your confirmation. Nothing is logged until you tap Add. (Works in Chrome on Android and other browsers with the Web Speech API — if an in-app preview blocks the mic, open the file in Chrome.)" },
+    text: "Tap \u201CTell trainer what you ate\u201D and just speak — LogEasy transcribes it and lines it up for your confirmation. Nothing is logged until you tap Add. (Works in Chrome on Android and other browsers with the Web Speech API — if an in-app preview blocks the mic, open the file in Chrome.)" },
   { icon: "dumbbell", grad: "linear-gradient(135deg,#4ade80,#2dd4bf)", title: "Your AI trainer",
-    text: "Tell LogEasy your goal and your equipment — nothing, dumbbells, or a full gym — and it builds your whole month: 28 days of workouts with build weeks, real progression, and a planned deload week. Every exercise comes with plain-English form cues." },
+    text: "Tell LogEasy your goals and your equipment — nothing, dumbbells, a squat rack at home, or a full gym — and it builds your whole month: 28 days of workouts with build weeks, real progression, and a planned deload week. Every exercise comes with plain-English form cues." },
   { icon: "watch", grad: "linear-gradient(135deg,#38bdf8,#818cf8)", title: "Your data walks in",
     text: "Import steps, workouts, and sleep from your watch or phone — Apple Health, Fitbit, Garmin, Samsung, Google Fit. Today's steps headline your home screen, and repeat imports never double-count." },
   { icon: "chat", grad: "linear-gradient(135deg,#2dd4bf,#4ade80)", title: "Ask your trainer",
@@ -5261,7 +5369,7 @@ var wiz = null;
 var wizSessionDone = false;
 function startWizard(){
   if (state.profile){ switchView("profile"); return; }
-  wiz = { step: 0, data: { name: "", sex: "male", goal: "lose", experience: "beginner", equip: "none", days: [], ft: "", inch: "", age: "", weight: "", activity: "1.375", diet: "", targetWeight: "", msg: "" } };
+  wiz = { step: 0, data: { name: "", sex: "male", goal: "lose", goals: ["lose"], experience: "beginner", equip: "none", days: [], ft: "", inch: "", age: "", weight: "", activity: "1.375", diet: "", targetWeight: "", msg: "" } };
   var o = $("wizOverlay"); if (o) o.style.display = "flex";
   renderWizard();
 }
@@ -5273,6 +5381,10 @@ function maybeStartWizard(){
 function closeWizard(){
   var o = $("wizOverlay"); if (o) o.style.display = "none";
   wiz = null;
+}
+function wizGoalBtn(value, label, sub){
+  var on = wiz.data.goals.indexOf(value) >= 0;
+  return '<button type="button" class="wizOpt' + (on ? " on" : "") + '" data-wiz-goal="' + value + '"><span>' + label + (sub ? '<span class="woSub">' + sub + "</span>" : "") + "</span></button>";
 }
 function wizOptBtn(group, value, label, sub){
   var on = String(wiz.data[group]) === String(value);
@@ -5290,12 +5402,12 @@ function renderWizard(){
   var d = wiz.data, h = "";
   var msg = d.msg ? '<div class="err">' + esc(d.msg) + "</div>" : "";
   if (step === "goal"){
-    h = "<h2>👋 I'm your trainer. What's your main goal?</h2><p>Tap one — I'll build your workouts and your food targets around it.</p>" + msg +
+    h = "<h2>👋 I'm your trainer. What are your goals?</h2><p>Tap all that apply — I'll blend your workouts and your food targets around them, then tap Next.</p>" + msg +
       '<div class="wizOpts">' +
-      wizOptBtn("goal", "lose", "🔥 Lose weight", "Steady, healthy pace — never crash-diet math") +
-      wizOptBtn("goal", "maintain", "⚖️ Stay fit &amp; maintain", "Hold your weight, get stronger and fitter") +
-      wizOptBtn("goal", "gain", "💪 Build muscle", "A small surplus and progressive training") +
-      wizOptBtn("goal", "performance", "🏃 Get stronger &amp; perform", "Performance first — strength and work capacity") +
+      wizGoalBtn("lose", "🔥 Lose weight", "Steady, healthy pace — never crash-diet math") +
+      wizGoalBtn("maintain", "⚖️ Stay fit &amp; maintain", "Hold your weight, get stronger and fitter") +
+      wizGoalBtn("gain", "💪 Build muscle", "Progressive training with enough fuel") +
+      wizGoalBtn("performance", "🏃 Get stronger &amp; perform", "Performance first — strength and work capacity") +
       "</div>";
   } else if (step === "experience"){
     h = "<h2>How much training experience do you have?</h2><p>Be honest — the plan matches your level, and it progresses as you do.</p>" + msg +
@@ -5309,6 +5421,7 @@ function renderWizard(){
       '<div class="wizOpts">' +
       wizOptBtn("equip", "none", "🧍 No equipment", "Bodyweight only — train anywhere") +
       wizOptBtn("equip", "dumbbells", "🏠 Dumbbells at home", "A set of dumbbells is plenty") +
+      wizOptBtn("equip", "rack", "🏋️ Home gym / squat rack", "Barbell + rack at home — mixes with bodyweight &amp; dumbbells") +
       wizOptBtn("equip", "gym", "🏢 Full gym", "Barbells, racks, machines, cables") +
       "</div>";
   } else if (step === "days"){
@@ -5353,6 +5466,7 @@ function renderWizard(){
     var t = dailyTargets(state.profile);
     var tDays = trainingDaysFor(state.profile);
     h = "<h2>🎉 Your plan is built" + (state.profile.name ? ", " + esc(state.profile.name) : "") + ".</h2>" +
+      "<p><b>Your goals:</b> " + esc(goalLabels(state.profile)) + ".</p>" +
       "<p><b>Your daily targets:</b> " + t.cal.toLocaleString() + " kcal · protein " + t.p + " g · carbs " + t.c + " g · fat " + t.fat + " g.</p>" +
       "<p><b>Your training week:</b> " + tDays.map(function(x){ return WEEKDAYS[x]; }).join(", ") + " — plus a full 28-day month plan with a planned deload week, already generated.</p>" +
       "<p>From here it's one tap: the big button on the Today tab logs food, workouts and sleep by voice. Everything else lives in the tabs below.</p>";
@@ -5365,6 +5479,18 @@ function renderWizard(){
       wiz.data.msg = "";
       if (g === "diet"){ renderWizard(); return; }
       wizAdvance();
+    });
+  });
+  card.querySelectorAll("[data-wiz-goal]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var v = b.getAttribute("data-wiz-goal");
+      var k = wiz.data.goals.indexOf(v);
+      if (k >= 0){ if (wiz.data.goals.length > 1) wiz.data.goals.splice(k, 1); }
+      else wiz.data.goals.push(v);
+      wiz.data.goals = sanitizeGoals(wiz.data.goals, "");
+      if (wiz.data.goals.length) wiz.data.goal = wiz.data.goals[0];
+      wiz.data.msg = "";
+      renderWizard();
     });
   });
   card.querySelectorAll("[data-wiz-day]").forEach(function(b){
@@ -5422,9 +5548,10 @@ function finishWizard(){
   var d = wiz.data;
   var heightIn = (num(d.ft) * 12) + num(d.inch);
   var days = d.days.slice().sort(function(a, b){ return a - b; });
+  var goals = sanitizeGoals(d.goals, d.goal);
   state.profile = {
     name: d.name || "", sex: d.sex, age: Math.round(num(d.age)), heightIn: heightIn,
-    weightLb: num(d.weight), activity: num(d.activity, 1.375), goal: d.goal,
+    weightLb: num(d.weight), activity: num(d.activity, 1.375), goal: goals[0], goals: goals,
     equip: d.equip, experience: d.experience, trainingDays: days.length ? days : undefined,
     diet: d.diet || "", avoid: "", targetWeightLb: num(d.targetWeight) || 0
   };
@@ -5448,10 +5575,21 @@ function finishWizard(){
    on the ForgeKitchen Gumroad product BEFORE this file is swapped live,
    or the printed code will not work at checkout. */
 var FK_GUMROAD_URL = "https://travisbriggs.gumroad.com/l/vipawz";
+/* The ForgeKitchen APP itself (v2.7.0): LogEasy's diet travels in the
+   link (?diet=…) and ForgeKitchen opens with matching meal suggestions. */
+var FK_APP_URL = "https://whitewolfoklahoma-rgb.github.io/forgekitchen-share/";
+function fkAppUrl(){
+  var d = state.profile && state.profile.diet;
+  return FK_APP_URL + (d ? "?diet=" + encodeURIComponent(d) : "");
+}
+function refreshFkLinks(){
+  document.querySelectorAll(".fkAppLink").forEach(function(a){ a.href = fkAppUrl(); });
+}
 function renderFkCard(){
   var el = $("fkPromo"); if (!el) return;
   el.innerHTML = '<div class="card fkCard" style="padding:13px 16px"><div class="flexb"><h3 style="margin:0"><span class="hIco">' + icon("flame", 19) + '</span>Cooking tonight?</h3><a class="btn sm" href="' + FK_GUMROAD_URL + '" target="_blank" rel="noopener" style="text-decoration:none">Get ForgeKitchen</a></div>' +
-    '<p class="small mt" style="margin-bottom:0">Recipes live in <b>ForgeKitchen</b> — send a meal from there and it lands in this log, macros counted. <b>LogEasy owners: take $10 off ForgeKitchen ($39 instead of $49) with code FORGEPAIR</b> — or get both in the <b>Forge Bundle, $99</b>. The two offline apps connect by sending/importing a file; no account, no live sync.</p></div>';
+    '<p class="small mt" style="margin-bottom:0">Recipes live in <b>ForgeKitchen</b> — send a meal from there and it lands in this log, macros counted. <b>LogEasy owners: take $10 off ForgeKitchen ($39 instead of $49) with code FORGEPAIR</b> — or get both in the <b>Forge Bundle, $99</b>. The two offline apps connect by sending/importing a file; no account, no live sync.</p>' +
+    '<p class="small mt" style="margin-bottom:0"><a class="fkAppLink" href="' + FK_APP_URL + '" target="_blank" rel="noopener">Meals &amp; recipes — open the ForgeKitchen app ›</a></p></div>';
 }
 /* ---------- swipe navigation (v2.1.1) ---------- */
 var FF_TABS = ["dashboard","train","nutrition","activity","progress","profile"];
@@ -6314,6 +6452,15 @@ function routeOneTouchTranscript(raw){
       return;
     }
   }
+  // 3.5) plan exercise edits — "add goblet squats", "take out burpees":
+  //      applied immediately, like sleep/steps/weight above
+  var pedit = parsePlanExerciseEdit(txt);
+  if (pedit){
+    if (pedit.invalid){ voiceStatus("onetouch", "🤔 " + pedit.summary); return; }
+    if (applyPlanAdjustment(pedit)) voiceStatus("onetouch", "🏋️ " + pedit.summary + " — done, it's live in your plan on the Train tab.");
+    else voiceStatus("onetouch", "🤔 " + pedit.summary + " — I couldn't apply that; check the Train tab.");
+    return;
+  }
   // 4) about to train — "I'm about to do squats", "start today's workout"
   var wp = parseVoiceWorkout(txt);
   var hasStructure = /\bsets?\b|\breps?\b|\bat\s+\d|\b\d+\s*(?:lb|lbs|kg|pounds?)\b/.test(low);
@@ -6342,7 +6489,7 @@ function routeOneTouchTranscript(raw){
   if (matchVoiceExercise(txt) || /\b(workout|trained|lifted|gym|exercise)\b/.test(low)) renderVoiceWorkout(txt);
   else renderVoiceFoodMatches(txt, "dashboard");
 }
-/* Caddy-style trainer brief (v2.6.0): one tap on "Talk to your trainer"
+/* Caddy-style trainer brief (v2.6.0): one tap on "Trainer's instructions"
    answers with today's workout, today's food targets and sleep guidance,
    composed from the same data functions the rest of the app uses. The
    full offline Q&A (trainerAnswer) stays one tap away in the same panel. */
@@ -6391,7 +6538,7 @@ function handleVoiceTranscript(target, txt){
 }
 
 /* ---------- workout voice log + plan adjustments (v2.2.3) ----------
-   "Tell me what you trained" parses exercises/sets/reps/weight into a
+   "Tell trainer what you trained" parses exercises/sets/reps/weight into a
    confirm-first staging card — nothing is logged until the user taps the
    log button. The same flow accepts plan-adjustment talk ("go lighter
    Thursday", "move leg day to Friday"). Adjustments route into the plan
@@ -6424,8 +6571,13 @@ function matchVoiceExercise(clause){
     var nm = " " + sorted[i].name.toLowerCase().replace(/-/g, " ") + " ";
     if (q.indexOf(nm) >= 0 || q.indexOf(nm.slice(0, -1) + "s ") >= 0) return sorted[i];
   }
-  for (var j = 0; j < EXERCISE_VOICE_SYNONYMS.length; j++){
-    if (q.indexOf(EXERCISE_VOICE_SYNONYMS[j][0]) >= 0){ var ex = exerciseByName(EXERCISE_VOICE_SYNONYMS[j][1]); if (ex) return ex; }
+  /* Longest (most specific) synonym first: "goblet" must beat the
+     generic "squat" inside "goblet squats", or the match lands on
+     Barbell Back Squat. Sort is stable, so equal-length keys keep
+     their listed order. */
+  var syns = EXERCISE_VOICE_SYNONYMS.slice().sort(function(a, b){ return b[0].length - a[0].length; });
+  for (var j = 0; j < syns.length; j++){
+    if (q.indexOf(syns[j][0]) >= 0){ var ex = exerciseByName(syns[j][1]); if (ex) return ex; }
   }
   return null;
 }
@@ -6494,8 +6646,122 @@ function parsePlanAdjustment(text){
   return { type: "adjust", dayIdx: idx, date: day.date, loadStep: loadStep, volStep: volStep,
            summary: day.weekday + " (" + day.name + "): " + words.join(" + ") + " — within safe bounds (load ±10%, volume ±20%)" };
 }
+/* ---------- voice plan exercise edits (v2.7.0) ----------
+   "Add goblet squats" / "take out burpees" — spoken edits to the plan
+   itself (not a workout log). The parser resolves the exercise against
+   the library and the target day against the weekly plan: an explicit
+   day ("to Monday", "from leg day") wins; otherwise adds land on
+   today's session (or the next training day if today is rest) and
+   removals find the day that actually contains the exercise. Edits
+   apply to the weekly plan AND the month-plan day with the same date,
+   so what the user sees on Train is what changed. A phrase carrying
+   sets/reps structure is a workout LOG, not a plan edit, and is left
+   for parseExerciseClause. */
+function defaultSlotForExercise(ex){
+  var found = null;
+  Object.keys(DAY_SLOTS).forEach(function(k){
+    DAY_SLOTS[k].forEach(function(s){ if (!found && s[0] === ex.muscle) found = s; });
+  });
+  if (found) return { sets: found[1], repMin: found[2], repMax: found[3] };
+  return ex.unit === "sec" ? { sets: 3, repMin: 30, repMax: 45 } : { sets: 3, repMin: 8, repMax: 12 };
+}
+function parsePlanExerciseEdit(text){
+  var raw = String(text || "").trim();
+  if (!raw) return null;
+  if (/\bsets?\b|\d+\s*(x|×)\s*\d+/i.test(raw)) return null;
+  var t = " " + raw.toLowerCase().replace(/[.,!?;:]+/g, " ").replace(/\s+/g, " ") + " ";
+  var addM = t.match(/\b(?:add|include|put in|put)\s+(.+)/);
+  var remM = t.match(/\b(?:remove|take out|take off|drop|delete|cut)\s+(.+)/);
+  var m = addM || remM;
+  if (!m) return null;
+  var type = addM ? "exadd" : "exremove";
+  if (!state.plan || !state.plan.days) return { type: type, invalid: true, summary: "No plan yet — set up your profile first and I'll build one you can edit." };
+  var rest = " " + m[1].trim() + " ";
+  var dayIdx = -1;
+  var tokM = rest.match(/\b(?:to|on|for|from)\s+(today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/);
+  if (tokM){
+    dayIdx = planDayIndexForToken(tokM[1]);
+    rest = rest.replace(tokM[0], " ");
+  } else {
+    var descM = rest.match(/\b(?:to|on|for|from)\s+(.+?)\s*$/);
+    if (descM){
+      var di = planDayIndexForDescriptor(descM[1]);
+      if (di >= 0){ dayIdx = di; rest = rest.replace(descM[0], " "); }
+    }
+  }
+  rest = rest.replace(/\b(?:to|from)\s+(?:my\s+|the\s+)?(?:workout|session|plan)\b/g, " ").replace(/\b(?:my\s+|the\s+)?(?:workout|session|plan)\b/g, " ").replace(/\s+/g, " ").trim();
+  var ex = matchVoiceExercise(rest);
+  if (!ex){
+    if (/\b(workout|plan|session|training)\b/.test(t)) return { type: type, invalid: true, summary: "I couldn't match that to an exercise in the library — nothing was changed." };
+    return null;
+  }
+  var todayIdx = planDayIndexForToken("today");
+  if (type === "exadd"){
+    if (dayIdx < 0){
+      dayIdx = todayIdx;
+      if (dayIdx < 0 || state.plan.days[dayIdx].rest){
+        var start = dayIdx < 0 ? 0 : dayIdx;
+        dayIdx = -1;
+        for (var i = 0; i < 7; i++){ var cand = state.plan.days[(start + i) % 7]; if (cand && !cand.rest){ dayIdx = (start + i) % 7; break; } }
+        if (dayIdx < 0) dayIdx = todayIdx >= 0 ? todayIdx : 0;
+      }
+    }
+    var day = state.plan.days[dayIdx];
+    if (!day) return { type: type, invalid: true, summary: "I couldn't find that day in this week's plan — nothing was changed." };
+    if (day.exercises.some(function(px){ return px.id === ex.id; })) return { type: type, dayIdx: dayIdx, exId: ex.id, invalid: true, summary: ex.name + " is already in " + day.weekday + "'s workout (" + day.name + ")." };
+    return { type: type, dayIdx: dayIdx, date: day.date, exId: ex.id,
+             summary: "Add " + ex.name + " to " + day.weekday + " (" + day.name + ")" };
+  }
+  // exremove: explicit day wins; otherwise find the day holding the exercise
+  if (dayIdx < 0){
+    var order = [];
+    if (todayIdx >= 0) for (var a = 0; a < 7; a++) order.push((todayIdx + a) % 7);
+    else for (var b = 0; b < 7; b++) order.push(b);
+    for (var k = 0; k < order.length; k++){
+      var d2 = state.plan.days[order[k]];
+      if (d2 && d2.exercises.some(function(px){ return px.id === ex.id; })){ dayIdx = order[k]; break; }
+    }
+  }
+  var rday = dayIdx >= 0 ? state.plan.days[dayIdx] : null;
+  if (!rday || !rday.exercises.some(function(px){ return px.id === ex.id; })){
+    return { type: type, dayIdx: dayIdx, exId: ex.id, invalid: true, summary: ex.name + " isn't in this week's plan — nothing to remove." };
+  }
+  return { type: type, dayIdx: dayIdx, date: rday.date, exId: ex.id,
+           summary: "Remove " + ex.name + " from " + rday.weekday + " (" + rday.name + ")" };
+}
 function applyPlanAdjustment(adj){
   if (!adj || adj.invalid) return false;
+  if (adj.type === "exadd" || adj.type === "exremove"){
+    if (!state.plan || !state.plan.days || adj.dayIdx < 0) return false;
+    var pday = state.plan.days[adj.dayIdx];
+    var ex = exerciseById(adj.exId);
+    if (!pday || !ex) return false;
+    var mday = null;
+    if (state.monthPlan && Array.isArray(state.monthPlan.days)) mday = state.monthPlan.days.filter(function(d){ return d.date === pday.date; })[0] || null;
+    if (adj.type === "exadd"){
+      if (pday.exercises.some(function(px){ return px.id === ex.id; })) return false;
+      var slot = defaultSlotForExercise(ex);
+      pday.exercises.push({ id: ex.id, sets: slot.sets, repMin: slot.repMin, repMax: slot.repMax });
+      if (pday.rest){ pday.rest = false; if (pday.name === "Rest") pday.name = "Custom Workout"; }
+      if (mday && !mday.exercises.some(function(px){ return px.id === ex.id; })){
+        var built = applyMonthProgression([{ id: ex.id, sets: slot.sets, repMin: slot.repMin, repMax: slot.repMax, restSec: monthRestSeconds(mday.exercises.length, ex, ex.muscle) }], mday.week || 1)[0];
+        mday.exercises.push(built);
+        if (mday.rest){ mday.rest = false; mday.deload = false; if (mday.name === "Rest"){ mday.name = "Custom Workout"; mday.focus = "Custom Workout"; } }
+      }
+    } else {
+      var had = pday.exercises.some(function(px){ return px.id === ex.id; }) || (mday && mday.exercises.some(function(px){ return px.id === ex.id; }));
+      if (!had) return false;
+      pday.exercises = pday.exercises.filter(function(px){ return px.id !== ex.id; });
+      if (!pday.exercises.length){ pday.rest = true; pday.name = "Rest"; }
+      if (mday){
+        mday.exercises = mday.exercises.filter(function(px){ return px.id !== ex.id; });
+        if (!mday.exercises.length){ mday.rest = true; mday.name = "Rest"; mday.focus = "Rest"; }
+      }
+    }
+    saveState(state);
+    try { renderTrain(); renderDashboard(); } catch(e){}
+    return true;
+  }
   if (adj.type === "move"){
     if (!state.plan || adj.fromIdx < 0 || adj.toIdx < 0) return false;
     var days = state.plan.days;
@@ -6553,11 +6819,21 @@ function parseExerciseClause(clause){
 function parseVoiceWorkout(text){
   var adjustments = [], entries = [], unmatched = [];
   String(text || "").split(/[.;]\s*/).filter(Boolean).forEach(function(sentence){
+    // v2.7.0: plan exercise edits ("add goblet squats", "take out burpees"),
+    // including two edits joined by "and" in one breath. When every part
+    // of the sentence is an edit, the sentence is fully consumed here.
+    var editParts = sentence.split(/\s+and\s+(?=(?:add|remove|take out|take off|drop|put in)\b)/i);
+    if (editParts.every(function(part){ return !!parsePlanExerciseEdit(part); })){
+      editParts.forEach(function(part){ adjustments.push(parsePlanExerciseEdit(part)); });
+      return;
+    }
     if (/\b(move|swap)\b/i.test(sentence)){
       var adj = parsePlanAdjustment(sentence);
       if (adj){ adjustments.push(adj); return; }
     }
     sentence.split(/\s*(?:,|\band\b)\s*/).filter(Boolean).forEach(function(clause){
+      var e2 = parsePlanExerciseEdit(clause);
+      if (e2){ adjustments.push(e2); return; }
       var a2 = parsePlanAdjustment(clause);
       if (a2){ adjustments.push(a2); return; }
       var parsed = parseExerciseClause(clause);
@@ -7406,6 +7682,7 @@ var FF_API = {
   extractSpokenDate: extractSpokenDate, comboNumberOf: comboNumberOf, comboFoodFor: comboFoodFor,
   EXTRA_FOODS: EXTRA_FOODS, CHAIN_VARIANTS: CHAIN_VARIANTS, INGREDIENTS: INGREDIENTS, STANDARD_BUILDS: STANDARD_BUILDS, decomposeFoodPhrase: decomposeFoodPhrase, detectChain: detectChain, stripChainMentions: stripChainMentions, bestTokenMatch: bestTokenMatch,
   parseVoiceWorkout: parseVoiceWorkout, parsePlanAdjustment: parsePlanAdjustment, applyPlanAdjustment: applyPlanAdjustment, planAdjustNoteHtml: planAdjustNoteHtml, logVoiceWorkout: logVoiceWorkout, renderVoiceWorkout: renderVoiceWorkout, addFoodEntry: addFoodEntry,
+  parsePlanExerciseEdit: parsePlanExerciseEdit, profileGoals: profileGoals, sanitizeGoals: sanitizeGoals, equipLabel: equipLabel, goalLabels: goalLabels, proteinPerKg: proteinPerKg, buildSessionExercises: buildSessionExercises,
   cancelVoiceDictation: cancelVoiceDictation, startVoiceDictation: startVoiceDictation, handleVoiceTranscript: handleVoiceTranscript,
   encouragementMode: encouragementMode, greetingForHour: greetingForHour, encouragementCandidates: encouragementCandidates,
   dashboardMilestones: dashboardMilestones, pickDashboardEncouragement: pickDashboardEncouragement,
